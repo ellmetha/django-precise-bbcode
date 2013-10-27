@@ -136,12 +136,14 @@ class BBCodeParser:
             elif len(placeholders) == 2:
                 fmt.update({placeholders[1]: value, placeholders[0]: option if option else ''})
             else:
-                pass
+                raise NotImplementedError
 
             # Semantic validation
             valid = self._validate_format(fmt)
-            if not valid:
+            if not valid and option:
                 return tag_def.format(**fmt)
+            elif not valid:
+                return tag_def.replace('=', '').format(**fmt)
 
             # Return the rendered data
             return format_string.format(**fmt)
@@ -161,11 +163,13 @@ class BBCodeParser:
             }
             list_tag = 'ol' if option in css_opts else 'ul'
             list_tag_css = u' style="list-style-type:{};"'.format(css_opts[option]) if list_tag == 'ol' else u''
-            rendered = u' <{tag}{css}>{content}</{tag}>'.format(tag=list_tag, css=list_tag_css, content=value)
+            rendered = u'<{tag}{css}>{content}</{tag}>'.format(tag=list_tag, css=list_tag_css, content=value)
             return rendered
 
         def _render_url(name, value, option=None, parent=None):
             href = option if option else value
+            if '://' not in href:
+                href = 'http://' + href
             content = value if option else href
             valid_href = re.search(_url_re, href)
             # Render
@@ -179,13 +183,12 @@ class BBCodeParser:
         self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
         self.add_default_renderer('u', '[u]{TEXT}[/u]', '<u>{TEXT}</u>')
         self.add_default_renderer('s', '[s]{TEXT}[/s]', '<strike>{TEXT}</strike>')
-        self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR}">{TEXT}</span>')
         self.add_renderer('list', _render_list, strip=True)
         self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, strip=True)
         self.add_default_renderer('quote', '[quote]{TEXT}[/quote]', '<blockquote>{TEXT}</blockquote>', strip=True)
         self.add_default_renderer('code', '[code]{TEXT}[/code]', '<code>{TEXT}</code>', render_embedded=False)
         self.add_default_renderer('center', '[center]{TEXT}[/center]', '<div style="text-align:center;">{TEXT}</div>')
-        self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR}">{TEXT}</span>')
+        self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
         self.add_default_renderer('img', '[img]{URL}[/img]', '<img src="{URL}" alt="" />')
 
@@ -199,7 +202,7 @@ class BBCodeParser:
             placeholder_type = re.sub('\d+$', '', placeholder_name)
             try:
                 valid_content = re.search(self._PLACEHOLDERS_RE[placeholder_type], content)
-                assert valid_content is not None or len(content) == 0
+                assert valid_content is not None
             except KeyError:
                 raise InvalidBBCodePlaholder(placeholder_type)
             except AssertionError:
@@ -313,7 +316,8 @@ class BBCodeParser:
     def _drop_syntactic_errors(self, tokens):
         """
         Given a list of lexical tokens, find that tags that are not closed or not started and converts them to textual tokens.
-        The non-valid tokens must not be swallowed.
+        The non-valid tokens must not be swallowed. The tag tokens that are not valid in the BBCode tree will be converted to
+        textual tokens (eg. in '[b][i]test[/b][/i]' the 'b' tags will be tokenized as data).
         """
         opening_tags = []
         for index, token in enumerate(tokens):
@@ -332,7 +336,10 @@ class BBCodeParser:
                 else:
                     tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
             elif token.type == BBCodeToken.TK_NEWLINE:
-                previous_tag, _ = opening_tags[-1] if len(opening_tags) > 0 else None
+                if len(opening_tags) > 0:
+                    previous_tag, _ = opening_tags[-1]
+                else:
+                    previous_tag = None
                 if previous_tag:
                     _, previous_tag_options = self.bbcodes[previous_tag.tag_name]
                     if previous_tag_options.newline_closes:
@@ -441,7 +448,7 @@ class BBCodeParser:
         """
         Given an input text, update it by replacing the HTML special characters or the found links by their HTML corresponding.
         """
-        url_matches = {}
+        url_matches = []
 
         if replace_links:
             # The links must be pulled out before doing any character replacement
@@ -451,15 +458,15 @@ class BBCodeParser:
                 if not match:
                     break
                 # Replace any link with a token that will be substitude back after replacements
-                token = '-*-bbcode-link-{math}-*-'.format(match=match)
-                url_matches[token] = self._link_replace(match)
+                token = '-*-bbcode-link-{match}-{pos}-*-'.format(match=id(match), pos=pos)
+                url_matches.append((token, self._link_replace(match)))
                 url_start, url_end = match.span()
                 data = data[:url_start] + token + data[url_end:]
                 pos = url_start
         if replace_specialchars:
-            self._replace(data, self.replace_html)
+            data = self._replace(data, self.replace_html)
         # Now put the previously genered links in the result text
-        for token, replacement in url_matches.items():
+        for token, replacement in url_matches:
             data = data.replace(token, replacement)
         return data
 

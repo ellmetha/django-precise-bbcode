@@ -16,9 +16,7 @@ escape_html = (
     ('<', '&lt;'),
     ('>', '&gt;'),
     ('"', '&quot;'),
-    ('\'', '&#39'),
-    ('.', '&#46'),
-    (':', '&#58;'),
+    ('\'', '&#39;'),
 )
 BBCODE_ESCAPE_HTML = getattr(settings, 'BBCODE_ESCAPE_HTML', escape_html)
 
