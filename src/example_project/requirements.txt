@@ -1,0 +1,4 @@
+django
+south
+django-pipeline
+django-debug-toolbar
