@@ -18,7 +18,7 @@ bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*
 _placeholder_re = re.compile(r'{(\w+)}')
 _url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
 _email_re = re.compile(r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*" + r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' + r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
-_text_re = re.compile(r'^(.*?)$')
+_text_re = re.compile(r'(^\w+)|(\w+\S*$)')
 _simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
 _color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
 _number_re = re.compile(r'^([0-9]+)$')
@@ -41,6 +41,8 @@ class BBCodeTagOptions:
     standalone = False
     # The embedded tags will be rendered
     render_embedded = True
+    # The embedded newlines will be converted to markup
+    transform_newlines = True
     # The HTML characters inside this tag will be escaped
     escape_html = True
     # Replace URLs with link markups inside this tag
@@ -134,7 +136,7 @@ class BBCodeParser:
             if len(placeholders) == 1:
                 fmt.update({placeholders[0]: value})
             elif len(placeholders) == 2:
-                fmt.update({placeholders[1]: value, placeholders[0]: option if option else ''})
+                fmt.update({placeholders[1]: value, placeholders[0]: self._replace(option, self.replace_html) if option else ''})
             else:
                 raise NotImplementedError
 
@@ -167,7 +169,7 @@ class BBCodeParser:
             return rendered
 
         def _render_url(name, value, option=None, parent=None):
-            href = option if option else value
+            href = self._replace(option, self.replace_html) if option else value
             if '://' not in href:
                 href = 'http://' + href
             content = value if option else href
@@ -183,7 +185,7 @@ class BBCodeParser:
         self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
         self.add_default_renderer('u', '[u]{TEXT}[/u]', '<u>{TEXT}</u>')
         self.add_default_renderer('s', '[s]{TEXT}[/s]', '<strike>{TEXT}</strike>')
-        self.add_renderer('list', _render_list, strip=True)
+        self.add_renderer('list', _render_list, transform_newlines=True, strip=True)
         self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, strip=True)
         self.add_default_renderer('quote', '[quote]{TEXT}[/quote]', '<blockquote>{TEXT}</blockquote>', strip=True)
         self.add_default_renderer('code', '[code]{TEXT}[/code]', '<code>{TEXT}</code>', render_embedded=False)
@@ -418,9 +420,11 @@ class BBCodeParser:
                         inner = self._render_textual_content(''.join(tk.text for tk in embedded_tokens),
                                                              tag_options.replace_html, tag_options.replace_links)
 
-                    # Strip if specified in the tag options
+                    # Strip and replaces newlines if specified in the tag options
                     if tag_options.strip:
                         inner = inner.strip()
+                    if tag_options.transform_newlines:
+                        inner = inner.replace('\n', self.newline_char)
 
                     # Append the rendered data
                     rendered.append(call_rendering_function(token.tag_name, inner, token.option, parent_tag))

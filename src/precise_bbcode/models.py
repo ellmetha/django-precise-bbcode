@@ -29,6 +29,10 @@ class BBCodeTag(models.Model):
     standalone = models.BooleanField(
         verbose_name=_('Standalone tag'),
         help_text=_('Set this option if this tag does not have a closing tag'))
+    transform_newlines = models.BooleanField(
+        verbose_name=_('Transform line breaks'),
+        help_text=_('Set this option to convert any line break to the equivalent markup'),
+        default=True)
     render_embedded = models.BooleanField(
         verbose_name=('Render embedded tags'),
         help_text=_('Set this option to force the tags embedded in this tag to be rendered'),
