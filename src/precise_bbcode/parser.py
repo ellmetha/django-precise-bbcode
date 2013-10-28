@@ -17,6 +17,7 @@ bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*
 # Other regex
 _placeholder_re = re.compile(r'{(\w+)}')
 _url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
+_domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')
 _email_re = re.compile(r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*" + r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' + r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
 _text_re = re.compile(r'(^\w+)|(\w+\S*$)')
 _simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
@@ -35,8 +36,10 @@ class InvalidBBCodePlaholder(Exception):
 class BBCodeTagOptions:
     # Force the closing of this tag after a newline
     newline_closes = False
-    # For the closing of this tag after the start of the same tag
+    # Force the closing of this tag after the start of the same tag
     same_tag_closes = False
+    # Force the closing of this tag after the end of another tag
+    end_tag_closes = False
     # This tag does not have a closing tag
     standalone = False
     # The embedded tags will be rendered
@@ -170,14 +173,14 @@ class BBCodeParser:
 
         def _render_url(name, value, option=None, parent=None):
             href = self._replace(option, self.replace_html) if option else value
-            if '://' not in href:
+            if '://' not in href and _domain_re.match(href):
                 href = 'http://' + href
             content = value if option else href
             valid_href = re.search(_url_re, href)
             # Render
             if not valid_href:
-                rendered_option = '=' + href if option else ''
-                return u'[url{}]{}[/url]'.format(rendered_option, content)
+                # For the default URL tag, a non-valid url can be a relative path to any resource ; it must be rendered
+                return u'<a href="{}">{}</a>'.format(href, content or href)
             else:
                 return u'<a href="{}">{}</a>'.format(href, content or href)
 
@@ -186,7 +189,7 @@ class BBCodeParser:
         self.add_default_renderer('u', '[u]{TEXT}[/u]', '<u>{TEXT}</u>')
         self.add_default_renderer('s', '[s]{TEXT}[/s]', '<strike>{TEXT}</strike>')
         self.add_renderer('list', _render_list, transform_newlines=True, strip=True)
-        self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, strip=True)
+        self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, end_tag_closes=True, strip=True)
         self.add_default_renderer('quote', '[quote]{TEXT}[/quote]', '<blockquote>{TEXT}</blockquote>', strip=True)
         self.add_default_renderer('code', '[code]{TEXT}[/code]', '<code>{TEXT}</code>', render_embedded=False)
         self.add_default_renderer('center', '[center]{TEXT}[/center]', '<div style="text-align:center;">{TEXT}</div>')
@@ -317,7 +320,7 @@ class BBCodeParser:
 
     def _drop_syntactic_errors(self, tokens):
         """
-        Given a list of lexical tokens, find that tags that are not closed or not started and converts them to textual tokens.
+        Given a list of lexical tokens, find the tags that are not closed or not started and converts them to textual tokens.
         The non-valid tokens must not be swallowed. The tag tokens that are not valid in the BBCode tree will be converted to
         textual tokens (eg. in '[b][i]test[/b][/i]' the 'b' tags will be tokenized as data).
         """
@@ -331,6 +334,11 @@ class BBCodeParser:
                     opening_tags.append((token, index))
             elif token.type == BBCodeToken.TK_END_TAG:
                 if len(opening_tags) > 0:
+                    previous_tag, _ = opening_tags[-1]
+                    _, previous_tag_options = self.bbcodes[previous_tag.tag_name]
+                    if previous_tag_options.end_tag_closes:
+                        opening_tags.pop()
+
                     if opening_tags[-1][0].tag_name != token.tag_name:
                         tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
                     else:
@@ -346,7 +354,7 @@ class BBCodeParser:
                     _, previous_tag_options = self.bbcodes[previous_tag.tag_name]
                     if previous_tag_options.newline_closes:
                         opening_tags.pop()
-        # The remaining tags do not have a closing tag, they must be converted to testual tokens
+        # The remaining tags do not have a closing tag, they must be converted to testual tokens)
         for tag in opening_tags:
             token, index = tag
             tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
@@ -371,25 +379,26 @@ class BBCodeParser:
     def _find_closing_token(self, tag_name, tag_options, tokens, pos):
         """
         Given the name and the options of a considered tag, a list of lexical tokens and the position of the current tag in this list,
-        find the position of the associated closing tag. The position of the end of the current tag is returned.
+        find the position of the associated closing tag. This function returns a tuple of the form (end_pos, consume_now), where 'consume_now'
+        is a boolean that indicates whether the ending token should be consumed or not.
         """
         similar_tags_embedded = 0
         while pos < len(tokens):
             token = tokens[pos]
             if token.type == BBCodeToken.TK_NEWLINE and tag_options.newline_closes:
-                return pos
+                return pos, True
             elif token.type == BBCodeToken.TK_START_TAG and token.tag_name == tag_name:
                 if tag_options.same_tag_closes:
-                    return pos - 1
+                    return pos, False
                 if tag_options.render_embedded:
                     similar_tags_embedded += 1
             elif token.type == BBCodeToken.TK_END_TAG and token.tag_name == tag_name:
                 if similar_tags_embedded > 0:
                     similar_tags_embedded -= 1
                 else:
-                    return pos
+                    return pos, True
             pos += 1
-        return pos
+        return pos, True
 
     def _render_tokens(self, tokens, parent_tag=None):
         """
@@ -411,9 +420,13 @@ class BBCodeParser:
                     rendered.append(call_rendering_function(token.tag_name, None, token.option, parent_tag))
                 else:
                     # First find the closing tag associated with this tag
-                    token_end = self._find_closing_token(token.tag_name, tag_options, tokens, itk + 1)
-
+                    token_end, consume_now = self._find_closing_token(token.tag_name, tag_options, tokens, itk + 1)
                     embedded_tokens = tokens[itk + 1:token_end]
+
+                    # If the end tag should not be consumed, back up one (after processing the embedded tokens)
+                    if not consume_now:
+                        token_end -= 1
+
                     if tag_options.render_embedded:
                         inner = self._render_tokens(embedded_tokens, parent_tag=tag_options)
                     else:
