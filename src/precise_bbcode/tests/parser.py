@@ -55,16 +55,44 @@ class ParserTestCase(TestCase):
     )
 
     CUSTOM_TAGS_RENDERING_TESTS = {
-        'tags': (
-            ('justify', '[justify]{TEXT}[/justify]', '<div style="text-align:justify;">{TEXT}</div>'),
-            ('spoiler', '[spoiler]{TEXT}[/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>'),
-        ),
+        'tags': {
+            'justify': {
+                'args': ('justify', '[justify]{TEXT}[/justify]', '<div style="text-align:justify;">{TEXT}</div>'),
+                'kwargs': {},
+            },
+            'spoiler': {
+                'args': ('spoiler', '[spoiler]{TEXT}[/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>'),
+                'kwargs': {},
+            },
+            'youtube': {
+                'args': ('youtube', '[youtube]{TEXT}[/youtube]', '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/{TEXT}"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/{TEXT}" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>'),
+                'kwargs': {},
+            },
+            'h1': {
+                'args': ('h1', '[h1={COLOR}]{TEXT}[/h1]', '<span style="border-left:6px {COLOR} solid;border-bottom:1px {COLOR} dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:{COLOR};">{TEXT}</span><br />'),
+                'kwargs': {},
+            },
+            'hr': {
+                'args': ('hr', '[hr]', '<hr />'),
+                'kwargs': {'standalone': True},
+            },
+            'size': {
+                'args': ('size', '[size={NUMBER}]{TEXT}[/size]', '<span style="font-size:{NUMBER}px;">{TEXT}</span>'),
+                'kwargs': {},
+            },
+        },
         'tests': (
             # BBcodes without errors
             ('[justify]hello world![/justify]', '<div style="text-align:justify;">hello world!</div>'),
-            ('[spoiler]hidden![/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">hidden!</div></div></div>')
+            ('[spoiler]hidden![/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">hidden!</div></div></div>'),
+            ('[youtube]ztD3mRMdqSw[/youtube]', '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/ztD3mRMdqSw"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/ztD3mRMdqSw" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>'),
+            ('[h1=#FFF]hello world![/h1]', '<span style="border-left:6px #FFF solid;border-bottom:1px #FFF dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:#FFF;">hello world!</span><br />'),
+            ('[hr]', '<hr />'),
+            ('[size=24]hello world![/size]', '<span style="font-size:24px;">hello world!</span>'),
             # BBCodes with syntactic errors
             # BBCodes with semantic errors
+            ('[size=]hello world![/size]', '[size]hello world![/size]'),
+            ('[size=hello]hello world![/size]', '[size=hello]hello world![/size]'),
         )
     }
 
@@ -79,8 +107,8 @@ class ParserTestCase(TestCase):
 
     def test_custom_tags_rendering(self):
         # Setup
-        for tag_def in self.CUSTOM_TAGS_RENDERING_TESTS['tags']:
-            self.parser.add_default_renderer(*tag_def)
+        for _, tag_def in self.CUSTOM_TAGS_RENDERING_TESTS['tags'].items():
+            self.parser.add_default_renderer(*tag_def['args'], **tag_def['kwargs'])
         # Run & check
         for bbcodes_text, expected_html_text in self.CUSTOM_TAGS_RENDERING_TESTS['tests']:
             result = self.parser.render(bbcodes_text)

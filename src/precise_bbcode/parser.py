@@ -140,8 +140,6 @@ class BBCodeParser:
                 fmt.update({placeholders[0]: value})
             elif len(placeholders) == 2:
                 fmt.update({placeholders[1]: value, placeholders[0]: self._replace(option, self.replace_html) if option else ''})
-            else:
-                raise NotImplementedError
 
             # Semantic validation
             valid = self._validate_format(fmt)
