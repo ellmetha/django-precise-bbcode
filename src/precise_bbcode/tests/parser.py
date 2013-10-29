@@ -9,7 +9,7 @@ from precise_bbcode.parser import BBCodeParser
 
 
 class ParserTestCase(TestCase):
-    RENDERING_TESTS = (
+    DEFAULT_TAGS_RENDERING_TESTS = (
         # BBcodes without errors
         ('[b]hello world![/b]', '<strong>hello world!</strong>'),
         ('[b]hello [i]world![/i][/b]', '<strong>hello <em>world!</em></strong>'),
@@ -33,7 +33,9 @@ class ParserTestCase(TestCase):
         ('[url=relative/foo/bar.html]link[/url]', '<a href="relative/foo/bar.html">link</a>'),
         ('[url=/absolute/foo/bar.html]link[/url]', '<a href="/absolute/foo/bar.html">link</a>'),
         ('[url=./hello.html]world![/url]', '<a href="./hello.html">world!</a>'),
+        ('[img]http://www.foo.com/bar/img.png[/img]', '<img src="http://www.foo.com/bar/img.png" alt="" />'),
         ('[quote] \r\nhello\nworld! [/quote]', '<blockquote>hello<br />world!</blockquote>'),
+        ('[code][b]hello world![/b][/code]', '<code>[b]hello world![/b]</code>'),
         ('[color=green]goto [url=google.com]google website[/url][/color]', '<span style="color:green;">goto <a href="http://google.com">google website</a></span>'),
         ('[color=#FFFFFF]white[/color]', '<span style="color:#FFFFFF;">white</span>'),
         ('[color=<script></script>]xss[/color]', '[color=&lt;script&gt;&lt;/script&gt;]xss[/color]'),
@@ -47,15 +49,39 @@ class ParserTestCase(TestCase):
         ('[b\n hello [i]the[/i] world![/b]', '[b<br /> hello <em>the</em> world![/b]'),
         ('[b]hello [i]the[/b] world![/i]', '[b]hello <em>the[/b] world!</em>'),
         # BBCodes with semantic errors
+        ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes
         ('[unknown][hello][/unknown]', '[unknown][hello][/unknown]'),
     )
 
+    CUSTOM_TAGS_RENDERING_TESTS = {
+        'tags': (
+            ('justify', '[justify]{TEXT}[/justify]', '<div style="text-align:justify;">{TEXT}</div>'),
+            ('spoiler', '[spoiler]{TEXT}[/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>'),
+        ),
+        'tests': (
+            # BBcodes without errors
+            ('[justify]hello world![/justify]', '<div style="text-align:justify;">hello world!</div>'),
+            ('[spoiler]hidden![/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">hidden!</div></div></div>')
+            # BBCodes with syntactic errors
+            # BBCodes with semantic errors
+        )
+    }
+
     def setUp(self):
         self.parser = BBCodeParser()
 
-    def test_rendering(self):
+    def test_default_tags_rendering(self):
         # Run & check
-        for bbcodes_text, expected_html_text in self.RENDERING_TESTS:
+        for bbcodes_text, expected_html_text in self.DEFAULT_TAGS_RENDERING_TESTS:
+            result = self.parser.render(bbcodes_text)
+            self.assertEqual(result, expected_html_text)
+
+    def test_custom_tags_rendering(self):
+        # Setup
+        for tag_def in self.CUSTOM_TAGS_RENDERING_TESTS['tags']:
+            self.parser.add_default_renderer(*tag_def)
+        # Run & check
+        for bbcodes_text, expected_html_text in self.CUSTOM_TAGS_RENDERING_TESTS['tests']:
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)

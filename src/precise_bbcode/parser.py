@@ -150,8 +150,13 @@ class BBCodeParser:
             elif not valid:
                 return tag_def.replace('=', '').format(**fmt)
 
+            # Before rendering, it's necessary to escape the included braces: '{' and '}' ; some of them could not be placeholders
+            escaped_format_string = format_string.replace('{', '{{').replace('}', '}}')
+            for placeholder in fmt.keys():
+                escaped_format_string = escaped_format_string.replace('{' + placeholder + '}', placeholder)
+
             # Return the rendered data
-            return format_string.format(**fmt)
+            return escaped_format_string.format(**fmt)
         self.add_renderer(tag_name, _render_default, **kwargs)
 
     def init_renderers(self):
@@ -176,13 +181,8 @@ class BBCodeParser:
             if '://' not in href and _domain_re.match(href):
                 href = 'http://' + href
             content = value if option else href
-            valid_href = re.search(_url_re, href)
             # Render
-            if not valid_href:
-                # For the default URL tag, a non-valid url can be a relative path to any resource ; it must be rendered
-                return u'<a href="{}">{}</a>'.format(href, content or href)
-            else:
-                return u'<a href="{}">{}</a>'.format(href, content or href)
+            return u'<a href="{}">{}</a>'.format(href, content or href)
 
         self.add_default_renderer('b', '[b]{TEXT}[/b]', '<strong>{TEXT}</strong>')
         self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
@@ -195,7 +195,7 @@ class BBCodeParser:
         self.add_default_renderer('center', '[center]{TEXT}[/center]', '<div style="text-align:center;">{TEXT}</div>')
         self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
-        self.add_default_renderer('img', '[img]{URL}[/img]', '<img src="{URL}" alt="" />')
+        self.add_default_renderer('img', '[img]{URL}[/img]', '<img src="{URL}" alt="" />', replace_links=False)
 
     def _validate_format(self, format_dict):
         """
@@ -431,7 +431,7 @@ class BBCodeParser:
                         inner = self._render_tokens(embedded_tokens, parent_tag=tag_options)
                     else:
                         inner = self._render_textual_content(''.join(tk.text for tk in embedded_tokens),
-                                                             tag_options.replace_html, tag_options.replace_links)
+                                                             tag_options.escape_html, tag_options.replace_links)
 
                     # Strip and replaces newlines if specified in the tag options
                     if tag_options.strip:
