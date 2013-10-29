@@ -26,6 +26,9 @@ class BBCodeTag(models.Model):
     same_tag_closes = models.BooleanField(
         verbose_name=_('Same tag closing'),
         help_text=_('Set this option to force the closing of this tag after the beginning of a similar tag'))
+    end_tag_closes = models.BooleanField(
+        verbose_name=_('End tag closing'),
+        help_text=_('Set this option to force the closing of this tag after the end of another tag'))
     standalone = models.BooleanField(
         verbose_name=_('Standalone tag'),
         help_text=_('Set this option if this tag does not have a closing tag'))
