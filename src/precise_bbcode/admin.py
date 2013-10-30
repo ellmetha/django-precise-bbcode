@@ -18,7 +18,7 @@ class BBCodeTagAdmin(admin.ModelAdmin):
         }),
         (_('Advanced options'), {
             'classes': ('collapse',),
-            'fields': ('render_embedded', 'escape_html', 'replace_links', 'strip', 'swallow_trailing_newline')
+            'fields': ('newline_closes', 'same_tag_closes', 'end_tag_closes', 'transform_newlines', 'render_embedded', 'escape_html', 'replace_links', 'strip', 'swallow_trailing_newline')
         }),
     )
 

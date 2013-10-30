@@ -15,7 +15,7 @@ bbcodde_standalone_re = r"^\[(?P<start_name>[A-Za-z0-9]*)(=\{[A-Za-z0-9]*\})?\]\
 bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*\]')
 
 # Other regex
-_placeholder_re = re.compile(r'{(\w+)}')
+placeholder_re = re.compile(r'{(\w+)}')
 _url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
 _domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')
 _email_re = re.compile(r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*" + r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' + r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
@@ -133,7 +133,7 @@ class BBCodeParser:
         format the rendered string.
         """
         def _render_default(name, value, option=None, parent=None):
-            placeholders = re.findall(_placeholder_re, tag_def)
+            placeholders = re.findall(placeholder_re, tag_def)
             # Get the format data
             fmt = {}
             if len(placeholders) == 1:

@@ -11,6 +11,8 @@ from django.utils.translation import ugettext_lazy as _
 # Local application / specific library imports
 from .parser import bbcodde_standalone_re
 from .parser import bbcodde_standard_re
+from .parser import BBCodeParser
+from .parser import placeholder_re
 
 
 class BBCodeTag(models.Model):
@@ -74,8 +76,15 @@ class BBCodeTag(models.Model):
         if not self.standalone and re_groups['start_name'] != re_groups['end_name']:
             raise ValidationError(_("This BBCode tag dit not validate because the start tag and the tag names are not the same"))
         # The tag name must be unique
+        if re_groups['start_name'] in BBCodeParser.DEFAULT_TAGS:
+            raise ValidationError(_("This BBCode tag did not validate because a default tag with this name already exists"))
         if BBCodeTag.objects.filter(tag_name=re_groups['start_name']).exists():
             raise ValidationError(_("A BBCode tag with this name appears to already exist"))
+        # Validates placeholders
+        def_placeholders = re.findall(placeholder_re, self.tag_definition)
+        html_placeholders = re.findall(placeholder_re, self.html_replacement)
+        if def_placeholders != html_placeholders:
+            raise ValidationError(_("The placeholders defined in the tag definition must be present in the HTML replacement code!"))
         super(BBCodeTag, self).clean()
 
     def save(self, *args, **kwargs):

@@ -131,11 +131,13 @@ class ParserTestCase(TestCase):
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
 
-    def test_unicode(self):
+    def test_unicode_inouts(self):
+        # Setup
         if sys.version_info >= (3,):
             src = '[center]ƒünk¥ • 你好 §tüƒƒ[/center]'
             dst = '<div style="text-align:center;">ƒünk¥ • 你好 §tüƒƒ</div>'
         else:
             src = unicode('[center]ƒünk¥ 你好 • §tüƒƒ 你好[/center]', 'utf-8')
             dst = unicode('<div style="text-align:center;">ƒünk¥ 你好 • §tüƒƒ 你好</div>', 'utf-8')
+        # Run & check
         self.assertEqual(self.parser.render(src), dst)
