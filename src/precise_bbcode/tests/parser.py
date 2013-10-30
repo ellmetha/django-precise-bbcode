@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+import sys
+
 # Third party imports
 from django.test import TestCase
 
@@ -80,6 +82,14 @@ class ParserTestCase(TestCase):
                 'args': ('size', '[size={NUMBER}]{TEXT}[/size]', '<span style="font-size:{NUMBER}px;">{TEXT}</span>'),
                 'kwargs': {},
             },
+            'mailto': {
+                'args': ('email', '[email]{EMAIL}[/email]', '<a href="mailto:{EMAIL}">{EMAIL}</a>'),
+                'kwargs': {'replace_links': False},
+            },
+            'simpletext': {
+                'args': ('simpletext', '[simpletext]{SIMPLETEXT}[/simpletext]', '<span>{SIMPLETEXT}</span>'),
+                'kwargs': {},
+            }
         },
         'tests': (
             # BBcodes without errors
@@ -89,10 +99,17 @@ class ParserTestCase(TestCase):
             ('[h1=#FFF]hello world![/h1]', '<span style="border-left:6px #FFF solid;border-bottom:1px #FFF dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:#FFF;">hello world!</span><br />'),
             ('[hr]', '<hr />'),
             ('[size=24]hello world![/size]', '<span style="font-size:24px;">hello world!</span>'),
-            # BBCodes with syntactic errors
+            ('[email]xyz@xyz.com[/email]', '<a href="mailto:xyz@xyz.com">xyz@xyz.com</a>'),
+            ('[email]xyz.fr@xyz.com[/email]', '<a href="mailto:xyz.fr@xyz.com">xyz.fr@xyz.com</a>'),
+            ('[simpletext]hello world[/simpletext]', '<span>hello world</span>'),
             # BBCodes with semantic errors
             ('[size=]hello world![/size]', '[size]hello world![/size]'),
             ('[size=hello]hello world![/size]', '[size=hello]hello world![/size]'),
+            ('[email]hello world![/email]', '[email]hello world![/email]'),
+            ('[email]http://www.google.com[/email]', '[email]http://www.google.com[/email]'),
+            ('[email=12]24[/email]', '[email]24[/email]'),
+            ('[simpletext]hello world![/simpletext]', '[simpletext]hello world![/simpletext]'),
+            ('[simpletext]hello #~ world[/simpletext]', '[simpletext]hello #~ world[/simpletext]'),
         )
     }
 
@@ -113,3 +130,12 @@ class ParserTestCase(TestCase):
         for bbcodes_text, expected_html_text in self.CUSTOM_TAGS_RENDERING_TESTS['tests']:
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
+
+    def test_unicode(self):
+        if sys.version_info >= (3,):
+            src = '[center]ƒünk¥ • 你好 §tüƒƒ[/center]'
+            dst = '<div style="text-align:center;">ƒünk¥ • 你好 §tüƒƒ</div>'
+        else:
+            src = unicode('[center]ƒünk¥ 你好 • §tüƒƒ 你好[/center]', 'utf-8')
+            dst = unicode('<div style="text-align:center;">ƒünk¥ 你好 • §tüƒƒ 你好</div>', 'utf-8')
+        self.assertEqual(self.parser.render(src), dst)

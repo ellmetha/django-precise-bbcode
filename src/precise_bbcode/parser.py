@@ -19,7 +19,7 @@ _placeholder_re = re.compile(r'{(\w+)}')
 _url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
 _domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')
 _email_re = re.compile(r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*" + r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' + r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
-_text_re = re.compile(r'(^\w+)|(\w+\S*$)')
+_text_re = re.compile(r'(^[\w]+)|([\w]+\S*$)', flags=re.UNICODE)
 _simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
 _color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
 _number_re = re.compile(r'^([0-9]+)$')
@@ -90,7 +90,7 @@ class BBCodeParser:
     # A list of all placeholder types supported by the parser and their corresponding regex
     _PLACEHOLDERS_RE = {
         'URL': _url_re,
-        'EMAIL': _url_re,
+        'EMAIL': _email_re,
         'TEXT': _text_re,
         'SIMPLETEXT': _simpletext_re,
         'COLOR': _color_re,
@@ -182,18 +182,18 @@ class BBCodeParser:
             # Render
             return u'<a href="{}">{}</a>'.format(href, content or href)
 
-        self.add_default_renderer('b', '[b]{TEXT}[/b]', '<strong>{TEXT}</strong>')
-        self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
-        self.add_default_renderer('u', '[u]{TEXT}[/u]', '<u>{TEXT}</u>')
-        self.add_default_renderer('s', '[s]{TEXT}[/s]', '<strike>{TEXT}</strike>')
+        self.add_default_renderer('b', u'[b]{TEXT}[/b]', u'<strong>{TEXT}</strong>')
+        self.add_default_renderer('i', u'[i]{TEXT}[/i]', u'<em>{TEXT}</em>')
+        self.add_default_renderer('u', u'[u]{TEXT}[/u]', u'<u>{TEXT}</u>')
+        self.add_default_renderer('s', u'[s]{TEXT}[/s]', u'<strike>{TEXT}</strike>')
         self.add_renderer('list', _render_list, transform_newlines=True, strip=True)
-        self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, end_tag_closes=True, strip=True)
-        self.add_default_renderer('quote', '[quote]{TEXT}[/quote]', '<blockquote>{TEXT}</blockquote>', strip=True)
-        self.add_default_renderer('code', '[code]{TEXT}[/code]', '<code>{TEXT}</code>', render_embedded=False)
-        self.add_default_renderer('center', '[center]{TEXT}[/center]', '<div style="text-align:center;">{TEXT}</div>')
-        self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR};">{TEXT}</span>')
+        self.add_default_renderer('*', u'[*]{TEXT}', u'<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, end_tag_closes=True, strip=True)
+        self.add_default_renderer('quote', u'[quote]{TEXT}[/quote]', u'<blockquote>{TEXT}</blockquote>', strip=True)
+        self.add_default_renderer('code', u'[code]{TEXT}[/code]', u'<code>{TEXT}</code>', render_embedded=False)
+        self.add_default_renderer('center', u'[center]{TEXT}[/center]', u'<div style="text-align:center;">{TEXT}</div>')
+        self.add_default_renderer('color', u'[color={COLOR}]{TEXT}[/color]', u'<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
-        self.add_default_renderer('img', '[img]{URL}[/img]', '<img src="{URL}" alt="" />', replace_links=False)
+        self.add_default_renderer('img', u'[img]{URL}[/img]', u'<img src="{URL}" alt="" />', replace_links=False)
 
     def _validate_format(self, format_dict):
         """
