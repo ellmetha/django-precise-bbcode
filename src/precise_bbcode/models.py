@@ -85,6 +85,10 @@ class BBCodeTag(models.Model):
         html_placeholders = re.findall(placeholder_re, self.html_replacement)
         if def_placeholders != html_placeholders:
             raise ValidationError(_("The placeholders defined in the tag definition must be present in the HTML replacement code!"))
+        def_placeholders_uniques = len(list(set(def_placeholders)))
+        html_placeholders_uniques = len(list(set(html_placeholders)))
+        if (len(def_placeholders) != def_placeholders_uniques) or (len(html_placeholders) != html_placeholders_uniques):
+            raise ValidationError(_("The placeholders defined in the tag and the HTML replacement code must be strictly uniques"))
         super(BBCodeTag, self).clean()
 
     def save(self, *args, **kwargs):
