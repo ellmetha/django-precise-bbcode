@@ -83,12 +83,8 @@ class BBCodeParser:
     # A list of the default BBCode tags handled by the parser
     DEFAULT_TAGS = ('b', 'i', 'u', 's', 'list', '*', 'code', 'quote', 'center', 'color', 'url', 'img')
 
-    # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
-    _TAG_OPENING = '['
-    _TAG_ENDING = ']'
-
     # A list of all placeholder types supported by the parser and their corresponding regex
-    _PLACEHOLDERS_RE = {
+    PLACEHOLDERS_RE = {
         'URL': _url_re,
         'EMAIL': _email_re,
         'TEXT': _text_re,
@@ -96,6 +92,10 @@ class BBCodeParser:
         'COLOR': _color_re,
         'NUMBER': _number_re,
     }
+
+    # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
+    _TAG_OPENING = '['
+    _TAG_ENDING = ']'
 
     def __init__(self, *args, **kwargs):
         self.newline_char = bbcode_settings.BBCODE_NEWLINE
@@ -204,7 +204,7 @@ class BBCodeParser:
         for placeholder_name, content in format_dict.items():
             placeholder_type = re.sub('\d+$', '', placeholder_name)
             try:
-                valid_content = re.search(self._PLACEHOLDERS_RE[placeholder_type], content)
+                valid_content = re.search(self.PLACEHOLDERS_RE[placeholder_type], content)
                 assert valid_content is not None
             except KeyError:
                 raise InvalidBBCodePlaholder(placeholder_type)
