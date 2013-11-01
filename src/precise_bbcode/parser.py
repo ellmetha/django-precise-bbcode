@@ -539,7 +539,6 @@ _bbcode_parser = None
 def get_parser():
     if not _bbcode_parser:
         _load_parser()
-        print("loaded")
     return _bbcode_parser
 
 
