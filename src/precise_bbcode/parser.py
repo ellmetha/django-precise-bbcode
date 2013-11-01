@@ -5,8 +5,10 @@ from collections import defaultdict
 import re
 
 # Third party imports
+from django.db.models import get_model
+
 # Local application / specific library imports
-from precise_bbcode.conf import settings as bbcode_settings
+from .conf import settings as bbcode_settings
 
 
 # BBCode regex
@@ -97,13 +99,16 @@ class BBCodeParser:
     _TAG_OPENING = '['
     _TAG_ENDING = ']'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, allow_custom_bbcodes=True, *args, **kwargs):
         self.newline_char = bbcode_settings.BBCODE_NEWLINE
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
         self.bbcodes = {}
         # Init default renderers
         self.init_renderers()
+        # Init custom renderers
+        if allow_custom_bbcodes:
+            self.init_custom_renderers()
 
     def add_renderer(self, tag_name, render_func, **kwargs):
         """
@@ -194,6 +199,17 @@ class BBCodeParser:
         self.add_default_renderer('color', u'[color={COLOR}]{TEXT}[/color]', u'<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
         self.add_default_renderer('img', u'[img]{URL}[/img]', u'<img src="{URL}" alt="" />', replace_links=False)
+
+    def init_custom_renderers(self):
+        """
+        Find the user-defined BBCode tags and initializes their associated renderers.
+        """
+        BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')
+        if BBCodeTag:
+            custom_tags = BBCodeTag.objects.all()
+            for tag in custom_tags:
+                args, kwargs = tag.parser_args
+                self.add_default_renderer(*args, **kwargs)
 
     def _validate_format(self, format_dict):
         """
@@ -511,3 +527,22 @@ class BBCodeParser:
         lexical_units = self._drop_syntactic_errors(self.get_tokens(data))
         rendered = self._render_tokens(lexical_units)
         return rendered
+
+
+_bbcode_parser = None
+# The easiest way to use the BBcode parser is to import the following get_parser function (except if
+# you need many BBCodeParser instances at a time or you want to subclass it).
+# 
+# Note if you create a new instance of BBCodeParser, the built in bbcode tags are still installed.
+
+
+def get_parser():
+    if not _bbcode_parser:
+        _load_parser()
+        print("loaded")
+    return _bbcode_parser
+
+
+def _load_parser():
+    global _bbcode_parser
+    _bbcode_parser = BBCodeParser()

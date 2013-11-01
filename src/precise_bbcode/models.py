@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from .parser import bbcodde_standalone_re
 from .parser import bbcodde_standard_re
 from .parser import BBCodeParser
+from .parser import BBCodeTagOptions
 from .parser import placeholder_re
 
 
@@ -113,3 +114,21 @@ class BBCodeTag(models.Model):
         self.tag_name = re_groups['start_name']
 
         super(BBCodeTag, self).save(*args, **kwargs)
+
+    @property
+    def parser_args(self):
+        """
+        Returns a tuple of the form: (args, kwargs). This is aimed to be used as arguments for adding the current tag
+        to the tags list of a BBCode parser.
+        """
+        # Constructs the positional arguments list
+        args = [self.tag_name, self.tag_definition, self.html_replacement]
+        # Constructs the keyword arguments dict
+        kwargs = {}
+        opts = self._meta
+        tag_option_attrs = vars(BBCodeTagOptions)
+        for f in opts.fields:
+            if f.name in tag_option_attrs:
+                kwargs[f.name] = f.value_from_object(self)
+
+        return (args, kwargs)
