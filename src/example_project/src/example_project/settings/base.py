@@ -128,6 +128,7 @@ INSTALLED_APPS = (
 
     # Local apps
     'example_project',
+    'test_messages',
 )
 
 # Django pipeline setings
