@@ -5,6 +5,7 @@ from base64 import b64decode
 from base64 import b64encode
 
 # Third party imports
+from django import forms
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import force_bytes
@@ -120,6 +121,11 @@ class BBCodeTextField(models.TextField):
             return cls_name, args, kwargs
         except ImportError:
             pass
+
+    def formfield(self, **kwargs):
+        defaults = {'form_class': forms.CharField}
+        defaults.update(kwargs)
+        return super(BBCodeTextField, self).formfield(**defaults)
 
 
 class BBCodeBlobCreator(BBCodeTextCreator):
