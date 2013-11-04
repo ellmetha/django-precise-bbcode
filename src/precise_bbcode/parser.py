@@ -347,13 +347,29 @@ class BBCodeParser:
                 if not tag_options.standalone:
                     opening_tags.append((token, index))
             elif token.type == BBCodeToken.TK_END_TAG:
+                _, tag_options = self.bbcodes[token.tag_name]
                 if len(opening_tags) > 0:
                     previous_tag, _ = opening_tags[-1]
                     _, previous_tag_options = self.bbcodes[previous_tag.tag_name]
                     if previous_tag_options.end_tag_closes:
                         opening_tags.pop()
 
-                    if opening_tags[-1][0].tag_name != token.tag_name:
+                    if not opening_tags:
+                        continue
+
+                    if (opening_tags[-1][0].tag_name != token.tag_name and token.tag_name in [x[0].tag_name for x in opening_tags]
+                            and tag_options.render_embedded):
+                        # In this case, we iterate to the first opening of the current tag : all the tags between the current tag
+                        # and its opening are converted to textual tokens
+                        for tag in reversed(opening_tags):
+                            tk, index = tag
+                            if tk.tag_name == token.tag_name:
+                                opening_tags.pop()
+                                break
+                            else:
+                                tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, tk.text)
+                                opening_tags.pop()
+                    elif opening_tags[-1][0].tag_name != token.tag_name:
                         tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
                     else:
                         opening_tags.pop()

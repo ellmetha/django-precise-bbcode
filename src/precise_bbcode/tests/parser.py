@@ -44,12 +44,13 @@ class ParserTestCase(TestCase):
         ('[COLOR=blue]hello world![/color]', '<span style="color:blue;">hello world!</span>'),
         # BBCodes with syntactic errors
         ('[b]z sdf s s', '[b]z sdf s s'),
-        ('[b][i]hello world![/b][/i]', '[b]<em>hello world![/b]</em>'),
+        ('[b][i]hello world![/b][/i]', '<strong>[i]hello world!</strong>[/i]'),
         ('[b]hello [i]world![/i]', '[b]hello <em>world!</em>'),
         ('[color]test[/color]', '[color]test[/color]'),
         ('[/abcdef][/i]', '[/abcdef][/i]'),
         ('[b\n hello [i]the[/i] world![/b]', '[b<br /> hello <em>the</em> world![/b]'),
-        ('[b]hello [i]the[/b] world![/i]', '[b]hello <em>the[/b] world!</em>'),
+        ('[b]hello [i]the[/b] world![/i]', '<strong>hello [i]the</strong> world![/i]'),
+        ('[b] hello the[u]world ![/i] see you[/b]', '<strong> hello the[u]world ![/i] see you</strong>'),
         # BBCodes with semantic errors
         ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes
