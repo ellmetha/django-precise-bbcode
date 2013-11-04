@@ -2,7 +2,9 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views.generic import TemplateView
+
+from test_messages.views import TestMessageCreate
+from test_messages.views import TestMessageDetailView
 
 
 # Admin autodiscover
@@ -14,7 +16,8 @@ urlpatterns = patterns('',
     url(r'^' + settings.ADMIN_URL, include(admin.site.urls)),
 
     # Apps
-    (r'^$', TemplateView.as_view(template_name="test/index.html")),
+    (r'^$', TestMessageCreate.as_view()),
+    url(r'^testmessage/(?P<message_pk>\d+)/$', TestMessageDetailView.as_view(), name="bbcode-message-detail"),
 )
 
 # # In DEBUG mode, serve media files through Django.

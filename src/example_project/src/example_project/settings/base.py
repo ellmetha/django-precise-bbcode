@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     # Third party apps
     'south',
     'pipeline',
+    'crispy_forms',
 
     # Precise BBCode apps
     'precise_bbcode',
@@ -147,3 +148,7 @@ PIPELINE_JS = {}
 PIPELINE_COMPILERS = (
     'pipeline.compilers.less.LessCompiler',
 )
+
+# Crispy forms settings
+# --------------------------------------
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
