@@ -7,7 +7,7 @@ django-precise-bbcode
 
 This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, etc) and allows the use of custom BBCode tags. These can be added in two different ways:
 
-* Custom tags can be defined in the Django administration panel and stored into the database ; doing this allows any non-technical admin to add BBCode tags by defining the HTML replacement string associated with his tag
+* Custom tags can be defined in the Django administration panel and stored into the database ; doing this allows any non-technical admin to add BBCode tags by defining the HTML replacement string associated with each tag
 * Tags can also be registered to the parser by using a custom function aimed to render a given bbcode tag and its content to the corresponding HTML markup
 
 *Note that django-precise-bbcode is in an early stage of development*
