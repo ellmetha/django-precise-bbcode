@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+import re
 import sys
 
 # Third party imports
@@ -8,6 +9,8 @@ from django.test import TestCase
 
 # Local application / specific library imports
 from precise_bbcode.parser import BBCodeParser
+from precise_bbcode.parser import _text_re
+from precise_bbcode.parser import _url_re
 
 
 class ParserTestCase(TestCase):
@@ -114,6 +117,43 @@ class ParserTestCase(TestCase):
         )
     }
 
+    PLACEHOLDERS_RE_TESTS = {
+        'text': {
+            're': _text_re,
+            'tests': (
+                u'hello world',
+                u'hello\nworld',
+                u'   hello world     ',
+                u'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
+                u'12902',
+            )
+        },
+        'url': {
+            're': _url_re,
+            'tests': (
+                'http://foo.com/blah_blah',
+                '(Something like http://foo.com/blah_blah)',
+                'http://foo.com/blah_blah_(wikipedia)',
+                'http://foo.com/more_(than)_one_(parens)',
+                '(Something like http://foo.com/blah_blah_(wikipedia))',
+                'http://foo.com/blah_(wikipedia)#cite-1',
+                'http://foo.com/blah_(wikipedia)_blah#cite-1',
+                'http://foo.com/(something)?after=parens',
+                'http://foo.com/blah_blah.',
+                'http://foo.com/blah_blah/.',
+                '<http://foo.com/blah_blah>',
+                '<http://foo.com/blah_blah/>',
+                'http://foo.com/blah_blah,',
+                'http://www.extinguishedscholar.com/wpglob/?p=364.',
+                '<tag>http://example.com</tag>',
+                'Just a www.example.com link.',
+                'http://example.com/something?with,commas,in,url, but not at end',
+                'bit.ly/foo',
+                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
+            )
+        },
+    }
+
     def setUp(self):
         self.parser = BBCodeParser()
 
@@ -142,3 +182,9 @@ class ParserTestCase(TestCase):
             dst = unicode('<div style="text-align:center;">ƒünk¥ 你好 • §tüƒƒ 你好</div>', 'utf-8')
         # Run & check
         self.assertEqual(self.parser.render(src), dst)
+
+    def test_placeholder_regex(self):
+        # Run & check
+        for _, re_tests in self.PLACEHOLDERS_RE_TESTS.items():
+            for test in re_tests['tests']:
+                self.assertIsNotNone(re.search(re_tests['re'], test))
