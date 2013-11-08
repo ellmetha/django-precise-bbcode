@@ -20,11 +20,11 @@ bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*
 placeholder_re = re.compile(r'{(\w+)}')
 _url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
 _domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')
-_email_re = re.compile(r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*" + r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' + r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
+_email_re = re.compile(r'(\w+[.|\w])*@\[?(\w+[.])*\w+\]?', re.IGNORECASE)
 _text_re = re.compile(r'^\s*([\w]+)|([\w]+\S*)\s*$', flags=re.UNICODE)
 _simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
 _color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
-_number_re = re.compile(r'^([0-9]+)$')
+_number_re = re.compile(r'^[+-]?\d+(?:(\.|,)\d+)?$')
 
 
 class InvalidBBCodePlaholder(Exception):
@@ -35,7 +35,7 @@ class InvalidBBCodePlaholder(Exception):
         return repr(self.value)
 
 
-class BBCodeTagOptions:
+class BBCodeTagOptions(object):
     # Force the closing of this tag after a newline
     newline_closes = False
     # Force the closing of this tag after the start of the same tag
@@ -62,7 +62,7 @@ class BBCodeTagOptions:
             setattr(self, attr, bool(value))
 
 
-class BBCodeToken:
+class BBCodeToken(object):
     TK_START_TAG = "start_tag"
     TK_END_TAG = "end_tag"
     TK_DATA = "data"
@@ -81,7 +81,7 @@ class BBCodeToken:
         return u'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
 
-class BBCodeParser:
+class BBCodeParser(object):
     # A list of the default BBCode tags handled by the parser
     DEFAULT_TAGS = ('b', 'i', 'u', 's', 'list', '*', 'code', 'quote', 'center', 'color', 'url', 'img')
 

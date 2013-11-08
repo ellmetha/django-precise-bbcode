@@ -9,6 +9,10 @@ from django.test import TestCase
 
 # Local application / specific library imports
 from precise_bbcode.parser import BBCodeParser
+from precise_bbcode.parser import _color_re
+from precise_bbcode.parser import _email_re
+from precise_bbcode.parser import _number_re
+from precise_bbcode.parser import _simpletext_re
 from precise_bbcode.parser import _text_re
 from precise_bbcode.parser import _url_re
 
@@ -126,6 +130,16 @@ class ParserTestCase(TestCase):
                 u'   hello world     ',
                 u'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
                 u'12902',
+                u'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer pretium, mi ac molestie ornare, urna sem fermentum erat, malesuada interdum sapien turpis sit amet eros.\nPhasellus quis mi velit. Cras porttitor dui faucibus rhoncus fringilla. Cras non fringilla est. \nCurabitur sollicitudin nisi quis sem sodales, quis blandit massa rhoncus. Nam porta at lacus semper gravida.\n',
+                u'안녕하세요!',
+            )
+        },
+        'simpletext': {
+            're': _simpletext_re,
+            'tests': (
+                'hello world',
+                'slugify-u-21'
+                'hello91',
             )
         },
         'url': {
@@ -150,8 +164,63 @@ class ParserTestCase(TestCase):
                 'http://example.com/something?with,commas,in,url, but not at end',
                 'bit.ly/foo',
                 'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
+                'http://something.xx:8080'
             )
         },
+        'email': {
+            're': _email_re,
+            'tests': (
+                'president@whitehouse.gov',
+                'xyz.xyz@xy.com',
+                'hello_world@rt.rt',
+                '"email"@domain.com',
+                'a@b.cc',
+                'joe@aol.com',
+                'joe@wrox.co.uk',
+                'joe@domain.info',
+                'asmith@mactec.com',
+                'foo12@foo.edu ',
+                'bob.smith@foo.tv',
+                'bob-smith@foo.com',
+                'bob.smith@foo.com',
+                'bob_smith@foo.com',
+                'bob@somewhere.com',
+                'bob.jones@[1.1.1.1]',
+                'bob@a.b.c.d.info',
+                '&lt;ab@cd.ef&gt;',
+                'bob A. jones &lt;ab@cd.ef&gt;',
+                'bob A. jones &lt;ab@[1.1.1.111]&gt;',
+                'blah@127.0.0.1',
+                'whatever@somewhere.museum',
+                'foreignchars@myforeigncharsdomain.nu',
+                'me+mysomething@mydomain.com',
+                'u-s_e.r1@s-ub2.domain-name.museum:8080',
+            )
+        },
+        'color': {
+            're': _color_re,
+            'tests': (
+                'red',
+                'blue',
+                'pink',
+                '#FFFFFF',
+                '#fff000',
+                '#FFF',
+                '#3089a2',
+            )
+        },
+        'number': {
+            're': _number_re,
+            'tests': (
+                '12',
+                '1289101',
+                '-121',
+                '89.12',
+                '100000000000001',
+                '10000000000000,1',
+                '-12,1990000000000000001',
+            )
+        }
     }
 
     def setUp(self):
