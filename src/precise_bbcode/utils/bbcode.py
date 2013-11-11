@@ -3,7 +3,7 @@
 # Standard library imports
 # Third party imports
 # Local application / specific library imports
-from .parser import get_parser
+from precise_bbcode.parser import get_parser
 
 
 def render_bbcodes(text):

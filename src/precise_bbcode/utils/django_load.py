@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+
+# Standard library imports
+import imp
+
+# Third party imports
+from django.conf import settings
+from django.utils.importlib import import_module
+
+# Local application / specific library imports
+
+
+def get_module(app, modname):
+    """
+    Internal function to load a module from a single app.
+    """
+    # Find out the app's __path__
+    try:
+        app_path = import_module(app).__path__
+    except AttributeError:
+        return
+
+    # Use imp.find_module to find the app's modname.py
+    try:
+        imp.find_module(modname, app_path)
+    except ImportError:
+        return
+
+    # Import the app's module file
+    import_module(u'{}.{}'.format(app, modname))
+
+
+def load(modname):
+    """
+    Loads all modules with name 'modname' from all installed apps.
+    """
+    for app in settings.INSTALLED_APPS:
+        get_module(app, modname)

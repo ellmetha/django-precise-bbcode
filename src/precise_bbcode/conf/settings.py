@@ -21,5 +21,9 @@ escape_html = (
 BBCODE_ESCAPE_HTML = getattr(settings, 'BBCODE_ESCAPE_HTML', escape_html)
 
 
+# Should custom tags be allowed ?
+BBCODE_ALLOW_CUSTOM_TAGS = getattr(settings, 'BBCODE_ALLOW_CUSTOM_TAGS', True)
+
+
 # Other options
 BBCODE_NORMALIZE_NEWLINES = getattr(settings, 'BBCODE_NORMALIZE_NEWLINES', True)

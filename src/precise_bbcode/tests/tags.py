@@ -7,10 +7,10 @@ from django.test import TestCase
 
 # Local application / specific library imports
 from precise_bbcode.models import BBCodeTag
-from precise_bbcode.parser import BBCodeParser
+from precise_bbcode.parser import get_parser
 
 
-class TagsTestCase(TestCase):
+class CustomTagsTestCase(TestCase):
     ERRONEOUS_TAGS_TESTS = (
         {'tag_definition': '[tag]', 'html_replacement': ''},
         {'tag_definition': 'it\s not a tag', 'html_replacement': ''},
@@ -32,7 +32,7 @@ class TagsTestCase(TestCase):
     )
 
     def setUp(self):
-        self.parser = BBCodeParser()
+        self.parser = get_parser()
 
     def test_erroneous_tags_saving(self):
         # Run & check

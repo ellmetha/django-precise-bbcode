@@ -57,6 +57,10 @@ class BBCodeTagOptions(object):
     # Swallow the first trailing newline
     swallow_trailing_newline = False
 
+    # The following options will be usefull for BBCode editors
+    helpline = None
+    display_on_editor = True
+
     def __init__(self, **kwargs):
         for attr, value in list(kwargs.items()):
             setattr(self, attr, bool(value))
@@ -99,16 +103,13 @@ class BBCodeParser(object):
     _TAG_OPENING = '['
     _TAG_ENDING = ']'
 
-    def __init__(self, allow_custom_bbcodes=True, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.newline_char = bbcode_settings.BBCODE_NEWLINE
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
         self.bbcodes = {}
         # Init default renderers
         self.init_renderers()
-        # Init custom renderers
-        if allow_custom_bbcodes:
-            self.init_custom_renderers()
 
     def add_renderer(self, tag_name, render_func, **kwargs):
         """
@@ -134,7 +135,7 @@ class BBCodeParser(object):
     def add_default_renderer(self, tag_name, tag_def, format_string, **kwargs):
         """
         Installs a renderer that constructs a dictionary composed of the value of the
-        tag and its possible option and use it to semantically validate the tag  and to
+        tag and its possible option and use it to semantically validate the tag and to
         format the rendered string.
         """
         def _render_default(name, value, option=None, parent=None):
@@ -199,17 +200,6 @@ class BBCodeParser(object):
         self.add_default_renderer('color', u'[color={COLOR}]{TEXT}[/color]', u'<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
         self.add_default_renderer('img', u'[img]{URL}[/img]', u'<img src="{URL}" alt="" />', replace_links=False)
-
-    def init_custom_renderers(self):
-        """
-        Find the user-defined BBCode tags and initializes their associated renderers.
-        """
-        BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')
-        if BBCodeTag:
-            custom_tags = BBCodeTag.objects.all()
-            for tag in custom_tags:
-                args, kwargs = tag.parser_args
-                self.add_default_renderer(*args, **kwargs)
 
     def _validate_format(self, format_dict):
         """
@@ -558,6 +548,37 @@ def get_parser():
     return _bbcode_parser
 
 
+def _init_bbcode_tags(parser):
+    """
+    Call the BBCode tag pool to fetch all the module-based tags and initializes
+    their associated renderers.
+    """
+    from precise_bbcode.tag_pool import tag_pool
+    tags = tag_pool.get_tags()
+    for tag_def in tags:
+        tag = tag_def()
+        parser.add_renderer(tag.tag_name, tag.render, **tag._options())
+
+
+def _init_custom_bbcode_tags(parser):
+    """
+    Find the user-defined BBCode tags and initializes their associated renderers.
+    """
+    BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')
+    if BBCodeTag:
+        custom_tags = BBCodeTag.objects.all()
+        for tag in custom_tags:
+            args, kwargs = tag.parser_args
+            parser.add_default_renderer(*args, **kwargs)
+
+
 def _load_parser():
     global _bbcode_parser
     _bbcode_parser = BBCodeParser()
+
+    # Init renderers registered in 'bbcode_tags' modules
+    _init_bbcode_tags(_bbcode_parser)
+
+    # Init custom renderers defined in BBCodeTag model instances
+    if bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
+        _init_custom_bbcode_tags(_bbcode_parser)

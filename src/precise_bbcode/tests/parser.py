@@ -8,7 +8,7 @@ import sys
 from django.test import TestCase
 
 # Local application / specific library imports
-from precise_bbcode.parser import BBCodeParser
+from precise_bbcode.parser import get_parser
 from precise_bbcode.parser import _color_re
 from precise_bbcode.parser import _email_re
 from precise_bbcode.parser import _number_re
@@ -224,7 +224,7 @@ class ParserTestCase(TestCase):
     }
 
     def setUp(self):
-        self.parser = BBCodeParser()
+        self.parser = get_parser()
 
     def test_default_tags_rendering(self):
         # Run & check
