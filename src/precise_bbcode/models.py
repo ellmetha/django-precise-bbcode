@@ -88,13 +88,13 @@ class BBCodeTag(models.Model):
         # The used placeholders must be the same in the tag definition and in the HTML replacement code
         def_placeholders = re.findall(placeholder_re, self.tag_definition)
         html_placeholders = re.findall(placeholder_re, self.html_replacement)
-        if sorted(def_placeholders) != sorted(html_placeholders):
+        if set(def_placeholders) != set(html_placeholders):
             raise ValidationError(_("The placeholders defined in the tag definition must be present in the HTML replacement code!"))
 
         # ... and two placeholders must not have the same name
-        def_placeholders_uniques = len(list(set(def_placeholders)))
-        html_placeholders_uniques = len(list(set(html_placeholders)))
-        if (len(def_placeholders) != def_placeholders_uniques) or (len(html_placeholders) != html_placeholders_uniques):
+        def_placeholders_uniques = set(def_placeholders)
+        html_placeholders_uniques = set(html_placeholders)
+        if (set(def_placeholders) != def_placeholders_uniques) or (set(html_placeholders) != html_placeholders_uniques):
             raise ValidationError(_("The placeholders defined in the tag and the HTML replacement code must be strictly uniques"))
 
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
