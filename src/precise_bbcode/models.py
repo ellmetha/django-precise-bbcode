@@ -21,7 +21,7 @@ class BBCodeTag(models.Model):
     tag_definition = models.TextField(verbose_name=_('Tag definition'))
     html_replacement = models.TextField(verbose_name=_('Replacement HTML code'))
     helpline = models.CharField(max_length=120, verbose_name=_('Help text for this tag'), null=True, blank=True)
-    display_on_editor = models.BooleanField(verbose_name=_('Display on editor'))
+    display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
     # Tag options
     newline_closes = models.BooleanField(
         verbose_name=_('Newline closing'),
