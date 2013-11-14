@@ -8,6 +8,78 @@ from django.test import TestCase
 # Local application / specific library imports
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.parser import get_parser
+from precise_bbcode.parser import _init_bbcode_tags
+from precise_bbcode.tag_base import TagBase
+from precise_bbcode.tag_pool import TagAlreadyRegistered
+from precise_bbcode.tag_pool import TagNotRegistered
+from precise_bbcode.tag_pool import tag_pool
+
+
+class FooTag(TagBase):
+    tag_name = "foo"
+    render_embedded = False
+
+    def render(self, name, value, option=None, parent=None):
+        return u'<pre>{}</pre>'.format(value)
+
+
+class FooTagSub(FooTag):
+    tag_name = "foo2"
+    render_embedded = False
+
+
+class BarTag(TagBase):
+    tag_name = "bar"
+
+    def render(self, name, value, option=None, parent=None):
+        if not option:
+            return u'<div class="bar">{}</div>'.format(value)
+        return u'<div class="bar" style="color:{};">{}</div>'.format(option, value)
+
+
+class TagsTestCase(TestCase):
+    TAGS_TESTS = (
+        ('[foo]hello world![/foo]', '<pre>hello world!</pre>'),
+        ('[bar]hello world![/bar]', '<div class="bar">hello world!</div>'),
+        ('[foo]hello [bar]world![/bar][/foo]', '<pre>hello [bar]world![/bar]</pre>'),
+        ('[bar]hello [foo]world![/foo][/bar]', '<div class="bar">hello <pre>world!</pre></div>'),
+        (u'[bar]안녕하세요![/bar]', u'<div class="bar">안녕하세요!</div>'),
+    )
+
+    def setUp(self):
+        self.parser = get_parser()
+
+    def test_register_tag_twice_should_raise(self):
+        # Setup
+        number_of_tags_before = len(tag_pool.get_tags())
+        tag_pool.register_tag(FooTag)
+        # Run & check
+        # Let's add it a second time. We should catch an exception
+        with self.assertRaises(TagAlreadyRegistered):
+            tag_pool.register_tag(FooTag)
+        # Let's make sure we have the same number of tags as before
+        tag_pool.unregister_tag(FooTag)
+        number_of_tags_after = len(tag_pool.get_tags())
+        self.assertEqual(number_of_tags_before, number_of_tags_after)
+
+    def test_unregister_non_existing_tag_should_raise(self):
+        # Setup
+        number_of_tags_before = len(tag_pool.get_tags())
+        # Run & check
+        with self.assertRaises(TagNotRegistered):
+            tag_pool.unregister_tag(FooTagSub)
+        number_of_tags_after = len(tag_pool.get_tags())
+        self.assertEqual(number_of_tags_before, number_of_tags_after)
+
+    def test_render_tags(self):
+        # Setup
+        tag_pool.register_tag(FooTag)
+        tag_pool.register_tag(BarTag)
+        _init_bbcode_tags(self.parser)
+        # Run & check
+        for bbcodes_text, expected_html_text in self.TAGS_TESTS:
+            result = self.parser.render(bbcodes_text)
+            self.assertEqual(result, expected_html_text)
 
 
 class CustomTagsTestCase(TestCase):
