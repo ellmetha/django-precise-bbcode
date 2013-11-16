@@ -11,3 +11,4 @@ import unittest
 # Sub-packages imports
 from parser import *
 from tags import *
+from templatetags import *
