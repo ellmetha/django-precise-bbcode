@@ -119,6 +119,7 @@ For defining more complex BBCodes, it is also possible to add class-based BBCode
       def render(self, name, value, option=None, parent=None):
           return '<span style="color:red;">%s</span>' % value
 
+  tag_pool.register_tag(RedTag)
 
 Author
 ------
