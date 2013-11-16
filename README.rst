@@ -93,7 +93,7 @@ While Django-precise-bbcode comes with some built-in BBCode tags, there will be 
 
 The easiest way to add a custom tag is to define it by using the Django administration system. Just got to the admin page and you will see a new 'BBCode tags' section. In this you can create and edit custom BBCode tags. These are then used by the built-in BBCode parser to render any BBCode content. Adding such a custom BCode tag consists in defining at least two values in the associated admin form:
 
-* The definition of the tag: it's wehere you enter your BBCode. All you need to do is to add a string containing your BBCode and the associated placeholders (special uppercase words surrounded by { and } -- they are similar to the "replacement fields" that you define in python format strings). For example, you would enter the follofing string for a very simple ``[red]`` bbcode:
+* The definition of the tag: it's wehere you enter your BBCode. All you need to do is to add a string containing your BBCode and the associated placeholders (special uppercase words surrounded by { and } -- they are similar to the "replacement fields" that you define in python format strings). For example, you would enter the following string for a very simple ``[red]`` bbcode:
 
   ::
 
