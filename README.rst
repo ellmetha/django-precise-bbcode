@@ -100,7 +100,7 @@ The easiest way to add a custom tag is to define it by using the Django administ
     [red]{TEXT}[/red]
 
   The placeholders that you can use in the tag definition are typed. Only the following placeholders can be used: ``TEXT``, ``SIMPLETEXT``, ``URL``, ``EMAIL``, ``COLOR``, ``NUMBER``.
-* The HTML replacement code: you will enter the HTML for the BBCode you defined previously. All the placeholders you used in your BBCode definition must be replaced in the HTML replacement code. For example, the HTML replacement code associated with the previous [red] bbcode can be:
+* The HTML replacement code: you will enter the HTML for the BBCode you defined previously. All the placeholders you used in your BBCode definition must be replaced in the HTML replacement code. For example, the HTML replacement code associated with the previous ``[red]`` bbcode can be:
 
   ::
     
