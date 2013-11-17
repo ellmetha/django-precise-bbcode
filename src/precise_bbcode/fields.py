@@ -3,11 +3,17 @@
 # Standard library imports
 from base64 import b64decode
 from base64 import b64encode
+import base64
+try:
+    from cPickle import loads, dumps, UnpicklingError
+except ImportError:
+    from pickle import loads, dumps, UnpicklingError
 
 # Third party imports
 from django import forms
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.encoding import force_bytes
 from django.utils.encoding import force_unicode
 
@@ -103,8 +109,11 @@ class BBCodeTextField(models.TextField):
 
         if isinstance(bbcode_text, BBCodeContent):
             bbcode_text = bbcode_text.raw
-        parser = get_parser()
-        rendered = parser.render(bbcode_text)
+
+        rendered = ''
+        if bbcode_text:
+            parser = get_parser()
+            rendered = parser.render(bbcode_text)
 
         setattr(instance, self.rendered_field_name, rendered)
 
@@ -136,11 +145,14 @@ class BBCodeBlobCreator(BBCodeTextCreator):
     """
     def __get__(self, instance, type=None):
         bbcode_content = super(BBCodeBlobCreator, self).__get__(instance, type)
-        if instance is not None:
+        if instance is not None and bbcode_content is not None:
             try:
-                raw = force_unicode(b64decode(force_bytes(bbcode_content.raw)))
-                rendered = force_unicode(b64decode(force_bytes(bbcode_content.rendered)))
-            except TypeError:
+                try:
+                    raw = loads(b64decode(force_bytes(bbcode_content.raw)))
+                except UnpicklingError:
+                    raw = bbcode_content.raw
+                rendered = loads(b64decode(force_bytes(bbcode_content.rendered)))
+            except (TypeError, AttributeError, UnpicklingError):
                 return bbcode_content
             else:
                 return BBCodeContent(raw, rendered=rendered)
@@ -158,11 +170,11 @@ class BBCodeBlobField(BBCodeTextField):
     def get_db_prep_save(self, value, connection):
         if isinstance(value, BBCodeContent):
             value = value.raw
-        value = b64encode(force_bytes(value))
+        value = b64encode(force_bytes(dumps(value)))
         return super(BBCodeTextField, self).get_db_prep_save(value, connection)
 
     def get_db_prep_lookup(self, lookup_type, value):
-        value = b64decode(force_bytes(value))
+        value = loads(b64decode(force_bytes(value)))
         return super(BBCodeBlobCreator, self).get_db_prep_lookup(lookup_type, value)
 
     def process_bbcodes(self, signal, sender, instance=None, **kwargs):
@@ -170,7 +182,10 @@ class BBCodeBlobField(BBCodeTextField):
 
         if isinstance(bbcode_text, BBCodeContent):
             bbcode_text = bbcode_text.raw
-        parser = get_parser()
-        rendered = parser.render(bbcode_text)
 
-        setattr(instance, self.rendered_field_name, b64encode(force_bytes(rendered)))
+        rendered = ''
+        if bbcode_text:
+            parser = get_parser()
+            rendered = parser.render(bbcode_text)
+
+        setattr(instance, self.rendered_field_name, b64encode(force_bytes(dumps(rendered))))
