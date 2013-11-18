@@ -1,21 +1,10 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
-from base64 import b64decode
-from base64 import b64encode
-import base64
-try:
-    from cPickle import loads, dumps, UnpicklingError
-except ImportError:
-    from pickle import loads, dumps, UnpicklingError
-
 # Third party imports
 from django import forms
 from django.db import models
 from django.db.models import signals
-from django.utils.encoding import DjangoUnicodeDecodeError
-from django.utils.encoding import force_bytes
-from django.utils.encoding import force_unicode
 
 # Local application / specific library imports
 from .parser import get_parser
@@ -135,57 +124,3 @@ class BBCodeTextField(models.TextField):
         defaults = {'form_class': forms.CharField}
         defaults.update(kwargs)
         return super(BBCodeTextField, self).formfield(**defaults)
-
-
-class BBCodeBlobCreator(BBCodeTextCreator):
-    """
-    Similar as the BBCodeTextCreator. The main difference is that it decodes the values of
-    the raw and the rendered data (stored as binary objects) before returning a BBCodeContent
-    instance when the field is accessed.
-    """
-    def __get__(self, instance, type=None):
-        bbcode_content = super(BBCodeBlobCreator, self).__get__(instance, type)
-        if instance is not None and bbcode_content is not None:
-            try:
-                try:
-                    raw = loads(b64decode(force_bytes(bbcode_content.raw)))
-                except UnpicklingError:
-                    raw = bbcode_content.raw
-                rendered = loads(b64decode(force_bytes(bbcode_content.rendered)))
-            except (TypeError, AttributeError, UnpicklingError):
-                return bbcode_content
-            else:
-                return BBCodeContent(raw, rendered=rendered)
-        return bbcode_content
-
-
-class BBCodeBlobField(BBCodeTextField):
-    """
-    Similar as the BBCodeTextField. The main difference is that the value of the initial field
-    and the value of the rendered content are converted to BLOB (Binary Large OBject) before storage.
-    """
-    def set_descriptor_class(self, cls):
-        setattr(cls, self.name, BBCodeBlobCreator(self))
-
-    def get_db_prep_save(self, value, connection):
-        if isinstance(value, BBCodeContent):
-            value = value.raw
-        value = b64encode(force_bytes(dumps(value)))
-        return super(BBCodeTextField, self).get_db_prep_save(value, connection)
-
-    def get_db_prep_lookup(self, lookup_type, value):
-        value = loads(b64decode(force_bytes(value)))
-        return super(BBCodeBlobCreator, self).get_db_prep_lookup(lookup_type, value)
-
-    def process_bbcodes(self, signal, sender, instance=None, **kwargs):
-        bbcode_text = getattr(instance, self.raw_name)
-
-        if isinstance(bbcode_text, BBCodeContent):
-            bbcode_text = bbcode_text.raw
-
-        rendered = ''
-        if bbcode_text:
-            parser = get_parser()
-            rendered = parser.render(bbcode_text)
-
-        setattr(instance, self.rendered_field_name, b64encode(force_bytes(dumps(rendered))))

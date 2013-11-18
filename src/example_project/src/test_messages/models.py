@@ -4,13 +4,13 @@
 # Third party imports
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from precise_bbcode.fields import BBCodeBlobField
+from precise_bbcode.fields import BBCodeTextField
 
 # Local application / specific library imports
 
 
 class TestMessage(models.Model):
-    bbcode_content = BBCodeBlobField(verbose_name=_('BBCode content'))
+    bbcode_content = BBCodeTextField(verbose_name=_('BBCode content'))
 
     class Meta:
         verbose_name = _('Test message')
