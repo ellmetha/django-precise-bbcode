@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
+
 # Third party imports
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -20,7 +22,7 @@ class FooTag(TagBase):
     render_embedded = False
 
     def render(self, name, value, option=None, parent=None):
-        return u'<pre>{}</pre>'.format(value)
+        return '<pre>{}</pre>'.format(value)
 
 
 class FooTagSub(FooTag):
@@ -33,8 +35,8 @@ class BarTag(TagBase):
 
     def render(self, name, value, option=None, parent=None):
         if not option:
-            return u'<div class="bar">{}</div>'.format(value)
-        return u'<div class="bar" style="color:{};">{}</div>'.format(option, value)
+            return '<div class="bar">{}</div>'.format(value)
+        return '<div class="bar" style="color:{};">{}</div>'.format(option, value)
 
 
 class TagsTestCase(TestCase):
@@ -43,7 +45,7 @@ class TagsTestCase(TestCase):
         ('[bar]hello world![/bar]', '<div class="bar">hello world!</div>'),
         ('[foo]hello [bar]world![/bar][/foo]', '<pre>hello [bar]world![/bar]</pre>'),
         ('[bar]hello [foo]world![/foo][/bar]', '<div class="bar">hello <pre>world!</pre></div>'),
-        (u'[bar]안녕하세요![/bar]', u'<div class="bar">안녕하세요!</div>'),
+        ('[bar]안녕하세요![/bar]', '<div class="bar">안녕하세요!</div>'),
     )
 
     def setUp(self):
@@ -108,7 +110,7 @@ class CustomTagsTestCase(TestCase):
         {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>'},
         {'tag_definition': '[pre2={COLOR}]{TEXT1}[/pre2]', 'html_replacement': '<pre style="color:{COLOR};">{TEXT1}</pre>'},
         {'tag_definition': '[hr]', 'html_replacement': '<hr />', 'standalone': True},
-        {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'helpline': u'Display your text in bold'},
+        {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'helpline': 'Display your text in bold'},
         {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'display_on_editor': False},
         {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>', 'newline_closes': True},
         {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>', 'same_tag_closes': True},

@@ -2,6 +2,11 @@
 
 # Standard library imports
 # Third party imports
+try:
+    from django.utils.encoding import python_2_unicode_compatible
+except ImportError:
+    python_2_unicode_compatible = lambda x: x
+
 # Local application / specific library imports
 
 

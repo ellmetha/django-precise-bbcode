@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
 import imp
 
 # Third party imports
@@ -27,7 +28,7 @@ def get_module(app, modname):
         return
 
     # Import the app's module file
-    import_module(u'{}.{}'.format(app, modname))
+    import_module('{}.{}'.format(app, modname))
 
 
 def load(modname):

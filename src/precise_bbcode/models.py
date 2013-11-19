@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
 import re
 
 # Third party imports
@@ -64,7 +65,7 @@ class BBCodeTag(models.Model):
         app_label = 'precise_bbcode'
 
     def __unicode__(self):
-        return u'{}'.format(self.tag_name)
+        return '{}'.format(self.tag_name)
 
     def clean(self):
         tag_re = bbcodde_standard_re if not self.standalone else bbcodde_standalone_re

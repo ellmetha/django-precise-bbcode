@@ -19,7 +19,7 @@ class TestMessage(models.Model):
 
 
 # Sub-packages imports
-from fields import *
-from parser import *
-from tags import *
-from templatetags import *
+from .test_fields import *
+from .test_parser import *
+from .test_tags import *
+from .test_templatetags import *

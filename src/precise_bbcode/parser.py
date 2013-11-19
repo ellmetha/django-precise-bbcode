@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
 from collections import defaultdict
 import re
 
@@ -79,10 +80,10 @@ class BBCodeToken(object):
         self.text = text
 
     def __repr__(self):
-        return u'<BBCodeToken instance "({0}, {1}, {2}, {3})">'.format(self.type, self.tag_name, self.option, self.text)
+        return '<BBCodeToken instance "({0}, {1}, {2}, {3})">'.format(self.type, self.tag_name, self.option, self.text)
 
     def __unicode__(self):
-        return u'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
+        return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
 
 class BBCodeParser(object):
@@ -176,8 +177,8 @@ class BBCodeParser(object):
                 'i': 'lower-roman', 'I': 'upper-roman',
             }
             list_tag = 'ol' if option in css_opts else 'ul'
-            list_tag_css = u' style="list-style-type:{};"'.format(css_opts[option]) if list_tag == 'ol' else u''
-            rendered = u'<{tag}{css}>{content}</{tag}>'.format(tag=list_tag, css=list_tag_css, content=value)
+            list_tag_css = ' style="list-style-type:{};"'.format(css_opts[option]) if list_tag == 'ol' else ''
+            rendered = '<{tag}{css}>{content}</{tag}>'.format(tag=list_tag, css=list_tag_css, content=value)
             return rendered
 
         def _render_url(name, value, option=None, parent=None):
@@ -186,20 +187,20 @@ class BBCodeParser(object):
                 href = 'http://' + href
             content = value if option else href
             # Render
-            return u'<a href="{}">{}</a>'.format(href, content or href)
+            return '<a href="{}">{}</a>'.format(href, content or href)
 
-        self.add_default_renderer('b', u'[b]{TEXT}[/b]', u'<strong>{TEXT}</strong>')
-        self.add_default_renderer('i', u'[i]{TEXT}[/i]', u'<em>{TEXT}</em>')
-        self.add_default_renderer('u', u'[u]{TEXT}[/u]', u'<u>{TEXT}</u>')
-        self.add_default_renderer('s', u'[s]{TEXT}[/s]', u'<strike>{TEXT}</strike>')
+        self.add_default_renderer('b', '[b]{TEXT}[/b]', '<strong>{TEXT}</strong>')
+        self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
+        self.add_default_renderer('u', '[u]{TEXT}[/u]', '<u>{TEXT}</u>')
+        self.add_default_renderer('s', '[s]{TEXT}[/s]', '<strike>{TEXT}</strike>')
         self.add_renderer('list', _render_list, transform_newlines=True, strip=True)
-        self.add_default_renderer('*', u'[*]{TEXT}', u'<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, end_tag_closes=True, strip=True)
-        self.add_default_renderer('quote', u'[quote]{TEXT}[/quote]', u'<blockquote>{TEXT}</blockquote>', strip=True)
-        self.add_default_renderer('code', u'[code]{TEXT}[/code]', u'<code>{TEXT}</code>', render_embedded=False)
-        self.add_default_renderer('center', u'[center]{TEXT}[/center]', u'<div style="text-align:center;">{TEXT}</div>')
-        self.add_default_renderer('color', u'[color={COLOR}]{TEXT}[/color]', u'<span style="color:{COLOR};">{TEXT}</span>')
+        self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, end_tag_closes=True, strip=True)
+        self.add_default_renderer('quote', '[quote]{TEXT}[/quote]', '<blockquote>{TEXT}</blockquote>', strip=True)
+        self.add_default_renderer('code', '[code]{TEXT}[/code]', '<code>{TEXT}</code>', render_embedded=False)
+        self.add_default_renderer('center', '[center]{TEXT}[/center]', '<div style="text-align:center;">{TEXT}</div>')
+        self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
-        self.add_default_renderer('img', u'[img]{URL}[/img]', u'<img src="{URL}" alt="" />', replace_links=False)
+        self.add_default_renderer('img', '[img]{URL}[/img]', '<img src="{URL}" alt="" />', replace_links=False)
 
     def _validate_format(self, format_dict):
         """

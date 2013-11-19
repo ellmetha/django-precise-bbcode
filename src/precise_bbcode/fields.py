@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
+
 # Third party imports
 from django import forms
 from django.db import models
@@ -10,7 +12,7 @@ from django.db.models import signals
 from .parser import get_parser
 
 
-_rendered_content_field_name = lambda name: u'{}_rendered'.format(name)
+_rendered_content_field_name = lambda name: '{}_rendered'.format(name)
 
 
 class BBCodeContent(object):
@@ -19,7 +21,7 @@ class BBCodeContent(object):
         self.rendered = rendered
 
     def __unicode__(self):
-        return u'{}'.format(self.raw)
+        return '{}'.format(self.raw)
 
 
 class BBCodeTextCreator(object):

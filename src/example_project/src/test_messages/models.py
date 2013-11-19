@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
+
 # Third party imports
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -18,4 +20,4 @@ class TestMessage(models.Model):
         app_label = 'test_messages'
 
     def __unicode__(self):
-        return u'{}'.format(self.id if self.id else _('new message'))
+        return '{}'.format(self.id if self.id else _('new message'))

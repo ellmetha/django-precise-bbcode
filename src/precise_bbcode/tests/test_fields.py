@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import unicode_literals
+
 # Third party imports
 from django.test import TestCase
 
@@ -10,10 +12,10 @@ from precise_bbcode.tests import TestMessage
 
 class FieldsTestCase(TestCase):
     BBCODE_FIELDS_TESTS = (
-        (u'[b]hello [u]world![/u][/b]', u'<strong>hello <u>world!</u></strong>'),
+        ('[b]hello [u]world![/u][/b]', '<strong>hello <u>world!</u></strong>'),
         ('[url=http://google.com]goto google[/url]', '<a href="http://google.com">goto google</a>'),
-        (u'[b]hello [u]worlsd![/u][/b]', u'<strong>hello <u>worlsd!</u></strong>'),
-        (u'[b]안녕하세요[/b]', u'<strong>안녕하세요</strong>'),
+        ('[b]hello [u]worlsd![/u][/b]', '<strong>hello <u>worlsd!</u></strong>'),
+        ('[b]안녕하세요[/b]', '<strong>안녕하세요</strong>'),
     )
 
     def test_bbcode_text_field_accept_none_values(self):

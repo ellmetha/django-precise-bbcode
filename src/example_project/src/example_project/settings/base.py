@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from __future__ import unicode_literals
 import gettext
 import os
 PROJECT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../..')
@@ -19,8 +20,8 @@ TIME_ZONE = 'Europe/Paris'
 LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
-   ('en', u"English"),
-   ('fr', u"Français"),
+   ('en', "English"),
+   ('fr', "Français"),
 )
 
 LOCALE_PATHS = (

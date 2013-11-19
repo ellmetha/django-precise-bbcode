@@ -2,3 +2,4 @@
 *.pyo
 *.mo
 *.db
+__pycache__
