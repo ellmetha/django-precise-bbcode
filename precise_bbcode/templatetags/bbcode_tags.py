@@ -9,11 +9,11 @@ from django.template import Node
 from django.template import TemplateSyntaxError
 from django.template import TokenParser
 from django.template import Variable
-from django.utils import six
 from django.utils.safestring import mark_safe
 
 # Local application / specific library imports
 from precise_bbcode.utils.bbcode import render_bbcodes
+from precise_bbcode.utils.compat import string_types
 
 
 register = template.Library()
@@ -23,7 +23,7 @@ class BBCodeNode(Node):
     def __init__(self, filter_expression, asvar=None):
         self.filter_expression = filter_expression
         self.asvar = asvar
-        if isinstance(self.filter_expression.var, six.string_types):
+        if isinstance(self.filter_expression.var, string_types):
             self.filter_expression.var = Variable("'{!s}'".format(self.filter_expression.var))
 
     def render(self, context):

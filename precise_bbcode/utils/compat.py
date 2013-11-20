@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+import sys
+
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 # Third party imports
 try:
     from django.utils.encoding import python_2_unicode_compatible
 except ImportError:
     python_2_unicode_compatible = lambda x: x
 
+try:
+    from django.utils.six import string_types
+except ImportError:
+    if PY3:
+        string_types = str,
+    else:
+        string_types = basestring,
 # Local application / specific library imports
 
 
