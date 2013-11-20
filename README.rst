@@ -14,7 +14,7 @@ Requirements
 ------------
 
 * ``python >= 2.7`` (tested with version 2.7, 3.2)
-* ``django >= 1.5`` (tested with version 1.5, 1.6)
+* ``django >= 1.4`` (tested with version 1.4, 1.5, 1.6)
 * ``setuptools``
 
 
