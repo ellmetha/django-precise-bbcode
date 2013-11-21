@@ -26,7 +26,7 @@ setup(
     long_description=open('README.rst').read(),
     zip_safe=False,
     install_requires=[
-        "django",
+        "django>=1.4",
         "south",
     ],
     classifiers=[
