@@ -3,3 +3,4 @@
 *.mo
 *.db
 __pycache__
+.coverage
