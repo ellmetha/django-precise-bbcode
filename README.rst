@@ -1,3 +1,7 @@
+.. image::  https://travis-ci.org/ellmetha/django-precise-bbcode.png?branch=master
+  :target: http://travis-ci.org/ellmetha/django-precise-bbcode
+  :alt: build-status
+
 django-precise-bbcode
 =====================
 
