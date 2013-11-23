@@ -12,7 +12,7 @@ matrix:
   - python: "3.2"
     env: DJANGO=django==1.4
 install:
-  - "pip install $DJANGO --use-mirrors"
+  - "pip install $DJANGO coverage --use-mirrors"
 script:
   - coverage run --source=precise_bbcode runtests.py
   - coverage report -m
