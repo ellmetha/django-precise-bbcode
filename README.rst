@@ -1,6 +1,8 @@
 .. image::  https://travis-ci.org/ellmetha/django-precise-bbcode.png?branch=master
   :target: http://travis-ci.org/ellmetha/django-precise-bbcode
   :alt: build-status
+.. image:: https://coveralls.io/repos/ellmetha/django-precise-bbcode/badge.png?branch=master
+  :target: https://coveralls.io/r/ellmetha/django-precise-bbcode?branch=master 
 
 django-precise-bbcode
 =====================
