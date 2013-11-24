@@ -142,9 +142,9 @@ class CustomTagsTestCase(TestCase):
     VALID_TAG_TESTS = (
         {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>'},
         {'tag_definition': '[pre2={COLOR}]{TEXT1}[/pre2]', 'html_replacement': '<pre style="color:{COLOR};">{TEXT1}</pre>'},
-        {'tag_definition': '[hr]', 'html_replacement': '<hr />', 'standalone': True},
+        {'tag_definition': '[hrcustom]', 'html_replacement': '<hr />', 'standalone': True},
         {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'helpline': 'Display your text in bold'},
-        {'tag_definition': '[h1]{TEXT}[/h1]', 'html_replacement': '<strong>{TEXT}</strong>', 'display_on_editor': False},
+        {'tag_definition': '[hbold]{TEXT}[/hbold]', 'html_replacement': '<strong>{TEXT}</strong>', 'display_on_editor': False},
         {'tag_definition': '[pre3]{TEXT}[/pre3]', 'html_replacement': '<pre>{TEXT}</pre>', 'newline_closes': True},
         {'tag_definition': '[pre4]{TEXT}[/pre4]', 'html_replacement': '<pre>{TEXT}</pre>', 'same_tag_closes': True},
         {'tag_definition': '[troll]{TEXT}[/troll]', 'html_replacement': '<div class="troll">{TEXT}</div>', 'end_tag_closes': True},
@@ -172,8 +172,7 @@ class CustomTagsTestCase(TestCase):
             tag = BBCodeTag(**tag_dict)
             try:
                 tag.clean()
-                tag.save()
-            except ValidationError:
+            except ValidationError as e:
                 self.fail("The following BBCode failed to validate: {}".format(tag_dict))
 
     def test_parser_args_retrieval(self):
