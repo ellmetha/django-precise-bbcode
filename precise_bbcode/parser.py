@@ -29,11 +29,7 @@ _number_re = re.compile(r'^[+-]?\d+(?:(\.|,)\d+)?$')
 
 
 class InvalidBBCodePlaholder(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
+    pass
 
 
 class BBCodeTagOptions(object):
@@ -381,7 +377,7 @@ class BBCodeParser(object):
             tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
         return tokens
 
-    def _print_lexical_token_stream(self, data):
+    def _print_lexical_token_stream(self, data):  # pragma: no cover
         """
         Given an input text, print out the lexical token stream.
         """
@@ -463,7 +459,7 @@ class BBCodeParser(object):
                     # Append the rendered data
                     rendered.append(call_rendering_function(token.tag_name, inner, token.option, parent_tag))
 
-                    # Swallow the first trailing newline ig necessary
+                    # Swallow the first trailing newline if necessary
                     if tag_options.swallow_trailing_newline:
                         next_itk = token_end + 1
                         if next_itk < len(tokens) and tokens[next_itk].type == BBCodeToken.TK_NEWLINE:
