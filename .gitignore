@@ -4,3 +4,6 @@
 *.db
 __pycache__
 .coverage
+*.egg-info/
+*.egg/
+dist
