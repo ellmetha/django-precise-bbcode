@@ -100,7 +100,7 @@ class BBCodeTag(models.Model):
 
         # ... and two placeholders must not have the same name
         def_placeholders_uniques = list(set(def_placeholders))
-        if def_placeholders != def_placeholders_uniques:
+        if def_placeholders != sorted(def_placeholders_uniques):
             raise ValidationError(_("The placeholders defined in the tag definition must be strictly uniques"))
 
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
