@@ -31,7 +31,7 @@ Just run:
 
 ::
 
-  pip install git+git://github.com/ellmetha/django-precise-bbcode.git#egg=django-precise-bbcode
+  pip install django-precise-bbcode
 
 Once installed you can configure your project to use django-precise-bbcode with the following steps.
 
