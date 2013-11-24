@@ -4,7 +4,6 @@
 from __future__ import unicode_literals
 
 # Third party imports
-from django import forms
 from django.db import models
 from django.db.models import signals
 
@@ -87,14 +86,6 @@ class BBCodeTextField(models.TextField):
             value = value.raw
         return super(BBCodeTextField, self).get_db_prep_save(value, connection)
 
-    def get_db_prep_lookup(self, lookup_type, value):
-        if lookup_type == 'exact':
-            return [self.get_db_prep_save(value)]
-        elif lookup_type == 'in':
-            return [self.get_db_prep_save(v) for v in value]
-        else:
-            return super(BBCodeTextField, self).get_db_prep_lookup(lookup_type, value)
-
     def process_bbcodes(self, signal, sender, instance=None, **kwargs):
         bbcode_text = getattr(instance, self.raw_name)
 
@@ -121,8 +112,3 @@ class BBCodeTextField(models.TextField):
             return cls_name, args, kwargs
         except ImportError:
             pass
-
-    def formfield(self, **kwargs):
-        defaults = {'form_class': forms.CharField}
-        defaults.update(kwargs)
-        return super(BBCodeTextField, self).formfield(**defaults)

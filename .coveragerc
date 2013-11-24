@@ -1,0 +1,13 @@
+[report]
+exclude_lines =
+    pragma: no cover
+    def __unicode__
+    def __repr__
+    def south_field_triple
+    raise NotImplementedError
+omit =
+    *admin*
+    *compat*
+    *django_load*
+    *migrations*
+    *test_*

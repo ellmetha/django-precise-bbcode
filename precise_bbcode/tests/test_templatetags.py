@@ -33,6 +33,10 @@ class TemplateTagsTestCase(TestCase):
             '{% bbcode "Hello [u]world![/u]" as renderedvar %}'
             '{{ renderedvar }}',
             'Hello <u>world!</u>',
+        ),
+        (
+            "{% bbcode '[i]a \"small\" test[/i]' %}",
+            "<em>a &quot;small&quot; test</em>",
         )
     )
 
@@ -64,4 +68,3 @@ class TemplateTagsTestCase(TestCase):
         for template_content in self.BBCODE_TAG_ERRONEOUS_EXPRESSIONS_TESTS:
             with self.assertRaises(TemplateSyntaxError):
                 t = Template(self.loadstatement + template_content)
-                rendered = t.render(Context())

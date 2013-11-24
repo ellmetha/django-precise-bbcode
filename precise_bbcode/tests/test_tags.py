@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 # Third party imports
+from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -11,6 +12,7 @@ from django.test import TestCase
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.parser import get_parser
 from precise_bbcode.parser import _init_bbcode_tags
+from precise_bbcode.parser import _init_custom_bbcode_tags
 from precise_bbcode.tag_base import TagBase
 from precise_bbcode.tag_pool import TagAlreadyRegistered
 from precise_bbcode.tag_pool import TagNotRegistered
@@ -64,6 +66,33 @@ class TagsTestCase(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
+    def test_erroneous_tag_definition_should_raise(self):
+        # Setup
+        number_of_tags_before = len(tag_pool.get_tags())
+        # Run & check
+        with self.assertRaises(ImproperlyConfigured):
+            class ErrnoneousTag1(TagBase):
+                pass
+        with self.assertRaises(ImproperlyConfigured):
+            class ErrnoneousTag2(TagBase):
+                delattr(TagBase, 'tag_name')
+        with self.assertRaises(ValueError):
+            class ErrnoneousTag3(TagBase):
+                tag_name = "it's a bad tag name"
+        number_of_tags_after = len(tag_pool.get_tags())
+        self.assertEqual(number_of_tags_before, number_of_tags_after)
+
+    def test_register_invalid_tag_should_raise(self):
+        # Setup
+        number_of_tags_before = len(tag_pool.get_tags())
+        # Run & check
+        with self.assertRaises(ImproperlyConfigured):
+            class ErrnoneousTag4:
+                pass
+            tag_pool.register_tag(ErrnoneousTag4)
+        number_of_tags_after = len(tag_pool.get_tags())
+        self.assertEqual(number_of_tags_before, number_of_tags_after)
+
     def test_unregister_non_existing_tag_should_raise(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
@@ -89,9 +118,12 @@ class CustomTagsTestCase(TestCase):
         {'tag_definition': '[tag]', 'html_replacement': ''},
         {'tag_definition': 'it\s not a tag', 'html_replacement': ''},
         {'tag_definition': '[first]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT1}</p>'},
+        {'tag_definition': '[t2y={TEXT1}]{TEXT1}[/t2y]', 'html_replacement': '<b>{TEXT1}</b>'},
         {'tag_definition': '[tag2]{TEXT1}[/tag2]', 'html_replacement': '<p>{TEXT1}</p>', 'standalone': True},
         {'tag_definition': '[start]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT1}</p>'},
         {'tag_definition': '[start]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT1}</p>'},
+        {'tag_definition': '[start]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT2}</p>'},
+        {'tag_definition': '[start={TEXT1}]{TEXT1}[/end]', 'html_replacement': '<p style="color:{TEXT1};">{TEXT1}</p>'},
         {'tag_definition': '[b]{TEXT1}[/b]', 'html_replacement': '<b>{TEXT1}</b>'},
         {'tag_definition': '[justify]{TEXT1}[/justify]', 'html_replacement': '<div style="text-align:justify;"></div>'},
         {'tag_definition': '[center][/center]', 'html_replacement': '<div style="text-align:center;">{TEXT1}</div>'},
@@ -104,6 +136,7 @@ class CustomTagsTestCase(TestCase):
         {'tag_definition': '[test ]{TEXT1}[/test]', 'html_replacement': '<span>{TEXT}</span>'},
         {'tag_definition': '[test]{TEXT1}[/ test ]', 'html_replacement': '<span>{TEXT}</span>'},
         {'tag_definition': '[test]{TEXT1}[/test ]', 'html_replacement': '<span>{TEXT}</span>'},
+        {'tag_definition': '[foo]{TEXT1}[/foo ]', 'html_replacement': '<span>{TEXT}</span>'},
     )
 
     VALID_TAG_TESTS = (
@@ -111,16 +144,16 @@ class CustomTagsTestCase(TestCase):
         {'tag_definition': '[pre2={COLOR}]{TEXT1}[/pre2]', 'html_replacement': '<pre style="color:{COLOR};">{TEXT1}</pre>'},
         {'tag_definition': '[hr]', 'html_replacement': '<hr />', 'standalone': True},
         {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'helpline': 'Display your text in bold'},
-        {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'display_on_editor': False},
-        {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>', 'newline_closes': True},
-        {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>', 'same_tag_closes': True},
+        {'tag_definition': '[h1]{TEXT}[/h1]', 'html_replacement': '<strong>{TEXT}</strong>', 'display_on_editor': False},
+        {'tag_definition': '[pre3]{TEXT}[/pre3]', 'html_replacement': '<pre>{TEXT}</pre>', 'newline_closes': True},
+        {'tag_definition': '[pre4]{TEXT}[/pre4]', 'html_replacement': '<pre>{TEXT}</pre>', 'same_tag_closes': True},
         {'tag_definition': '[troll]{TEXT}[/troll]', 'html_replacement': '<div class="troll">{TEXT}</div>', 'end_tag_closes': True},
-        {'tag_definition': '[troll]{TEXT}[/troll]', 'html_replacement': '<div class="troll">{TEXT}</div>', 'transform_newlines': True},
+        {'tag_definition': '[troll1]{TEXT}[/troll1]', 'html_replacement': '<div class="troll">{TEXT}</div>', 'transform_newlines': True},
         {'tag_definition': '[idea]{TEXT1}[/idea]', 'html_replacement': '<div class="idea">{TEXT1}</div>', 'render_embedded': False},
-        {'tag_definition': '[idea]{TEXT1}[/idea]', 'html_replacement': '<div class="idea">{TEXT1}</div>', 'escape_html': False},
+        {'tag_definition': '[idea1]{TEXT1}[/idea1]', 'html_replacement': '<div class="idea">{TEXT1}</div>', 'escape_html': False},
         {'tag_definition': '[link]{URL}[/link]', 'html_replacement': '<div class="idea">{URL}</div>', 'replace_links': False},
-        {'tag_definition': '[link]{URL}[/link]', 'html_replacement': '<div class="idea">{URL}</div>', 'strip': True},
-        {'tag_definition': '[mailto]{EMAIL}[/mailto]', 'html_replacement': '<a href="mailto!{EMAIL}">{EMAIL}</div>', 'swallow_trailing_newline': True},
+        {'tag_definition': '[link1]{URL}[/link1]', 'html_replacement': '<div class="idea">{URL}</div>', 'strip': True},
+        {'tag_definition': '[mailto]{EMAIL}[/mailto]', 'html_replacement': '<a href="mailto:{EMAIL}">{EMAIL}</a>', 'swallow_trailing_newline': True},
     )
 
     def setUp(self):
@@ -139,5 +172,26 @@ class CustomTagsTestCase(TestCase):
             tag = BBCodeTag(**tag_dict)
             try:
                 tag.clean()
+                tag.save()
             except ValidationError:
                 self.fail("The following BBCode failed to validate: {}".format(tag_dict))
+
+    def test_parser_args_retrieval(self):
+        # Setup
+        tag = BBCodeTag(**{'tag_definition': '[io]{TEXT}[/io]', 'html_replacement': '<b>{TEXT}</b>'})
+        tag.save()
+        # Run & check
+        self.assertEqual(tag.parser_args, (['io', '[io]{TEXT}[/io]', '<b>{TEXT}</b>'],
+                         {'display_on_editor': True, 'end_tag_closes': False, 'escape_html': True,
+                          'helpline': None, 'newline_closes': False, 'render_embedded': True,
+                          'replace_links': True, 'same_tag_closes': False, 'standalone': False, 'strip': False,
+                          'swallow_trailing_newline': False, 'transform_newlines': True}))
+
+    def test_valid_tag_rendering(self):
+        # Setup
+        tag = BBCodeTag(**{'tag_definition': '[mail]{EMAIL}[/mail]',
+                        'html_replacement': '<a href="mailto:{EMAIL}">{EMAIL}</a>', 'swallow_trailing_newline': True})
+        tag.save()
+        _init_custom_bbcode_tags(self.parser)
+        # Run & check
+        self.assertEqual(self.parser.render('[mail]xyz@xyz.com[/mail]'), '<a href="mailto:xyz@xyz.com">xyz@xyz.com</a>')

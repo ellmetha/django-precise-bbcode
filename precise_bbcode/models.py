@@ -14,6 +14,7 @@ from .parser import bbcodde_standalone_re
 from .parser import bbcodde_standard_re
 from .parser import BBCodeParser
 from .parser import BBCodeTagOptions
+from .parser import get_parser
 from .parser import placeholder_re
 
 
@@ -68,6 +69,8 @@ class BBCodeTag(models.Model):
         return '{}'.format(self.tag_name)
 
     def clean(self):
+        parser = get_parser()
+
         tag_re = bbcodde_standard_re if not self.standalone else bbcodde_standalone_re
         valid_bbcode_tag = re.search(tag_re, self.tag_definition)
 
@@ -80,10 +83,7 @@ class BBCodeTag(models.Model):
         if not self.standalone and re_groups['start_name'] != re_groups['end_name']:
             raise ValidationError(_("This BBCode tag dit not validate because the start tag and the tag names are not the same"))
 
-        # The tag name must be unique
-        if re_groups['start_name'] in BBCodeParser.DEFAULT_TAGS:
-            raise ValidationError(_("This BBCode tag did not validate because a default tag with this name already exists"))
-        if BBCodeTag.objects.filter(tag_name=re_groups['start_name']).exists():
+        if re_groups['start_name'] in parser.bbcodes.keys():
             raise ValidationError(_("A BBCode tag with this name appears to already exist"))
 
         # The used placeholders must be the same in the tag definition and in the HTML replacement code
@@ -93,10 +93,9 @@ class BBCodeTag(models.Model):
             raise ValidationError(_("The placeholders defined in the tag definition must be present in the HTML replacement code!"))
 
         # ... and two placeholders must not have the same name
-        def_placeholders_uniques = set(def_placeholders)
-        html_placeholders_uniques = set(html_placeholders)
-        if (set(def_placeholders) != def_placeholders_uniques) or (set(html_placeholders) != html_placeholders_uniques):
-            raise ValidationError(_("The placeholders defined in the tag and the HTML replacement code must be strictly uniques"))
+        def_placeholders_uniques = list(set(def_placeholders))
+        if def_placeholders != def_placeholders_uniques:
+            raise ValidationError(_("The placeholders defined in the tag definition must be strictly uniques"))
 
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
         # with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT' placeholders are needed
