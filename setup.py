@@ -21,6 +21,7 @@ setup(
     author_email='morgan.aubert@zoho.com',
     packages=find_packages(),
     include_package_data=True,
+    url='https://github.com/ellmetha/django-precise-bbcode',
     license='BSD license, see LICENSE file',
     description='A django BBCode integration..',
     long_description=open('README.rst').read(),
@@ -30,7 +31,7 @@ setup(
         "south",
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
