@@ -27,16 +27,20 @@ class BBCodeTag(models.Model):
     # Tag options
     newline_closes = models.BooleanField(
         verbose_name=_('Newline closing'),
-        help_text=_('Set this option to force the closing of this tag after a newline'))
+        help_text=_('Set this option to force the closing of this tag after a newline'),
+        default=False)
     same_tag_closes = models.BooleanField(
         verbose_name=_('Same tag closing'),
-        help_text=_('Set this option to force the closing of this tag after the beginning of a similar tag'))
+        help_text=_('Set this option to force the closing of this tag after the beginning of a similar tag'),
+        default=False)
     end_tag_closes = models.BooleanField(
         verbose_name=_('End tag closing'),
-        help_text=_('Set this option to force the closing of this tag after the end of another tag'))
+        help_text=_('Set this option to force the closing of this tag after the end of another tag'),
+        default=False)
     standalone = models.BooleanField(
         verbose_name=_('Standalone tag'),
-        help_text=_('Set this option if this tag does not have a closing tag'))
+        help_text=_('Set this option if this tag does not have a closing tag'),
+        default=False)
     transform_newlines = models.BooleanField(
         verbose_name=_('Transform line breaks'),
         help_text=_('Set this option to convert any line break to the equivalent markup'),
@@ -55,10 +59,12 @@ class BBCodeTag(models.Model):
         default=True)
     strip = models.BooleanField(
         verbose_name=_('Strip leading and trailing whitespace'),
-        help_text=_('Set this option to strip leading and trailing whitespace inside this tag'))
+        help_text=_('Set this option to strip leading and trailing whitespace inside this tag'),
+        default=False)
     swallow_trailing_newline = models.BooleanField(
         verbose_name=_('Swallow trailing newline'),
-        help_text=_('Set this option to swallow the first trailing newline'))
+        help_text=_('Set this option to swallow the first trailing newline'),
+        default=False)
 
     class Meta:
         verbose_name = _('BBCode tag')
