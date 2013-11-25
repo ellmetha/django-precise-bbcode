@@ -46,7 +46,7 @@ class BBCodeTag(models.Model):
         help_text=_('Set this option to convert any line break to the equivalent markup'),
         default=True)
     render_embedded = models.BooleanField(
-        verbose_name=('Render embedded tags'),
+        verbose_name=_('Render embedded tags'),
         help_text=_('Set this option to force the tags embedded in this tag to be rendered'),
         default=True)
     escape_html = models.BooleanField(
