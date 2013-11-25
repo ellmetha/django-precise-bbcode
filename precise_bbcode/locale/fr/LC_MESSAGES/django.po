@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Morgan Aubert <morgan.aubert@zoho.com>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-26 00:20+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Morgan Aubert <morgan.aubert@zoho.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: admin.py:19
+msgid "Advanced options"
+msgstr "Options avancées"
+
+#: models.py:22
+msgid "BBCode tag name"
+msgstr "Nom du BBCode"
+
+#: models.py:23
+msgid "Tag definition"
+msgstr "Définition du BBCode"
+
+#: models.py:24
+msgid "Replacement HTML code"
+msgstr "Code HTML de remplacement"
+
+#: models.py:25
+msgid "Help text for this tag"
+msgstr "Texte d'aide pour ce bbcode"
+
+#: models.py:26
+msgid "Display on editor"
+msgstr "Afficher sur l'éditeur"
+
+#: models.py:29
+msgid "Newline closing"
+msgstr "Nouvelle ligne fermante"
+
+#: models.py:30
+msgid "Set this option to force the closing of this tag after a newline"
+msgstr ""
+"Activer cette option pour forcer la fermeture du bbcode après un saut de "
+"ligne"
+
+#: models.py:33
+msgid "Same tag closing"
+msgstr "Fermeture du bbcode si duplicata"
+
+#: models.py:34
+msgid ""
+"Set this option to force the closing of this tag after the beginning of a "
+"similar tag"
+msgstr ""
+"Activer cette option pour forcer la fermeture du bbcode si un bbcode "
+"similaire est rencontré"
+
+#: models.py:37
+msgid "End tag closing"
+msgstr "Fin de tag si balise de fermeture rencontrée"
+
+#: models.py:38
+msgid ""
+"Set this option to force the closing of this tag after the end of another tag"
+msgstr ""
+"Activer cette option pour forcer la fermeture du bbcode si une balise de fin "
+"de tag quelconque est rencontrée"
+
+#: models.py:41
+msgid "Standalone tag"
+msgstr "Tag sans contexte"
+
+#: models.py:42
+msgid "Set this option if this tag does not have a closing tag"
+msgstr ""
+"Activer cette option si le bbcode ne doit pas avoir de balise de fermeture"
+
+#: models.py:45
+msgid "Transform line breaks"
+msgstr "Transformer les sauts de ligne"
+
+#: models.py:46
+msgid "Set this option to convert any line break to the equivalent markup"
+msgstr ""
+"Activer cette option afin de convertir tout saut de ligne en notation HTML"
+
+#: models.py:49
+msgid "Render embedded tags"
+msgstr "Convertir les bbcodes imbriqués"
+
+#: models.py:50
+msgid "Set this option to force the tags embedded in this tag to be rendered"
+msgstr "Activer cette option pour forcer la converion des bbcodes imbriqués en leurs équivalents HTML"
+
+#: models.py:53
+msgid "Escape HTML characters"
+msgstr "Echapper les caractères HTML"
+
+#: models.py:54
+msgid "Set this option to escape HTML characters (<, >, and &) inside this tag"
+msgstr "Activer cette option afin d'échapper les caractères HTML (<, > a &) à l'intérieur de ce bbcode"
+
+#: models.py:57
+msgid "Replace links"
+msgstr "Remplacer les liens"
+
+#: models.py:58
+msgid "Set this option to replace URLs with link markups inside this tag"
+msgstr "Activer cette option afin de remplacer les URLs par les balises HTML correspondantes à l'intérieur de cet bbcode"
+
+#: models.py:61
+msgid "Strip leading and trailing whitespace"
+msgstr "Supprimer les espaces de début et de fin du contenu du bbcode"
+
+#: models.py:62
+msgid ""
+"Set this option to strip leading and trailing whitespace inside this tag"
+msgstr "Activer cette option pour  spprimer les espaces de début et de fin du contenu du bbcode"
+
+#: models.py:65
+msgid "Swallow trailing newline"
+msgstr "Supprimer les sauts de ligne"
+
+#: models.py:66
+msgid "Set this option to swallow the first trailing newline"
+msgstr "Activer cette option pour supprimer les sauts de ligne du contenu du bbcode"
+
+#: models.py:70
+msgid "BBCode tag"
+msgstr "BBCode"
+
+#: models.py:71
+msgid "BBCode tags"
+msgstr "BBCodes"
+
+#: models.py:85
+msgid "The BBCode definition you provided is not valid"
+msgstr "La définition du bbcode n'est pas valide"
+
+#: models.py:90
+msgid ""
+"This BBCode tag dit not validate because the start tag and the tag names are "
+"not the same"
+msgstr ""
+"Ce bbcode est invalide car les balises ouvrante et fermantes ne sont "
+"pas les mêmes"
+
+#: models.py:93
+msgid "A BBCode tag with this name appears to already exist"
+msgstr "Un bbcode disposant de ce nom existe déja"
+
+#: models.py:99
+msgid ""
+"The placeholders defined in the tag definition must be present in the HTML "
+"replacement code!"
+msgstr ""
+"Les zones de contenu définies dans le bbcode doivent être présentes dans le code "
+"HTML de remplacement!"
+
+#: models.py:104
+msgid "The placeholders defined in the tag definition must be strictly uniques"
+msgstr ""
+"Les zones de contenu définies dans le bbcode doivent être strictement uniques"
+
+#: models.py:111
+msgid "You can only use placeholder names among: "
+msgstr "Seuls les types de zones de contenu suivants peuvent être utilisés : "

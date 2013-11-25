@@ -1,6 +1,5 @@
 *.pyc
 *.pyo
-*.mo
 *.db
 __pycache__
 .coverage
