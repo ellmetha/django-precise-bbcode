@@ -24,6 +24,7 @@ class ParserTestCase(TestCase):
         ('[b]hello [i]world![/i][/b]', '<strong>hello <em>world!</em></strong>'),
         ('[b]hello [ world![/b]', '<strong>hello [ world!</strong>'),
         ('[b]]he[llo [ w]orld![/b]', '<strong>]he[llo [ w]orld!</strong>'),
+        ('[b]]hello [b]the[/b] world![/b]', '<strong>]hello <strong>the</strong> world!</strong>'),
         ('[ b ]hello [u]world![/u][ /b ]', '<strong>hello <u>world!</u></strong>'),
         ('[b]hello [] world![/b]', '<strong>hello [] world!</strong>'),
         ('[list]\n[*]one\n[*]two\n[/list]', '<ul><li>one</li><li>two</li></ul>'),
@@ -49,6 +50,7 @@ class ParserTestCase(TestCase):
         ('[color=#FFFFFF]white[/color]', '<span style="color:#FFFFFF;">white</span>'),
         ('[color=<script></script>]xss[/color]', '[color=&lt;script&gt;&lt;/script&gt;]xss[/color]'),
         ('[COLOR=blue]hello world![/color]', '<span style="color:blue;">hello world!</span>'),
+        ('[', '['),
         # BBCodes with syntactic errors
         ('[b]z sdf s s', '[b]z sdf s s'),
         ('[b][i]hello world![/b][/i]', '<strong>[i]hello world!</strong>[/i]'),
@@ -58,6 +60,8 @@ class ParserTestCase(TestCase):
         ('[b\n hello [i]the[/i] world![/b]', '[b<br /> hello <em>the</em> world![/b]'),
         ('[b]hello [i]the[/b] world![/i]', '<strong>hello [i]the</strong> world![/i]'),
         ('[b] hello the[u]world ![/i] see you[/b]', '<strong> hello the[u]world ![/i] see you</strong>'),
+        ('[col\nor]more tests[/color]', '[col<br />or]more tests[/color]'),
+        ('[color]more tests[/color=#FFF]', '[color]more tests[/color=#FFF]'),
         # BBCodes with semantic errors
         ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes
