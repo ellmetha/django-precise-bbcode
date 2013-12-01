@@ -120,6 +120,10 @@ class BBCodeTag(models.Model):
         self.tag_name = re_groups['start_name']
 
         super(BBCodeTag, self).save(*args, **kwargs)
+        # Ok, now the tag should be added to the BBCode parser for later use
+        args, kwargs = self.parser_args
+        parser = get_parser()
+        parser.add_default_renderer(*args, **kwargs)
 
     @property
     def parser_args(self):
