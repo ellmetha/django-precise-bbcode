@@ -1,6 +1,8 @@
 Welcome to django-precise-bbcode's documentation!
 =================================================
 
+.. image:: https://badge.fury.io/py/django-precise-bbcode.png
+    :target: http://badge.fury.io/py/django-precise-bbcode
 .. image::  https://travis-ci.org/ellmetha/django-precise-bbcode.png?branch=master
   :target: http://travis-ci.org/ellmetha/django-precise-bbcode
   :alt: build-status
