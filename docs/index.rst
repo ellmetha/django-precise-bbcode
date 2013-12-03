@@ -36,6 +36,7 @@ Using django-precise-bbcode
 
    quickstart
    custom_tags
+   settings
 
 
 Indices and tables
