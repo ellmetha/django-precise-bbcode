@@ -105,6 +105,7 @@ class BBCodeParser(object):
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
         self.bbcodes = {}
+        self.smilies = []
         # Init default renderers
         self.init_renderers()
 
@@ -214,6 +215,13 @@ class BBCodeParser(object):
             except AssertionError:
                 return False
         return True
+
+    def add_smiley(self, code, img):
+        """
+        Insert a smiley code and its associated icon URL into a list containing the available smilies. This list is composed
+        of 2-tuples of the form: (code, img HTML string).
+        """
+        self.smilies.append((code, img))
 
     def _parse_tag(self, tag):
         """
@@ -448,7 +456,7 @@ class BBCodeParser(object):
                         inner = self._render_tokens(embedded_tokens, parent_tag=tag_options)
                     else:
                         inner = self._render_textual_content(''.join(tk.text for tk in embedded_tokens),
-                                                             tag_options.escape_html, tag_options.replace_links)
+                                                             tag_options.escape_html, tag_options.replace_links, tag_options.render_embedded)
 
                     # Strip and replaces newlines if specified in the tag options
                     if tag_options.strip:
@@ -470,7 +478,8 @@ class BBCodeParser(object):
             elif token.type == BBCodeToken.TK_DATA:
                 replace_specialchars = parent_tag.escape_html if parent_tag else True
                 replace_links = parent_tag.replace_links if parent_tag else True
-                rendered.append(self._render_textual_content(token.text, replace_specialchars, replace_links))
+                replace_smilies = parent_tag.render_embedded if parent_tag else True
+                rendered.append(self._render_textual_content(token.text, replace_specialchars, replace_links, replace_smilies))
             elif token.type == BBCodeToken.TK_NEWLINE:
                 rendered.append(self.newline_char if parent_tag is None else token.text)
 
@@ -478,7 +487,7 @@ class BBCodeParser(object):
             itk += 1
         return ''.join(rendered)
 
-    def _render_textual_content(self, data, replace_specialchars, replace_links):
+    def _render_textual_content(self, data, replace_specialchars, replace_links, replace_smilies):
         """
         Given an input text, update it by replacing the HTML special characters or the found links by their HTML corresponding.
         """
@@ -499,6 +508,8 @@ class BBCodeParser(object):
                 pos = url_start
         if replace_specialchars:
             data = self._replace(data, self.replace_html)
+        if replace_smilies:
+            data = self._replace(data, self.smilies)
         # Now put the previously genered links in the result text
         for token, replacement in url_matches:
             data = data.replace(token, replacement)
@@ -569,6 +580,17 @@ def _init_custom_bbcode_tags(parser):
             parser.add_default_renderer(*args, **kwargs)
 
 
+def _init_bbcode_smilies(parser):
+    """
+    Find the user-defined smilies tags and register them to the BBCode parser.
+    """
+    SmileyTag = get_model('precise_bbcode', 'SmileyTag')
+    if SmileyTag:
+        custom_smilies = SmileyTag.objects.all()
+        for smiley in custom_smilies:
+            parser.add_smiley(smiley.code, smiley.html_code)
+
+
 def _load_parser():
     global _bbcode_parser
     _bbcode_parser = BBCodeParser()
@@ -579,3 +601,7 @@ def _load_parser():
     # Init custom renderers defined in BBCodeTag model instances
     if bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
         _init_custom_bbcode_tags(_bbcode_parser)
+
+    # Init smilies
+    if bbcode_settings.BBCODE_ALLOW_SMILIES:
+        _init_bbcode_smilies(_bbcode_parser)

@@ -54,14 +54,14 @@ In this case, the data associated with the ``{COLOR}`` placeholder is not requir
 HTML replacement code
 ~~~~~~~~~~~~~~~~~~~~~
 
-The HTML replacement code is where youenter the HTML for the bbcode you defined previously. All the placeholders you used in your bbcode definition must be present in the HTML replacement code. For example, the HTML replacement code associated with the last ``[foo]`` bbcode example could be::
+The HTML replacement code is where you enter the HTML for the bbcode you defined previously. All the placeholders you used in your bbcode definition must be present in the HTML replacement code. For example, the HTML replacement code associated with the last ``[foo]`` bbcode example could be::
 
     <div style="background:{COLOR};">{TEXT}</div>
 
 BBCode options
 ~~~~~~~~~~~~~~
 
-Some specific options can be used when defining a custom bbcode to alter its default behavior. For example, you could want to forbid the rendering of any bbcode tags included inside the your new bbcode. All these options are boolean fields and are indicated in the following table:
+Some specific options can be used when defining a custom bbcode to alter its default behavior. For example, you could want to forbid the rendering of any bbcode tags included inside your new bbcode. All these options are boolean fields and are indicated in the following table:
 
 +--------------------------+-----------------------------------------------------------------+-------------+
 | Option                   | Definition                                                      | Default     |
@@ -96,7 +96,7 @@ While the previous bbcode tag system allows you to easily define various bbcodes
 
 To do this, you will have to write a subclass of ``precise_bbcode.tag_base.TagBase`` for any tag you want to create. These class-based bbcodes must be defined inside a ``bbcode_tags`` module in your Django application.
 
-Each of this tag must provide a ``tag_name`` attribute and a ``render`` method and must be registered to a tag pool in order to be available to the BBCode parser. The ``render`` method is used to transform you bbcode tag and its context (value, option if provided) to the corresponding HTML output. Iy ``render`` method takes three arguments:
+Each of this tag must provide a ``tag_name`` attribute and a ``render`` method and must be registered to a tag pool in order to be available to the BBCode parser. The ``render`` method is used to transform your bbcode tag and its context (value, option if provided) to the corresponding HTML output. The ``render`` method takes three arguments:
 
 * **tag_name**: the name of the tag being rendered
 * **value**: the context between the start end the end tags, or None for standalone tags. Whether this has been rendered depends on the ``render_embedded`` tag option

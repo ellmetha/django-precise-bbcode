@@ -2,16 +2,22 @@
 
 # Standard library imports
 from __future__ import unicode_literals
+import re
 
 # Third party imports
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import signals
+from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
 from .parser import get_parser
 
 
 _rendered_content_field_name = lambda name: '{}_rendered'.format(name)
+
+_smiley_code_re = re.compile(r'^[\w|\S]+$')
+validate_smiley_code = RegexValidator(_smiley_code_re, _("Enter a valid 'smiley code' consisting of any character without whitespace characters"), 'invalid')
 
 
 class BBCodeContent(object):
@@ -98,6 +104,32 @@ class BBCodeTextField(models.TextField):
             rendered = parser.render(bbcode_text)
 
         setattr(instance, self.rendered_field_name, rendered)
+
+    def south_field_triple(self):
+        """
+        Returns a suitable description of this field for South.
+        """
+        try:
+            from south.modelsinspector import introspector
+            cls_name = '{0}.{1}'.format(
+                self.__class__.__module__,
+                self.__class__.__name__)
+            args, kwargs = introspector(self)
+            return cls_name, args, kwargs
+        except ImportError:
+            pass
+
+
+class SmileyCodeField(models.CharField):
+    default_validators = [validate_smiley_code]
+    description = _("Smiley code (up to %(max_length)s)")
+
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = kwargs.get('max_length', 50)
+        # Set db_index=True unless it's been set manually.
+        if 'db_index' not in kwargs:
+            kwargs['db_index'] = True
+        super(SmileyCodeField, self).__init__(*args, **kwargs)
 
     def south_field_triple(self):
         """

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
 from .models import BBCodeTag
+from .models import SmileyTag
 
 
 class BBCodeTagAdmin(admin.ModelAdmin):
@@ -33,4 +34,10 @@ class BBCodeTagAdmin(admin.ModelAdmin):
     )
 
 
+class SmileyTagAdmin(admin.ModelAdmin):
+    list_display = ('code', 'emotion')
+    list_display_links = ('code', 'emotion')
+
+
 admin.site.register(BBCodeTag, BBCodeTagAdmin)
+admin.site.register(SmileyTag, SmileyTagAdmin)
