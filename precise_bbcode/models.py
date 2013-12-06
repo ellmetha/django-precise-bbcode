@@ -10,6 +10,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
+from .conf import settings as bbcode_settings
+from .fields import SmileyCodeField
 from .parser import bbcodde_standalone_re
 from .parser import bbcodde_standard_re
 from .parser import BBCodeParser
@@ -142,3 +144,37 @@ class BBCodeTag(models.Model):
                 kwargs[f.name] = f.value_from_object(self)
 
         return (args, kwargs)
+
+
+class SmileyTag(models.Model):
+    code = SmileyCodeField(max_length=60, verbose_name=_('Smiley code'), unique=True)
+    image = models.ImageField(verbose_name=_('Smiley icon'), upload_to=bbcode_settings.SMILIES_UPLOAD_TO)
+    image_width = models.PositiveIntegerField(verbose_name=_('Smiley icon width'), null=True, blank=True)
+    image_height = models.PositiveIntegerField(verbose_name=_('Smiley icon height'), null=True, blank=True)
+    emotion = models.CharField(max_length=100, verbose_name=_('Related emotion'), null=True, blank=True)
+    display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
+
+    class Meta:
+        verbose_name = _('Smiley')
+        verbose_name_plural = _('Smilies')
+        app_label = 'precise_bbcode'
+
+    def __unicode__(self):
+        return '{}'.format(self.code)
+
+    def save(self, *args, **kwargs):
+        super(SmileyTag, self).save(*args, **kwargs)
+        # The smiley should be added to the BBCode parser for later use
+        parser = get_parser()
+        parser.add_smiley(self.code, self.html_code)
+
+    @property
+    def html_code(self):
+        """
+        Returns the HTML associated with the current smiley tag object.
+        """
+        width = self.image_width or 'auto'
+        height = self.image_height or 'auto'
+        emotion = self.emotion or ''
+        img = '<img src="{}" width="{}" height="{}" alt="{}" />'.format(self.image.url, width, height, emotion)
+        return img

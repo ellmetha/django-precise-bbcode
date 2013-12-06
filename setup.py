@@ -28,6 +28,7 @@ setup(
     zip_safe=False,
     install_requires=[
         "django>=1.4",
+        "pillow==2.2.1",
         "south",
     ],
     classifiers=[

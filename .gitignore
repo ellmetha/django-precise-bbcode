@@ -7,3 +7,4 @@ __pycache__
 *.egg/
 dist
 docs/_build/
+example_project/public/media/
