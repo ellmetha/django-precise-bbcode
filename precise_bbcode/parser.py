@@ -105,7 +105,7 @@ class BBCodeParser(object):
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
         self.bbcodes = {}
-        self.smilies = []
+        self.smilies = {}
         # Init default renderers
         self.init_renderers()
 
@@ -218,10 +218,9 @@ class BBCodeParser(object):
 
     def add_smiley(self, code, img):
         """
-        Insert a smiley code and its associated icon URL into a list containing the available smilies. This list is composed
-        of 2-tuples of the form: (code, img HTML string).
+        Insert a smiley code and its associated icon URL into a dictionary containing the available smilies.
         """
-        self.smilies.append((code, img))
+        self.smilies[code] = img
 
     def _parse_tag(self, tag):
         """
@@ -509,7 +508,7 @@ class BBCodeParser(object):
         if replace_specialchars:
             data = self._replace(data, self.replace_html)
         if replace_smilies:
-            data = self._replace(data, self.smilies)
+            data = self._replace(data, self.smilies.items())
         # Now put the previously genered links in the result text
         for token, replacement in url_matches:
             data = data.replace(token, replacement)
