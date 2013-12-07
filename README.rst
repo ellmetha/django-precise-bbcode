@@ -13,7 +13,7 @@ django-precise-bbcode
 
   BBCode is a special implementation of HTML. BBCode itself is similar in style to HTML, tags are enclosed in square brackets [ and ] rather than < and > and it offers greater control over what and how something is displayed.
 
-This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, etc) and allows the use of custom BBCode tags. These can be added in two different ways:
+This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, etc) and allows the use of smilies and custom BBCode tags. These can be added in two different ways:
 
 * Custom tags can be defined in the Django administration panel and stored into the database ; doing this allows any non-technical admin to add BBCode tags by defining the HTML replacement string associated with each tag
 * Tags can also be manually registered to be used by the parser by defining a tag class aimed to render a given bbcode tag and its content to the corresponding HTML markup
@@ -25,6 +25,7 @@ Requirements
 
 * ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3)
 * ``django >= 1.4`` (tested with version 1.4, 1.5, 1.6)
+* ``Pillow`` (required for smiley tags)
 * ``setuptools``
 
 
@@ -106,7 +107,7 @@ This field will store both the BBCode content and the correspondign HTML markup.
 And more...
 ***********
 
-Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/latest/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags.
+Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/latest/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags and smilies.
 
 Author
 ------
