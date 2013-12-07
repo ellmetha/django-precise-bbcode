@@ -24,8 +24,7 @@ class BBCodeTag(models.Model):
     tag_name = models.SlugField(max_length=20, verbose_name=_('BBCode tag name'), unique=True)
     tag_definition = models.TextField(verbose_name=_('Tag definition'))
     html_replacement = models.TextField(verbose_name=_('Replacement HTML code'))
-    helpline = models.CharField(max_length=120, verbose_name=_('Help text for this tag'), null=True, blank=True)
-    display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
+
     # Tag options
     newline_closes = models.BooleanField(
         verbose_name=_('Newline closing'),
@@ -67,6 +66,10 @@ class BBCodeTag(models.Model):
         verbose_name=_('Swallow trailing newline'),
         help_text=_('Set this option to swallow the first trailing newline'),
         default=False)
+
+    # For later use
+    helpline = models.CharField(max_length=120, verbose_name=_('Help text for this tag'), null=True, blank=True)
+    display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
 
     class Meta:
         verbose_name = _('BBCode tag')
@@ -151,6 +154,8 @@ class SmileyTag(models.Model):
     image = models.ImageField(verbose_name=_('Smiley icon'), upload_to=bbcode_settings.SMILIES_UPLOAD_TO)
     image_width = models.PositiveIntegerField(verbose_name=_('Smiley icon width'), null=True, blank=True)
     image_height = models.PositiveIntegerField(verbose_name=_('Smiley icon height'), null=True, blank=True)
+
+    # For later use
     emotion = models.CharField(max_length=100, verbose_name=_('Related emotion'), null=True, blank=True)
     display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
 
