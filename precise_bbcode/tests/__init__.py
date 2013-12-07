@@ -22,4 +22,5 @@ class TestMessage(models.Model):
 from .test_fields import *
 from .test_parser import *
 from .test_tags import *
+from .test_smilies import *
 from .test_templatetags import *
