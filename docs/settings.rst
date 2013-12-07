@@ -41,3 +41,20 @@ The flag indicating whether the custom BBCode tags (those defined by the end use
 Default: ``True``
 
 The flag indicating whether the newlines are normalized (if this is the case all newlines are replaced with ``\r\n``).
+
+Smilies settings
+****************
+
+``BBCODE_ALLOW_SMILIES``
+------------------------
+
+Default: ``True``
+
+The flag indicating whether the smilies (defined by the end users through the Django admin) are allowed.
+
+``SMILIES_UPLOAD_TO``
+---------------------
+
+Default: ``'precise_bbcode/smilies'``
+
+The media subdirectory where the smilies should be uploaded.
