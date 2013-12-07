@@ -26,6 +26,7 @@ Features
 
   * Simple custom bbcodes can be defined in the Django admin
   * ... or they can be registered using a plugin system by defining some Python classes
+* Support for custom smilies and emoticons
 
 
 Using django-precise-bbcode
@@ -36,6 +37,7 @@ Using django-precise-bbcode
 
    quickstart
    custom_tags
+   smilies
    settings
 
 
