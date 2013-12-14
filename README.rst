@@ -25,7 +25,7 @@ Requirements
 
 * ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3)
 * ``django >= 1.4`` (tested with version 1.4, 1.5, 1.6)
-* ``Pillow`` (required for smiley tags)
+* ``PIL`` or ``Pillow`` (required for smiley tags)
 * ``setuptools``
 
 
