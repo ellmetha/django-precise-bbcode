@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from .parser import get_parser
 
 
-_rendered_content_field_name = lambda name: '{}_rendered'.format(name)
+_rendered_content_field_name = lambda name: '_{}_rendered'.format(name)
 
 _smiley_code_re = re.compile(r'^[\w|\S]+$')
 validate_smiley_code = RegexValidator(_smiley_code_re, _("Enter a valid 'smiley code' consisting of any character without whitespace characters"), 'invalid')
@@ -32,7 +32,7 @@ class BBCodeContent(object):
 class BBCodeTextCreator(object):
     """
     Acts as the Django's default attribute descriptor class (enabled via the SubfieldBase metaclass).
-    The main difference is that it does not call to_python() on the BCodeTextField class. Instead, it
+    The main difference is that it does not call to_python() on the BBCodeTextField class. Instead, it
     stores the two different values of a BBCode content (the raw and the rendered data) separately.
     These values can be separately updated when something is assigned. When the field is accessed,
     a BBCodeContent instance will be returned ; this one is built with the current data.
@@ -65,16 +65,24 @@ class BBCodeTextField(models.TextField):
     The initial column stores the BBCode content and the other one keeps the rendered content returned
     by the BBCode parser.
     """
+    def __init__(self, *args, **kwargs):
+        # For South FakeORM compatibility: the frozen version of a BBCodeTextField can't try to add a
+        # '*_rendered' field, because the '*_rendered' field itself is frozen as well.
+        self.add_rendered_field = not kwargs.pop('no_rendered_field', False)
+        super(BBCodeTextField, self).__init__(*args, **kwargs)
+
     def contribute_to_class(self, cls, name):
         self.raw_name = name
-        self.rendered_field_name = _rendered_content_field_name(name)
 
-        # Create a hidden 'rendered' field
-        rendered = models.TextField(editable=False, null=True, blank=True)
-        # Ensure that the 'rendered' field appears before the actual field in
-        # the models _meta.fields
-        rendered.creation_counter = self.creation_counter
-        cls.add_to_class(self.rendered_field_name, rendered)
+        if self.add_rendered_field and not cls._meta.abstract:
+            self.rendered_field_name = _rendered_content_field_name(name)
+
+            # Create a hidden 'rendered' field
+            rendered = models.TextField(editable=False, null=True, blank=True)
+            # Ensure that the 'rendered' field appears before the actual field in
+            # the models _meta.fields
+            rendered.creation_counter = self.creation_counter
+            cls.add_to_class(self.rendered_field_name, rendered)
 
         # The data will be processed before each save
         signals.pre_save.connect(self.process_bbcodes, sender=cls)
@@ -105,20 +113,6 @@ class BBCodeTextField(models.TextField):
 
         setattr(instance, self.rendered_field_name, rendered)
 
-    def south_field_triple(self):
-        """
-        Returns a suitable description of this field for South.
-        """
-        try:
-            from south.modelsinspector import introspector
-            cls_name = '{0}.{1}'.format(
-                self.__class__.__module__,
-                self.__class__.__name__)
-            args, kwargs = introspector(self)
-            return cls_name, args, kwargs
-        except ImportError:
-            pass
-
 
 class SmileyCodeField(models.CharField):
     default_validators = [validate_smiley_code]
@@ -131,16 +125,22 @@ class SmileyCodeField(models.CharField):
             kwargs['db_index'] = True
         super(SmileyCodeField, self).__init__(*args, **kwargs)
 
-    def south_field_triple(self):
-        """
-        Returns a suitable description of this field for South.
-        """
-        try:
-            from south.modelsinspector import introspector
-            cls_name = '{0}.{1}'.format(
-                self.__class__.__module__,
-                self.__class__.__name__)
-            args, kwargs = introspector(self)
-            return cls_name, args, kwargs
-        except ImportError:
-            pass
+
+# Allow South to handle those fields smoothly
+try:
+    from south.modelsinspector import add_introspection_rules
+
+    # For a normal BBCodeTextField, the add_rendered_field attribute is always True,
+    # which means that the no_rendered_field arg will always be True in a frozen BBCodeTextField,
+    # which is what we want. The use of this flag will tell South not to make the _rendered
+    # fields again.
+    add_introspection_rules(rules=[((BBCodeTextField,),
+                                    [],
+                                    {'no_rendered_field': ('add_rendered_field',
+                                                           {})})],
+                            patterns=['precise_bbcode\.fields\.BBCodeTextField'])
+
+    # SmileyCodeField
+    add_introspection_rules([], ['^precise_bbcode\.fields\.SmileyCodeField'])
+except ImportError:  # pragma: no cover
+    pass
