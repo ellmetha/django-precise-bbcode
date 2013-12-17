@@ -90,6 +90,8 @@ class BBCodeTextField(models.TextField):
         # Add the default text field
         super(BBCodeTextField, self).contribute_to_class(cls, name)
 
+        # Associates the name of this field to a special descriptor that will return
+        # an appropriate BBCodeContent object each time the field is accessed
         self.set_descriptor_class(cls)
 
     def set_descriptor_class(self, cls):
