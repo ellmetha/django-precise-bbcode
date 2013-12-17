@@ -125,10 +125,10 @@ INSTALLED_APPS = (
     'pipeline',
     'crispy_forms',
 
-    # Precise BBCode apps
+    # Precise BBCode app
     'precise_bbcode',
 
-    # Local apps
+    # Test apps
     'example_project',
     'test_messages',
 )
