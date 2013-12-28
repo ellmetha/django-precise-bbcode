@@ -9,6 +9,7 @@ from django.template import Node
 from django.template import TemplateSyntaxError
 from django.template import TokenParser
 from django.template import Variable
+from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
 # Local application / specific library imports
@@ -37,6 +38,7 @@ class BBCodeNode(Node):
 
 
 @register.filter(is_safe=True)
+@stringfilter
 def bbcode(value):
     return render_bbcodes(value)
 
