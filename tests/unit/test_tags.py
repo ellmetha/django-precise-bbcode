@@ -27,6 +27,14 @@ class FooTag(TagBase):
         return '<pre>{}</pre>'.format(value)
 
 
+class FooTagAlt(TagBase):
+    tag_name = "foo"
+    render_embedded = False
+
+    def render(self, name, value, option=None, parent=None):
+        return '<pre>{}</pre>'.format(value)
+
+
 class FooTagSub(FooTag):
     tag_name = "foo2"
     render_embedded = False
@@ -41,7 +49,7 @@ class BarTag(TagBase):
         return '<div class="bar" style="color:{};">{}</div>'.format(option, value)
 
 
-class TagsTestCase(TestCase):
+class TestBbcodeTagPool(TestCase):
     TAGS_TESTS = (
         ('[foo]hello world![/foo]', '<pre>hello world!</pre>'),
         ('[bar]hello world![/bar]', '<div class="bar">hello world!</div>'),
@@ -53,7 +61,7 @@ class TagsTestCase(TestCase):
     def setUp(self):
         self.parser = get_parser()
 
-    def test_register_tag_twice_should_raise(self):
+    def test_should_raise_if_a_tag_is_registered_twice(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         tag_pool.register_tag(FooTag)
@@ -66,7 +74,7 @@ class TagsTestCase(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_erroneous_tag_definition_should_raise(self):
+    def test_can_not_register_erroneous_tags(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
@@ -82,7 +90,7 @@ class TagsTestCase(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_register_invalid_tag_should_raise(self):
+    def test_can_not_register_invalid_tags(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
@@ -93,7 +101,7 @@ class TagsTestCase(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_unregister_non_existing_tag_should_raise(self):
+    def test_can_not_unregister_a_non_registered_tag(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
@@ -102,9 +110,9 @@ class TagsTestCase(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_render_tags(self):
+    def test_owns_tags_that_can_be_rendered(self):
         # Setup
-        tag_pool.register_tag(FooTag)
+        tag_pool.register_tag(FooTagAlt)
         tag_pool.register_tag(BarTag)
         _init_bbcode_tags(self.parser)
         # Run & check
@@ -113,7 +121,7 @@ class TagsTestCase(TestCase):
             self.assertEqual(result, expected_html_text)
 
 
-class CustomTagsTestCase(TestCase):
+class TestBbcodeTag(TestCase):
     ERRONEOUS_TAGS_TESTS = (
         {'tag_definition': '[tag]', 'html_replacement': ''},
         {'tag_definition': 'it\s not a tag', 'html_replacement': ''},
@@ -159,14 +167,14 @@ class CustomTagsTestCase(TestCase):
     def setUp(self):
         self.parser = get_parser()
 
-    def test_erroneous_tags_cleaning(self):
+    def test_should_not_save_invalid_tags(self):
         # Run & check
         for tag_dict in self.ERRONEOUS_TAGS_TESTS:
             with self.assertRaises(ValidationError):
                 tag = BBCodeTag(**tag_dict)
                 tag.clean()
 
-    def test_valid_tags_cleaning(self):
+    def test_should_save_valid_tags(self):
         # Run & check
         for tag_dict in self.VALID_TAG_TESTS:
             tag = BBCodeTag(**tag_dict)
@@ -175,7 +183,7 @@ class CustomTagsTestCase(TestCase):
             except ValidationError as e:
                 self.fail("The following BBCode failed to validate: {}".format(tag_dict))
 
-    def test_parser_args_retrieval(self):
+    def test_should_provide_the_required_parser_args(self):
         # Setup
         tag = BBCodeTag(**{'tag_definition': '[io]{TEXT}[/io]', 'html_replacement': '<b>{TEXT}</b>'})
         tag.save()
@@ -186,7 +194,7 @@ class CustomTagsTestCase(TestCase):
                           'replace_links': True, 'same_tag_closes': False, 'standalone': False, 'strip': False,
                           'swallow_trailing_newline': False, 'transform_newlines': True}))
 
-    def test_valid_tag_rendering(self):
+    def test_can_be_rendered(self):
         # Setup
         tag = BBCodeTag(**{'tag_definition': '[mail]{EMAIL}[/mail]',
                         'html_replacement': '<a href="mailto:{EMAIL}">{EMAIL}</a>', 'swallow_trailing_newline': True})

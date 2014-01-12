@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
-import pkgutil
-import unittest
-
 # Third party imports
 from django.db import models
 
@@ -16,11 +13,3 @@ class TestMessage(models.Model):
     This model will be use for testing purposes.
     """
     content = BBCodeTextField(null=True, blank=True)
-
-
-# Sub-packages imports
-from .test_fields import *
-from .test_parser import *
-from .test_tags import *
-from .test_smilies import *
-from .test_templatetags import *

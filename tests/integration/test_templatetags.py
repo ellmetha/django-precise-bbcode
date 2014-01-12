@@ -10,7 +10,7 @@ from django.test import TestCase
 # Local application / specific library imports
 
 
-class TemplateTagsTestCase(TestCase):
+class TestBbcodeTemplateTags(TestCase):
     BBCODE_FILTER_EXPRESSIONS_TESTS = (
         (
             '{{ "[b]hello world![/b]"|bbcode }}',
@@ -49,21 +49,21 @@ class TemplateTagsTestCase(TestCase):
     def setUp(self):
         self.loadstatement = '{% load bbcode_tags %}'
 
-    def test_bbcode_filter_rendering(self):
+    def test_provide_a_functional_bbcode_filter(self):
         # Run & check
         for template_content, expected_html_text in self.BBCODE_FILTER_EXPRESSIONS_TESTS:
             t = Template(self.loadstatement + template_content)
             rendered = t.render(Context())
             self.assertEqual(rendered, expected_html_text)
 
-    def test_bbcode_tag_rendering(self):
+    def test_provide_a_functional_bbcode_tag(self):
         # Run & check
         for template_content, expected_html_text in self.BBCODE_TAG_EXPRESSIONS_TESTS:
             t = Template(self.loadstatement + template_content)
             rendered = t.render(Context())
             self.assertEqual(rendered, expected_html_text)
 
-    def test_bbcode_erroneous_tag_should_raise(self):
+    def test_should_raise_in_case_of_erroneous_syntax(self):
         # Run & check
         for template_content in self.BBCODE_TAG_ERRONEOUS_EXPRESSIONS_TESTS:
             with self.assertRaises(TemplateSyntaxError):

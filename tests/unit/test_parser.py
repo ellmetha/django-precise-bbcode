@@ -17,7 +17,7 @@ from precise_bbcode.parser import _text_re
 from precise_bbcode.parser import _url_re
 
 
-class ParserTestCase(TestCase):
+class TestParser(TestCase):
     DEFAULT_TAGS_RENDERING_TESTS = (
         # BBcodes without errors
         ('[b]hello world![/b]', '<strong>hello world!</strong>'),
@@ -230,13 +230,13 @@ class ParserTestCase(TestCase):
     def setUp(self):
         self.parser = get_parser()
 
-    def test_default_tags_rendering(self):
+    def test_can_render_default_tags(self):
         # Run & check
         for bbcodes_text, expected_html_text in self.DEFAULT_TAGS_RENDERING_TESTS:
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
 
-    def test_custom_tags_rendering(self):
+    def test_can_render_custom_tags(self):
         # Setup
         for _, tag_def in self.CUSTOM_TAGS_RENDERING_TESTS['tags'].items():
             self.parser.add_default_renderer(*tag_def['args'], **tag_def['kwargs'])
@@ -245,14 +245,14 @@ class ParserTestCase(TestCase):
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
 
-    def test_unicode_inputs(self):
+    def test_can_handle_unicode_inputs(self):
         # Setup
         src = '[center]ƒünk¥ 你好 • §tüƒƒ 你好[/center]'
         dst = '<div style="text-align:center;">ƒünk¥ 你好 • §tüƒƒ 你好</div>'
         # Run & check
         self.assertEqual(self.parser.render(src), dst)
 
-    def test_placeholder_regex(self):
+    def test_uses_valid_placeholder_regex(self):
         # Run & check
         for _, re_tests in self.PLACEHOLDERS_RE_TESTS.items():
             for test in re_tests['tests']:

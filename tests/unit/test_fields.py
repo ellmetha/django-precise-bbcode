@@ -2,7 +2,6 @@
 
 # Standard library imports
 from __future__ import unicode_literals
-import os
 
 # Third party imports
 from django.conf import settings
@@ -13,10 +12,10 @@ from django.test import TestCase
 # Local application / specific library imports
 from precise_bbcode.fields import BBCodeContent
 from precise_bbcode.models import SmileyTag
-from precise_bbcode.tests import TestMessage
+from tests.models import TestMessage
 
 
-class FieldsTestCase(TestCase):
+class TestBbcodeTextField(TestCase):
     BBCODE_FIELDS_TESTS = (
         ('[b]hello [u]world![/u][/b]', '<strong>hello <u>world!</u></strong>'),
         ('[url=http://google.com]goto google[/url]', '<a href="http://google.com">goto google</a>'),
@@ -24,6 +23,39 @@ class FieldsTestCase(TestCase):
         ('[b]안녕하세요[/b]', '<strong>안녕하세요</strong>'),
     )
 
+    def test_accepts_none_values(self):
+        # Setup
+        message = TestMessage()
+        message.content = None
+        # Run
+        message.save()
+        # Check
+        self.assertIsNone(message.content)
+        rendered = hasattr(message.content, 'rendered')
+        self.assertFalse(rendered)
+
+    def test_can_save_both_raw_and_rendered_data(self):
+        # Run & check
+        for bbcodes_text, expected_html_text in self.BBCODE_FIELDS_TESTS:
+            message = TestMessage()
+            message.content = bbcodes_text
+            message.save()
+            self.assertEqual(message.content.rendered, expected_html_text)
+
+    def test_uses_a_valid_descriptor_protocol(self):
+        # Setup
+        message = TestMessage()
+        message.content = None
+        message.save()
+        bbcode_content = BBCodeContent('[b]hello world![/b]')
+        # Run
+        message.content = bbcode_content
+        message.save()
+        # Check
+        self.assertEqual(message.content.rendered, '<strong>hello world!</strong>')
+
+
+class TestSmileyCodeField(TestCase):
     SMILIES_FIELDS_TESTS = (
         ';-)',
         ':lol:',
@@ -41,8 +73,6 @@ class FieldsTestCase(TestCase):
 
     def setUp(self):
         # Set up an image used for doing smilies tests
-        TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
-        settings.MEDIA_ROOT = os.path.join(TEST_ROOT, 'testdata/media/')
         f = open(settings.MEDIA_ROOT + "/icon_e_wink.gif", "rb")
         image_file = File(f)
         self.image = image_file
@@ -56,38 +86,7 @@ class FieldsTestCase(TestCase):
             except:
                 pass
 
-    def test_bbcode_text_field_accept_none_values(self):
-        # Setup
-        message = TestMessage()
-        message.content = None
-        # Run
-        message.save()
-        # Check
-        self.assertIsNone(message.content)
-        rendered = hasattr(message.content, 'rendered')
-        self.assertFalse(rendered)
-
-    def test_bbcode_text_field_saving(self):
-        # Run & check
-        for bbcodes_text, expected_html_text in self.BBCODE_FIELDS_TESTS:
-            message = TestMessage()
-            message.content = bbcodes_text
-            message.save()
-            self.assertEqual(message.content.rendered, expected_html_text)
-
-    def test_bbcode_text_field_descriptor_protocol(self):
-        # Setup
-        message = TestMessage()
-        message.content = None
-        message.save()
-        bbcode_content = BBCodeContent('[b]hello world![/b]')
-        # Run
-        message.content = bbcode_content
-        message.save()
-        # Check
-        self.assertEqual(message.content.rendered, '<strong>hello world!</strong>')
-
-    def test_smiley_field_saving(self):
+    def test_can_save_valid_smilies(self):
         # Run & check
         for smiley_code in self.SMILIES_FIELDS_TESTS:
             smiley = SmileyTag()
@@ -98,7 +97,7 @@ class FieldsTestCase(TestCase):
             except ValidationError:
                 self.fail("The following smiley code failed to validate: {}".format(smiley_code))
 
-    def test_erroneous_smiley_field_cleaning(self):
+    def test_should_not_save_erroneous_smilies(self):
         # Run & check
         for smiley_code in self.ERRONEOUS_SMILIES_FIELS_TESTS:
             smiley = SmileyTag()

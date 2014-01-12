@@ -2,7 +2,6 @@
 
 # Standard library imports
 from __future__ import unicode_literals
-import os
 
 # Third party imports
 from django.conf import settings
@@ -14,7 +13,7 @@ from precise_bbcode.models import SmileyTag
 from precise_bbcode.parser import get_parser
 
 
-class SmiliesTestCase(TestCase):
+class TestSmiley(TestCase):
     SMILIES_TESTS = (
         (':test:', '<img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" />'),
         ('[list][*]:test: hello\n[/list]', '<ul><li><img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" /> hello</li></ul>'),
@@ -25,8 +24,6 @@ class SmiliesTestCase(TestCase):
     def setUp(self):
         self.parser = get_parser()
         # Set up an image used for doing smilies tests
-        TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
-        settings.MEDIA_ROOT = os.path.join(TEST_ROOT, 'testdata/media/')
         f = open(settings.MEDIA_ROOT + "/icon_e_wink.gif", "rb")
         image_file = File(f)
         self.image = image_file
@@ -45,7 +42,7 @@ class SmiliesTestCase(TestCase):
             except:
                 pass
 
-    def test_valid_smilies_rendering(self):
+    def test_can_render_valid_smilies(self):
         # Run & check
         for bbcodes_text, expected_html_text in self.SMILIES_TESTS:
             result = self.parser.render(bbcodes_text)

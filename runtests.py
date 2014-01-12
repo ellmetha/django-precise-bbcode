@@ -1,67 +1,57 @@
 #!/usr/bin/env python
 
 # Standard library imports
+import os
 from os.path import dirname
 from os.path import realpath
-import os
 import sys
 
 # Third party imports
-from django.core.management import call_command
-from django.conf import global_settings as default_settings
-from django.conf import settings
 import django
 
-
-# Give feedback on used versions
-sys.stderr.write('Using Python version {0} from {1}\n'.format(sys.version[:5], sys.executable))
-sys.stderr.write('Using Django version {0} from {1}\n'.format(
-    django.get_version(),
-    os.path.dirname(os.path.abspath(django.__file__)))
-)
-
-# Detect location and available modules
-module_root = dirname(realpath(__file__))
-
-# Inline settings file
-settings.configure(
-    # will be False anyway by DjangoTestRunner.
-    DEBUG=False,
-    TEMPLATE_DEBUG=False,
-    DATABASES={
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:'
-        }
-    },
-    TEMPLATE_LOADERS=(
-        'django.template.loaders.app_directories.Loader',
-    ),
-    TEMPLATE_CONTEXT_PROCESSORS = default_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-        'django.core.context_processors.request',
-    ),
-    INSTALLED_APPS = (
-        'django.contrib.auth',
-        'django.contrib.contenttypes',
-        'django.contrib.messages',
-        'django.contrib.sites',
-        'django.contrib.admin',
-        'precise_bbcode',
-    ),
-    SITE_ID = 3,
-)
-
-call_command('syncdb', verbosity=1, interactive=False)
+# Local application / specific library imports
+from tests.settings import configure
 
 
-# ---- app start
-verbosity = 2 if '-v' in sys.argv else 1
+def run(verbosity, *args):
+    from django_nose import NoseTestSuiteRunner
+    runner = NoseTestSuiteRunner(verbosity=verbosity)
+    if not args:
+        args = ['tests']
+    num_failures = runner.run_tests(args)
+    if num_failures:
+        sys.exit(num_failures)
 
-from django.test.utils import get_runner
 
-TestRunner = get_runner(settings)  # DjangoTestSuiteRunner
-runner = TestRunner(verbosity=verbosity, interactive=True, failfast=False)
-failures = runner.run_tests(['precise_bbcode'])
+if __name__ == '__main__':
+    args = sys.argv[1:]
 
-if failures:
-    sys.exit(bool(failures))
+    verbosity = 1
+    if args:
+        # If some args were specified, try to see if any nose options have
+        # been specified. If they have, then don't set any.
+        has_options = any(map(lambda x: x.startswith('--'), args))
+        if not has_options:
+            args.extend(['--with-specplugin'])
+        else:
+            # Remove options as nose will pick these up from sys.argv
+            for arg in args:
+                if arg.startswith('--verbosity'):
+                    verbosity = int(arg[-1])
+            args = [arg for arg in args if not arg.startswith('-')]
+
+    # Give feedback on used versions
+    sys.stderr.write('Using Python version {0} from {1}\n'.format(sys.version[:5], sys.executable))
+    sys.stderr.write('Using Django version {0} from {1}\n'.format(
+        django.get_version(),
+        os.path.dirname(os.path.abspath(django.__file__)))
+    )
+
+    # Detect location and available modules
+    module_root = dirname(realpath(__file__))
+
+    # Configure Django and machina
+    configure()
+
+    # To infinity... and beyond!
+    run(verbosity, *args)
