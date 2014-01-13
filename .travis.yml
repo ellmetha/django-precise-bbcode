@@ -4,16 +4,16 @@ python:
   - "3.2"
   - "3.3"
 env:
-  - DJANGO=django==1.4
+  - DJANGO=django==1.4.2
   - DJANGO=django==1.5
   - DJANGO=django==1.6
 
 matrix:
   exclude:
   - python: "3.2"
-    env: DJANGO=django==1.4
+    env: DJANGO=django==1.4.2
   - python: "3.3"
-    env: DJANGO=django==1.4
+    env: DJANGO=django==1.4.2
 install:
   - "pip install $DJANGO coverage pillow django-nose==1.2 --use-mirrors"
 script:
