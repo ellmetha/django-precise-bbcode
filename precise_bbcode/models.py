@@ -7,6 +7,7 @@ import re
 # Third party imports
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
@@ -20,6 +21,7 @@ from .parser import get_parser
 from .parser import placeholder_re
 
 
+@python_2_unicode_compatible
 class BBCodeTag(models.Model):
     tag_name = models.SlugField(max_length=20, verbose_name=_('BBCode tag name'), unique=True)
     tag_definition = models.TextField(verbose_name=_('Tag definition'))
@@ -76,7 +78,7 @@ class BBCodeTag(models.Model):
         verbose_name_plural = _('BBCode tags')
         app_label = 'precise_bbcode'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{}'.format(self.tag_name)
 
     def clean(self):
@@ -149,6 +151,7 @@ class BBCodeTag(models.Model):
         return (args, kwargs)
 
 
+@python_2_unicode_compatible
 class SmileyTag(models.Model):
     code = SmileyCodeField(max_length=60, verbose_name=_('Smiley code'), unique=True)
     image = models.ImageField(verbose_name=_('Smiley icon'), upload_to=bbcode_settings.SMILIES_UPLOAD_TO)
@@ -164,7 +167,7 @@ class SmileyTag(models.Model):
         verbose_name_plural = _('Smilies')
         app_label = 'precise_bbcode'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{}'.format(self.code)
 
     def save(self, *args, **kwargs):

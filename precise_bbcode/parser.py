@@ -7,6 +7,7 @@ import re
 
 # Third party imports
 from django.db.models import get_model
+from django.utils.encoding import python_2_unicode_compatible
 
 # Local application / specific library imports
 from .conf import settings as bbcode_settings
@@ -63,6 +64,7 @@ class BBCodeTagOptions(object):
             setattr(self, attr, bool(value))
 
 
+@python_2_unicode_compatible
 class BBCodeToken(object):
     TK_START_TAG = "start_tag"
     TK_END_TAG = "end_tag"
@@ -78,7 +80,7 @@ class BBCodeToken(object):
     def __repr__(self):
         return '<BBCodeToken instance "({0}, {1}, {2}, {3})">'.format(self.type, self.tag_name, self.option, self.text)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
 

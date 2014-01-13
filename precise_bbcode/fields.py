@@ -8,6 +8,7 @@ import re
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
@@ -20,12 +21,13 @@ _smiley_code_re = re.compile(r'^[\w|\S]+$')
 validate_smiley_code = RegexValidator(_smiley_code_re, _("Enter a valid 'smiley code' consisting of any character without whitespace characters"), 'invalid')
 
 
+@python_2_unicode_compatible
 class BBCodeContent(object):
     def __init__(self, raw, rendered=None):
         self.raw = raw
         self.rendered = rendered
 
-    def __unicode__(self):
+    def __str__(self):
         return '{}'.format(self.raw)
 
 
