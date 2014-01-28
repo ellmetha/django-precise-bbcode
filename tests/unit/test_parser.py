@@ -62,6 +62,7 @@ class TestParser(TestCase):
         ('[b] hello the[u]world ![/i] see you[/b]', '<strong> hello the[u]world ![/i] see you</strong>'),
         ('[col\nor]more tests[/color]', '[col<br />or]more tests[/color]'),
         ('[color]more tests[/color=#FFF]', '[color]more tests[/color=#FFF]'),
+        ('[*]hello[/i]', '<li>hello</li>'),
         # BBCodes with semantic errors
         ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes

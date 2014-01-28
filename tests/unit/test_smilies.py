@@ -11,6 +11,7 @@ from django.test import TestCase
 # Local application / specific library imports
 from precise_bbcode.models import SmileyTag
 from precise_bbcode.parser import get_parser
+from precise_bbcode.parser import _init_bbcode_smilies
 
 
 class TestSmiley(TestCase):
@@ -32,6 +33,7 @@ class TestSmiley(TestCase):
         smiley.code = ':test:'
         smiley.image.save('icon_e_wink.gif', self.image)
         smiley.save()
+        _init_bbcode_smilies(self.parser)
 
     def tearDown(self):
         self.image.close()
