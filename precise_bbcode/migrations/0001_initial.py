@@ -9,8 +9,8 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'BBCodeTag'
-        db.create_table(u'precise_bbcode_bbcodetag', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        db.create_table('precise_bbcode_bbcodetag', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('tag_name', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=20)),
             ('tag_definition', self.gf('django.db.models.fields.TextField')()),
             ('html_replacement', self.gf('django.db.models.fields.TextField')()),
@@ -30,7 +30,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'BBCodeTag'
-        db.delete_table(u'precise_bbcode_bbcodetag')
+        db.delete_table('precise_bbcode_bbcodetag')
 
 
     models = {
@@ -40,7 +40,7 @@ class Migration(SchemaMigration):
             'escape_html': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'helpline': ('django.db.models.fields.CharField', [], {'max_length': '120', 'null': 'True', 'blank': 'True'}),
             'html_replacement': ('django.db.models.fields.TextField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'newline_closes': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'render_embedded': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'replace_links': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),

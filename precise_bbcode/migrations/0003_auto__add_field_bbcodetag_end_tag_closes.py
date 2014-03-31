@@ -9,14 +9,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'BBCodeTag.end_tag_closes'
-        db.add_column(u'precise_bbcode_bbcodetag', 'end_tag_closes',
+        db.add_column('precise_bbcode_bbcodetag', 'end_tag_closes',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
 
     def backwards(self, orm):
         # Deleting field 'BBCodeTag.end_tag_closes'
-        db.delete_column(u'precise_bbcode_bbcodetag', 'end_tag_closes')
+        db.delete_column('precise_bbcode_bbcodetag', 'end_tag_closes')
 
 
     models = {
@@ -27,7 +27,7 @@ class Migration(SchemaMigration):
             'escape_html': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'helpline': ('django.db.models.fields.CharField', [], {'max_length': '120', 'null': 'True', 'blank': 'True'}),
             'html_replacement': ('django.db.models.fields.TextField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'newline_closes': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'render_embedded': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'replace_links': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),

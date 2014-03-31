@@ -9,25 +9,25 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'TestMessage'
-        db.create_table(u'test_messages_testmessage', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            (u'_bbcode_content_rendered', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+        db.create_table('test_messages_testmessage', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('_bbcode_content_rendered', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('bbcode_content', self.gf('precise_bbcode.fields.BBCodeTextField')(no_rendered_field=True)),
         ))
-        db.send_create_signal(u'test_messages', ['TestMessage'])
+        db.send_create_signal('test_messages', ['TestMessage'])
 
 
     def backwards(self, orm):
         # Deleting model 'TestMessage'
-        db.delete_table(u'test_messages_testmessage')
+        db.delete_table('test_messages_testmessage')
 
 
     models = {
-        u'test_messages.testmessage': {
+        'test_messages.testmessage': {
             'Meta': {'object_name': 'TestMessage'},
-            u'_bbcode_content_rendered': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'bbcode_content': ('precise_bbcode.fields.BBCodeTextField', [], {u'no_rendered_field': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            '_bbcode_content_rendered': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'bbcode_content': ('precise_bbcode.fields.BBCodeTextField', [], {'no_rendered_field': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         }
     }
 

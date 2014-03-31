@@ -9,32 +9,32 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'SmileyTag'
-        db.create_table(u'precise_bbcode_smileytag', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('code', self.gf(u'precise_bbcode.fields.SmileyCodeField')(unique=True, max_length=60, db_index=True)),
+        db.create_table('precise_bbcode_smileytag', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('code', self.gf('precise_bbcode.fields.SmileyCodeField')(unique=True, max_length=60, db_index=True)),
             ('image', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
             ('image_width', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
             ('image_height', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
             ('emotion', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
             ('display_on_editor', self.gf('django.db.models.fields.BooleanField')(default=True)),
         ))
-        db.send_create_signal(u'precise_bbcode', ['SmileyTag'])
+        db.send_create_signal('precise_bbcode', ['SmileyTag'])
 
 
     def backwards(self, orm):
         # Deleting model 'SmileyTag'
-        db.delete_table(u'precise_bbcode_smileytag')
+        db.delete_table('precise_bbcode_smileytag')
 
 
     models = {
-        u'precise_bbcode.bbcodetag': {
+        'precise_bbcode.bbcodetag': {
             'Meta': {'object_name': 'BBCodeTag'},
             'display_on_editor': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'end_tag_closes': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'escape_html': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'helpline': ('django.db.models.fields.CharField', [], {'max_length': '120', 'null': 'True', 'blank': 'True'}),
             'html_replacement': ('django.db.models.fields.TextField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'newline_closes': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'render_embedded': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'replace_links': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -46,12 +46,12 @@ class Migration(SchemaMigration):
             'tag_name': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '20'}),
             'transform_newlines': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
-        u'precise_bbcode.smileytag': {
+        'precise_bbcode.smileytag': {
             'Meta': {'object_name': 'SmileyTag'},
-            'code': (u'precise_bbcode.fields.SmileyCodeField', [], {'unique': 'True', 'max_length': '60', 'db_index': 'True'}),
+            'code': ('precise_bbcode.fields.SmileyCodeField', [], {'unique': 'True', 'max_length': '60', 'db_index': 'True'}),
             'display_on_editor': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'emotion': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
             'image_height': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
             'image_width': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'})
