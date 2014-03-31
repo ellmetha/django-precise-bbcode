@@ -19,7 +19,7 @@ setup(
     version=read_relative_file('VERSION').strip(),
     author='Morgan Aubert',
     author_email='morgan.aubert@zoho.com',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     url='https://github.com/ellmetha/django-precise-bbcode',
     license='BSD license, see LICENSE file',
