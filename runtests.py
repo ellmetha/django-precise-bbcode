@@ -16,7 +16,7 @@ from tests.settings import configure
 def run(verbosity, *args):
     try:
         from django.test.runner import DiscoverRunner
-    except:
+    except ImportError:
         from django_nose import NoseTestSuiteRunner
         runner = NoseTestSuiteRunner(verbosity=verbosity)
     else:
