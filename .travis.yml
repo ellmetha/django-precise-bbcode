@@ -20,6 +20,3 @@ script:
   - make travis
 after_success:
   - coveralls
-branches:
-  only:
-    - master
