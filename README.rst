@@ -25,8 +25,8 @@ Read more in the `documentation <http://django-precise-bbcode.readthedocs.org/en
 Requirements
 ------------
 
-* ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3)
-* ``django >= 1.4.2`` (tested with version 1.4.2, 1.5, 1.6)
+* ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3, 3.4)
+* ``django >= 1.4.2`` (tested with version 1.4.2, 1.5, 1.6, 1.7)
 * ``PIL`` or ``Pillow`` (required for smiley tags)
 * ``setuptools``
 
