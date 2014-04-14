@@ -1,56 +1,55 @@
-# -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# encoding: utf8
+from django.db import models, migrations
+import precise_bbcode.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'BBCodeTag'
-        db.create_table('precise_bbcode_bbcodetag', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('tag_name', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=20)),
-            ('tag_definition', self.gf('django.db.models.fields.TextField')()),
-            ('html_replacement', self.gf('django.db.models.fields.TextField')()),
-            ('helpline', self.gf('django.db.models.fields.CharField')(max_length=120, null=True, blank=True)),
-            ('display_on_editor', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('newline_closes', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('same_tag_closes', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('standalone', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('render_embedded', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('escape_html', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('replace_links', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('strip', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('swallow_trailing_newline', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('precise_bbcode', ['BBCodeTag'])
+    dependencies = [
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'BBCodeTag'
-        db.delete_table('precise_bbcode_bbcodetag')
-
-
-    models = {
-        'precise_bbcode.bbcodetag': {
-            'Meta': {'object_name': 'BBCodeTag'},
-            'display_on_editor': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'escape_html': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'helpline': ('django.db.models.fields.CharField', [], {'max_length': '120', 'null': 'True', 'blank': 'True'}),
-            'html_replacement': ('django.db.models.fields.TextField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'newline_closes': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'render_embedded': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'replace_links': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'same_tag_closes': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'standalone': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'strip': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'swallow_trailing_newline': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'tag_definition': ('django.db.models.fields.TextField', [], {}),
-            'tag_name': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '20'})
-        }
-    }
-
-    complete_apps = ['precise_bbcode']
+    operations = [
+        migrations.CreateModel(
+            name='BBCodeTag',
+            fields=[
+                (u'id', models.AutoField(verbose_name=u'ID', serialize=False, auto_created=True, primary_key=True)),
+                ('tag_name', models.SlugField(unique=True, max_length=20, verbose_name=u'BBCode tag name')),
+                ('tag_definition', models.TextField(verbose_name=u'Tag definition')),
+                ('html_replacement', models.TextField(verbose_name=u'Replacement HTML code')),
+                ('newline_closes', models.BooleanField(default=False, help_text=u'Set this option to force the closing of this tag after a newline', verbose_name=u'Newline closing')),
+                ('same_tag_closes', models.BooleanField(default=False, help_text=u'Set this option to force the closing of this tag after the beginning of a similar tag', verbose_name=u'Same tag closing')),
+                ('end_tag_closes', models.BooleanField(default=False, help_text=u'Set this option to force the closing of this tag after the end of another tag', verbose_name=u'End tag closing')),
+                ('standalone', models.BooleanField(default=False, help_text=u'Set this option if this tag does not have a closing tag', verbose_name=u'Standalone tag')),
+                ('transform_newlines', models.BooleanField(default=True, help_text=u'Set this option to convert any line break to the equivalent markup', verbose_name=u'Transform line breaks')),
+                ('render_embedded', models.BooleanField(default=True, help_text=u'Set this option to force the tags embedded in this tag to be rendered', verbose_name=u'Render embedded tags')),
+                ('escape_html', models.BooleanField(default=True, help_text=u'Set this option to escape HTML characters (<, >, and &) inside this tag', verbose_name=u'Escape HTML characters')),
+                ('replace_links', models.BooleanField(default=True, help_text=u'Set this option to replace URLs with link markups inside this tag', verbose_name=u'Replace links')),
+                ('strip', models.BooleanField(default=False, help_text=u'Set this option to strip leading and trailing whitespace inside this tag', verbose_name=u'Strip leading and trailing whitespace')),
+                ('swallow_trailing_newline', models.BooleanField(default=False, help_text=u'Set this option to swallow the first trailing newline', verbose_name=u'Swallow trailing newline')),
+                ('helpline', models.CharField(max_length=120, null=True, verbose_name=u'Help text for this tag', blank=True)),
+                ('display_on_editor', models.BooleanField(default=True, verbose_name=u'Display on editor')),
+            ],
+            options={
+                u'verbose_name': u'BBCode tag',
+                u'verbose_name_plural': u'BBCode tags',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='SmileyTag',
+            fields=[
+                (u'id', models.AutoField(verbose_name=u'ID', serialize=False, auto_created=True, primary_key=True)),
+                ('code', precise_bbcode.fields.SmileyCodeField(unique=True, max_length=60, verbose_name=u'Smiley code', db_index=True)),
+                ('image', models.ImageField(upload_to='precise_bbcode/smilies', verbose_name=u'Smiley icon')),
+                ('image_width', models.PositiveIntegerField(null=True, verbose_name=u'Smiley icon width', blank=True)),
+                ('image_height', models.PositiveIntegerField(null=True, verbose_name=u'Smiley icon height', blank=True)),
+                ('emotion', models.CharField(max_length=100, null=True, verbose_name=u'Related emotion', blank=True)),
+                ('display_on_editor', models.BooleanField(default=True, verbose_name=u'Display on editor')),
+            ],
+            options={
+                u'verbose_name': u'Smiley',
+                u'verbose_name_plural': u'Smilies',
+            },
+            bases=(models.Model,),
+        ),
+    ]
