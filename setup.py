@@ -29,7 +29,6 @@ setup(
     install_requires=[
         "django>=1.4",
         "pillow>=2.2.1",
-        "south",
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
