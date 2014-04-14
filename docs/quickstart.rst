@@ -16,11 +16,11 @@ Then install the models::
 
     python manage.py syncdb
 
-Or, if you are using South::
+Or, if you are using South and Django 1.6 or below::
 
     python manage.py migrate precise_bbcode
 
-The current release of *django-precise-bbcode* supports Django 1.4, 1.5 and 1.6. Python 3 is supported.
+The current release of *django-precise-bbcode* supports Django 1.4, 1.5, 1.6 and 1.7. Python 3 is supported.
 
 
 Built-in BBCodes

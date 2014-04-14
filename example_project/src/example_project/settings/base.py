@@ -116,7 +116,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # Third party apps
-    'south',
     'pipeline',
     'crispy_forms',
 
