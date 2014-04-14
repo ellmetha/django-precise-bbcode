@@ -1,13 +1,15 @@
 django-precise-bbcode
 =====================
 
-.. image:: https://badge.fury.io/py/django-precise-bbcode.png
-    :target: http://badge.fury.io/py/django-precise-bbcode
 .. image::  https://travis-ci.org/ellmetha/django-precise-bbcode.png?branch=master
   :target: http://travis-ci.org/ellmetha/django-precise-bbcode
   :alt: build-status
 .. image:: https://coveralls.io/repos/ellmetha/django-precise-bbcode/badge.png?branch=master
   :target: https://coveralls.io/r/ellmetha/django-precise-bbcode?branch=master 
+.. image:: https://badge.fury.io/py/django-precise-bbcode.png
+    :target: http://badge.fury.io/py/django-precise-bbcode
+.. image:: https://pypip.in/d/django-precise-bbcode/badge.png
+    :target: https://crate.io/packages/django-precise-bbcode
 
 **Django-precise-bbcode** is a Django application providing a way to create textual contents based on BBCodes.
 
