@@ -16,9 +16,19 @@ Then install the models::
 
     python manage.py syncdb
 
-Or, if you are using South and Django 1.6 or below::
+If you are using South **and** Django 1.6 or below you have to customize the ``SOUTH_MIGRATION_MODULES`` setting as follow:
 
-    python manage.py migrate precise_bbcode
+::
+
+  SOUTH_MIGRATION_MODULES = {
+      'precise_bbcode': 'precise_bbcode.south_migrations',
+  }
+
+Then you can use the migration command provided by South:
+
+::
+
+  python manage.py migrate precise_bbcode
 
 The current release of *django-precise-bbcode* supports Django 1.4, 1.5, 1.6 and 1.7. Python 3 is supported.
 
