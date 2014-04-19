@@ -57,7 +57,7 @@ Then install the models:
 
   python manage.py syncdb
   
-Or, if you are using South and Django 1.6 or below:
+Or, if you are using South **and** Django 1.6 or below:
 
 ::
 
