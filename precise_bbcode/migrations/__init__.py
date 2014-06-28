@@ -12,7 +12,7 @@ To support South migrations, you should customize the SOUTH_MIGRATION_MODULES se
     }
 """
 
-# These migrations will work if Django 1.7 or greater is installed
+# These migrations will work if Django 1.7 or greater is installed
 try:
     from django.db import migrations
 except ImportError:
