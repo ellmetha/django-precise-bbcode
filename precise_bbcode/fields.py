@@ -63,10 +63,23 @@ class BBCodeTextField(models.TextField):
     by the BBCode parser.
     """
     def __init__(self, *args, **kwargs):
-        # For South FakeORM compatibility: the frozen version of a BBCodeTextField can't try to add a
-        # '*_rendered' field, because the '*_rendered' field itself is frozen as well.
+        # For South FakeORM / Django 1.7 migration serializer compatibility: the frozen version of a
+        #BBCodeTextField can't try to add a '*_rendered' field, because the '*_rendered' field itself
+        # is frozen / serialized as well.
         self.add_rendered_field = not kwargs.pop('no_rendered_field', False)
         super(BBCodeTextField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        """
+        As outlined in the Django 1.7 documentation, this method tells Django how to take an instance
+        of a new field in order to reduce it to a serialized form. This can be used to configure what
+        arguments need to be passed to the __init__() method of the field in order to re-create it.
+        We use it in order to pass the 'no_rendered_field' to the __init__() method. This will allow
+        the _rendered field to not be added to the model class twice.
+        """
+        name, import_path, args, kwargs = super(BBCodeTextField, self).deconstruct()
+        kwargs['no_rendered_field'] = True
+        return name, import_path, args, kwargs
 
     def contribute_to_class(self, cls, name):
         self.raw_name = name
