@@ -25,6 +25,9 @@ class BBCodeContent(object):
         self.raw = raw
         self.rendered = rendered
 
+    def __unicode__(self):
+        return self.raw
+
 
 class BBCodeTextCreator(object):
     """
