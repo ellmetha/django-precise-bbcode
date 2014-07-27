@@ -8,6 +8,7 @@ import re
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import signals
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
@@ -20,10 +21,14 @@ _smiley_code_re = re.compile(r'^[\w|\S]+$')
 validate_smiley_code = RegexValidator(_smiley_code_re, _("Enter a valid 'smiley code' consisting of any character without whitespace characters"), 'invalid')
 
 
+@python_2_unicode_compatible
 class BBCodeContent(object):
     def __init__(self, raw, rendered=None):
         self.raw = raw
         self.rendered = rendered
+
+    def __str__(self):
+        return self.raw
 
 
 class BBCodeTextCreator(object):
@@ -63,10 +68,23 @@ class BBCodeTextField(models.TextField):
     by the BBCode parser.
     """
     def __init__(self, *args, **kwargs):
-        # For South FakeORM compatibility: the frozen version of a BBCodeTextField can't try to add a
-        # '*_rendered' field, because the '*_rendered' field itself is frozen as well.
+        # For South FakeORM / Django 1.7 migration serializer compatibility: the frozen version of a
+        #BBCodeTextField can't try to add a '*_rendered' field, because the '*_rendered' field itself
+        # is frozen / serialized as well.
         self.add_rendered_field = not kwargs.pop('no_rendered_field', False)
         super(BBCodeTextField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        """
+        As outlined in the Django 1.7 documentation, this method tells Django how to take an instance
+        of a new field in order to reduce it to a serialized form. This can be used to configure what
+        arguments need to be passed to the __init__() method of the field in order to re-create it.
+        We use it in order to pass the 'no_rendered_field' to the __init__() method. This will allow
+        the _rendered field to not be added to the model class twice.
+        """
+        name, import_path, args, kwargs = super(BBCodeTextField, self).deconstruct()
+        kwargs['no_rendered_field'] = True
+        return name, import_path, args, kwargs
 
     def contribute_to_class(self, cls, name):
         self.raw_name = name

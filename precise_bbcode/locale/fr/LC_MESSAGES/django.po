@@ -136,7 +136,7 @@ msgstr "Supprimer les espaces de début et de fin du contenu du bbcode"
 msgid ""
 "Set this option to strip leading and trailing whitespace inside this tag"
 msgstr ""
-"Activer cette option pour  spprimer les espaces de début et de fin du "
+"Activer cette option pour  supprimer les espaces de début et de fin du "
 "contenu du bbcode"
 
 #: models.py:66

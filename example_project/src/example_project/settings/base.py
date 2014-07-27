@@ -78,12 +78,6 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '833090dhkgrfgdfg#ddfggdfdf*fds5645456fg'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
@@ -99,6 +93,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'pipeline.middleware.MinifyHTMLMiddleware',
@@ -121,7 +116,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # Third party apps
-    'south',
     'pipeline',
     'crispy_forms',
 

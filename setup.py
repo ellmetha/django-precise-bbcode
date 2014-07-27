@@ -24,12 +24,11 @@ setup(
     url='https://github.com/ellmetha/django-precise-bbcode',
     license='BSD license, see LICENSE file',
     description='A django BBCode integration..',
-    long_description=open('README.rst').read(),
+    long_description=read_relative_file('README.rst'),
     zip_safe=False,
     install_requires=[
         "django>=1.4",
         "pillow>=2.2.1",
-        "south",
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -44,5 +43,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ],
 )

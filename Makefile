@@ -1,4 +1,4 @@
-.PHONY: install upgrade coverage travis
+.PHONY: install upgrade coverage travis docs
 
 install:
 		pip install -r requirements.txt
@@ -13,3 +13,6 @@ coverage:
 		coverage report -m
 
 travis: install coverage
+
+docs:
+	cd docs && make html

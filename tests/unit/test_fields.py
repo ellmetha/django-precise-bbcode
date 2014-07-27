@@ -91,6 +91,7 @@ class TestSmileyCodeField(TestCase):
         for smiley_code in self.SMILIES_FIELDS_TESTS:
             smiley = SmileyTag()
             smiley.code = smiley_code
+            self.image.open()  # Re-open the ImageField
             smiley.image.save('icon_e_wink.gif', self.image)
             try:
                 smiley.full_clean()
@@ -102,6 +103,7 @@ class TestSmileyCodeField(TestCase):
         for smiley_code in self.ERRONEOUS_SMILIES_FIELS_TESTS:
             smiley = SmileyTag()
             smiley.code = smiley_code
+            self.image.open()  # Re-open the ImageField
             smiley.image.save('icon_e_wink.gif', self.image)
             with self.assertRaises(ValidationError):
                 smiley.full_clean()

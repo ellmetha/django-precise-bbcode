@@ -1,13 +1,27 @@
+=====================
 django-precise-bbcode
 =====================
 
-.. image:: https://badge.fury.io/py/django-precise-bbcode.png
-    :target: http://badge.fury.io/py/django-precise-bbcode
-.. image::  https://travis-ci.org/ellmetha/django-precise-bbcode.png?branch=master
-  :target: http://travis-ci.org/ellmetha/django-precise-bbcode
-  :alt: build-status
+.. image:: https://pypip.in/version/django-precise-bbcode/badge.png
+    :target: https://pypi.python.org/pypi/django-precise-bbcode/
+    :alt: Latest Version
+
+.. image:: https://travis-ci.org/ellmetha/django-precise-bbcode.svg?branch=master
+    :target: https://travis-ci.org/ellmetha/django-precise-bbcode
+    :alt: Travis status
+
 .. image:: https://coveralls.io/repos/ellmetha/django-precise-bbcode/badge.png?branch=master
-  :target: https://coveralls.io/r/ellmetha/django-precise-bbcode?branch=master 
+    :target: https://coveralls.io/r/ellmetha/django-precise-bbcode
+    :alt: Coveralls status
+
+.. image:: https://pypip.in/download/django-precise-bbcode/badge.png
+    :target: https://pypi.python.org/pypi//django-precise-bbcode/
+    :alt: Download
+
+.. image:: https://pypip.in/wheel/django-precise-bbcode/badge.png
+    :target: https://pypi.python.org/pypi/django-precise-bbcode/
+    :alt: Wheel Status
+
 
 **Django-precise-bbcode** is a Django application providing a way to create textual contents based on BBCodes.
 
@@ -23,8 +37,8 @@ Read more in the `documentation <http://django-precise-bbcode.readthedocs.org/en
 Requirements
 ------------
 
-* ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3)
-* ``django >= 1.4.2`` (tested with version 1.4.2, 1.5, 1.6)
+* ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3, 3.4)
+* ``django >= 1.4.2`` (tested with version 1.4.2, 1.5, 1.6, 1.7)
 * ``PIL`` or ``Pillow`` (required for smiley tags)
 * ``setuptools``
 
