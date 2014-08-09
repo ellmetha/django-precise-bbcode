@@ -51,7 +51,7 @@ Just run:
 ::
 
   pip install django-precise-bbcode
-
+|
 Once installed you can configure your project to use django-precise-bbcode with the following steps.
 
 Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
