@@ -63,6 +63,7 @@ Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
       'precise_bbcode',
   )
 
+
 Then install the models:
 
 ::
