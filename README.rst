@@ -62,13 +62,13 @@ Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
       # other apps
       'precise_bbcode',
   )
-
+|
 Then install the models:
 
 ::
 
   python manage.py syncdb
-  
+|
 If you are using South **and** Django 1.6 or below you have to customize the ``SOUTH_MIGRATION_MODULES`` setting as follow:
 
 ::
@@ -76,8 +76,7 @@ If you are using South **and** Django 1.6 or below you have to customize the ``S
   SOUTH_MIGRATION_MODULES = {
       'precise_bbcode': 'precise_bbcode.south_migrations',
   }
-
-
+|
 Then you can use the migration command provided by South:
 
 ::
@@ -97,7 +96,7 @@ Django-precise-bbcode comes with a BBCode parser that allows you to transform a 
   >>> parser = get_parser()
   >>> parser.render('[b]Hello [u]world![/u][/b]')
   '<strong>Hello <u>world!</u></strong>'
-  
+|  
 *It's that easy!*
 
 As you may need to render bbcodes inside one of your Django template, this parser can be used as a template filter or as a template tag after loading ``bbcode_tags``::
@@ -105,7 +104,7 @@ As you may need to render bbcodes inside one of your Django template, this parse
   {% load bbcode_tags %}
   {% bbcode entry.bbcode_content %}
   {{ "[b]Write some bbcodes![/b]"|bbcode }}
-
+|
 The BBCode content included in the ``entry.bbcode_content``  field will be converted to HTML and displayed. The last statement will output ``<strong>Write some bbcodes!</strong>``.
 
 Storing bbcodes
@@ -120,7 +119,7 @@ While you can use the Django built-in ``models.TextField`` to add your BBCode co
 
   class Post(models.Model):
       content = BBCodeTextField()
-
+|
 This field will store both the BBCode content and the correspondign HTML markup. The HTML content of such a field can then be displayed in any template by using its ``rendered`` attribute:
 
 ::
