@@ -23,7 +23,7 @@ django-precise-bbcode
     :alt: Wheel Status
 
 |
-**Django-precise-bbcode** is a Django application providing a way to create textual contents based on BBCodes.
+*Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
 
   BBCode is a special implementation of HTML. BBCode itself is similar in style to HTML, tags are enclosed in square brackets [ and ] rather than < and > and it offers greater control over what and how something is displayed.
 
@@ -52,7 +52,7 @@ Just run:
 
   pip install django-precise-bbcode
   
-Once installed you can configure your project to use django-precise-bbcode with the following steps.
+Once installed you can configure your project to use *django-precise-bbcode* with the following steps.
 
 Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
 
@@ -90,7 +90,7 @@ Usage
 Rendering bbcodes
 *****************
 
-Django-precise-bbcode comes with a BBCode parser that allows you to transform a textual content containing BBCode tags to the corresponding HTML markup. To do this, simply import the ``get_parser`` shortcut and use the ``render`` method of the BBCode parser::
+*Django-precise-bbcode* comes with a BBCode parser that allows you to transform a textual content containing BBCode tags to the corresponding HTML markup. To do this, simply import the ``get_parser`` shortcut and use the ``render`` method of the BBCode parser::
 
   >>> from precise_bbcode.parser import get_parser
   >>> parser = get_parser()
@@ -110,7 +110,7 @@ The BBCode content included in the ``entry.bbcode_content``  field will be conve
 Storing bbcodes
 ***************
 
-While you can use the Django built-in ``models.TextField`` to add your BBCode contents to your models, a common need is to store both the BBCode content and the corresponding HTML markup in the database. To address this Django-precise-bbcode provides a ``BBCodeTextField``.
+While you can use the Django built-in ``models.TextField`` to add your BBCode contents to your models, a common need is to store both the BBCode content and the corresponding HTML markup in the database. To address this *django-precise-bbcode* provides a ``BBCodeTextField``.
 
 ::
   
