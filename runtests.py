@@ -14,13 +14,9 @@ from tests.settings import configure
 
 
 def run(verbosity, *args):
-    try:
-        from django.test.runner import DiscoverRunner
-    except ImportError:
-        from django_nose import NoseTestSuiteRunner
-        runner = NoseTestSuiteRunner(verbosity=verbosity)
-    else:
-        runner = DiscoverRunner(verbosity=verbosity)
+    from django_nose import NoseTestSuiteRunner
+    runner = NoseTestSuiteRunner(verbosity=verbosity)
+
     if not args:
         args = ['tests']
     num_failures = runner.run_tests(args)
@@ -36,9 +32,7 @@ if __name__ == '__main__':
         # If some args were specified, try to see if any nose options have
         # been specified. If they have, then don't set any.
         has_options = any(map(lambda x: x.startswith('--'), args))
-        if not has_options:
-            args.extend(['--with-specplugin'])
-        else:
+        if has_options:
             # Remove options as nose will pick these up from sys.argv
             for arg in args:
                 if arg.startswith('--verbosity'):
