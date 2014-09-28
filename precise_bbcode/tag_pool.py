@@ -6,8 +6,8 @@
 from django.core.exceptions import ImproperlyConfigured
 
 # Local application / specific library imports
-from precise_bbcode.tag_base import TagBase
-from precise_bbcode.utils.django_load import load
+from .tag_base import TagBase
+from .core.loading import load
 
 
 class TagAlreadyRegistered(Exception):

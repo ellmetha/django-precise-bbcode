@@ -8,13 +8,13 @@ import re
 from django.test import TestCase
 
 # Local application / specific library imports
-from precise_bbcode.parser import get_parser
-from precise_bbcode.parser import _color_re
-from precise_bbcode.parser import _email_re
-from precise_bbcode.parser import _number_re
-from precise_bbcode.parser import _simpletext_re
-from precise_bbcode.parser import _text_re
-from precise_bbcode.parser import _url_re
+from precise_bbcode import get_parser
+from precise_bbcode.bbcode.parser import _color_re
+from precise_bbcode.bbcode.parser import _email_re
+from precise_bbcode.bbcode.parser import _number_re
+from precise_bbcode.bbcode.parser import _simpletext_re
+from precise_bbcode.bbcode.parser import _text_re
+from precise_bbcode.bbcode.parser import _url_re
 
 
 class TestParser(TestCase):

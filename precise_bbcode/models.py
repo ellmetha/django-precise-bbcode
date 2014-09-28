@@ -11,14 +11,14 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
+from . import get_parser
+from .bbcode.parser import BBCodeParser
+from .bbcode.parser import placeholder_re
+from .bbcode.tag import bbcodde_standalone_re
+from .bbcode.tag import bbcodde_standard_re
+from .bbcode.tag import BBCodeTagOptions
 from .conf import settings as bbcode_settings
 from .fields import SmileyCodeField
-from .parser import bbcodde_standalone_re
-from .parser import bbcodde_standard_re
-from .parser import BBCodeParser
-from .parser import BBCodeTagOptions
-from .parser import get_parser
-from .parser import placeholder_re
 
 
 @python_2_unicode_compatible

@@ -13,8 +13,8 @@ from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
 # Local application / specific library imports
-from precise_bbcode.utils.bbcode import render_bbcodes
-from precise_bbcode.utils.compat import string_types
+from precise_bbcode import render_bbcodes
+from precise_bbcode.core.compat import string_types
 
 
 register = template.Library()

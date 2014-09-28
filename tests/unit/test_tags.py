@@ -9,10 +9,10 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 # Local application / specific library imports
+from precise_bbcode import get_parser
+from precise_bbcode.bbcode import _init_bbcode_tags
+from precise_bbcode.bbcode import _init_custom_bbcode_tags
 from precise_bbcode.models import BBCodeTag
-from precise_bbcode.parser import get_parser
-from precise_bbcode.parser import _init_bbcode_tags
-from precise_bbcode.parser import _init_custom_bbcode_tags
 from precise_bbcode.tag_base import TagBase
 from precise_bbcode.tag_pool import TagAlreadyRegistered
 from precise_bbcode.tag_pool import TagNotRegistered
@@ -180,7 +180,7 @@ class TestBbcodeTag(TestCase):
             tag = BBCodeTag(**tag_dict)
             try:
                 tag.clean()
-            except ValidationError as e:
+            except ValidationError:
                 self.fail("The following BBCode failed to validate: {}".format(tag_dict))
 
     def test_should_provide_the_required_parser_args(self):

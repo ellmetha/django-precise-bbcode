@@ -9,9 +9,9 @@ from django.core.files import File
 from django.test import TestCase
 
 # Local application / specific library imports
+from precise_bbcode import get_parser
+from precise_bbcode.bbcode import _init_bbcode_smilies
 from precise_bbcode.models import SmileyTag
-from precise_bbcode.parser import get_parser
-from precise_bbcode.parser import _init_bbcode_smilies
 
 
 class TestSmiley(TestCase):

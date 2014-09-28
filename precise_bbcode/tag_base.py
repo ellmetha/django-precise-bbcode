@@ -7,8 +7,8 @@ import re
 from django.core.exceptions import ImproperlyConfigured
 
 # Local application / specific library imports
-from precise_bbcode.parser import BBCodeTagOptions
-from precise_bbcode.utils.compat import with_metaclass
+from .bbcode.tag import BBCodeTagOptions
+from .core.compat import with_metaclass
 
 
 class TagBaseMetaclass(type):
