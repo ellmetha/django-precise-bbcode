@@ -10,8 +10,7 @@ from django.test import TestCase
 
 # Local application / specific library imports
 from precise_bbcode import get_parser
-from precise_bbcode.bbcode import _init_bbcode_tags
-from precise_bbcode.bbcode import _init_custom_bbcode_tags
+from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.tag_base import TagBase
 from precise_bbcode.tag_pool import TagAlreadyRegistered
@@ -112,9 +111,10 @@ class TestBbcodeTagPool(TestCase):
 
     def test_owns_tags_that_can_be_rendered(self):
         # Setup
+        parser_loader = BBCodeParserLoader(parser=self.parser)
         tag_pool.register_tag(FooTagAlt)
         tag_pool.register_tag(BarTag)
-        _init_bbcode_tags(self.parser)
+        parser_loader.init_bbcode_tags()
         # Run & check
         for bbcodes_text, expected_html_text in self.TAGS_TESTS:
             result = self.parser.render(bbcodes_text)
@@ -196,9 +196,10 @@ class TestBbcodeTag(TestCase):
 
     def test_can_be_rendered(self):
         # Setup
+        parser_loader = BBCodeParserLoader(parser=self.parser)
         tag = BBCodeTag(**{'tag_definition': '[mail]{EMAIL}[/mail]',
                         'html_replacement': '<a href="mailto:{EMAIL}">{EMAIL}</a>', 'swallow_trailing_newline': True})
         tag.save()
-        _init_custom_bbcode_tags(self.parser)
+        parser_loader.init_custom_bbcode_tags()
         # Run & check
         self.assertEqual(self.parser.render('[mail]xyz@xyz.com[/mail]'), '<a href="mailto:xyz@xyz.com">xyz@xyz.com</a>')

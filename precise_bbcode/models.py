@@ -12,7 +12,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
 from . import get_parser
-from .bbcode.parser import BBCodeParser
 from .bbcode.parser import placeholder_re
 from .bbcode.tag import bbcodde_standalone_re
 from .bbcode.tag import bbcodde_standard_re
@@ -113,9 +112,9 @@ class BBCodeTag(models.Model):
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
         # with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT' placeholders are needed
         placeholder_types = [re.sub('\d+$', '', placeholder) for placeholder in def_placeholders]
-        valid_placeholder_types = [placeholder for placeholder in placeholder_types if placeholder in BBCodeParser.PLACEHOLDERS_RE.keys()]
+        valid_placeholder_types = [placeholder for placeholder in placeholder_types if placeholder in parser.placeholders.keys()]
         if valid_placeholder_types != placeholder_types:
-            raise ValidationError(_("You can only use placeholder names among: " + str(BBCodeParser.PLACEHOLDERS_RE.keys())
+            raise ValidationError(_("You can only use placeholder names among: " + str(parser.placeholders.keys())
                                   + ". If you need many placeholders of a specific type, you can append numbers to them (eg. {TEXT1} or {TEXT2})"))
 
         super(BBCodeTag, self).clean()

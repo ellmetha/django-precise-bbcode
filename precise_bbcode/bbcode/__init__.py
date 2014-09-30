@@ -2,79 +2,92 @@
 
 # Standard library imports
 from __future__ import unicode_literals
-from collections import defaultdict
-import re
 
 # Third party imports
 from django.db.models import get_model
-from django.utils.encoding import python_2_unicode_compatible
 
 # Local application / specific library imports
+from .parser import BBCodeParser
+from .placeholder import BaseBBCodePlaceholder
 from precise_bbcode.conf import settings as bbcode_settings
+from precise_bbcode.core.loading import get_subclasses
 
 
 _bbcode_parser = None
 # The easiest way to use the BBcode parser is to import the following get_parser function (except if
 # you need many BBCodeParser instances at a time or you want to subclass it).
 # 
-# Note if you create a new instance of BBCodeParser, the built in bbcode tags are still installed.
+# Note if you create a new instance of BBCodeParser, the built in bbcode tags will not be installed.
 
 
 def get_parser():
     if not _bbcode_parser:
-        _load_parser()
+        loader = BBCodeParserLoader()
+        loader.load_parser()
     return _bbcode_parser
 
 
-def _init_bbcode_tags(parser):
-    """
-    Call the BBCode tag pool to fetch all the module-based tags and initializes
-    their associated renderers.
-    """
-    from precise_bbcode.tag_pool import tag_pool
-    tags = tag_pool.get_tags()
-    for tag_def in tags:
-        tag = tag_def()
-        parser.add_renderer(tag.tag_name, tag.render, **tag._options())
+class BBCodeParserLoader(object):
+    def __init__(self, *args, **kwargs):
+        parser = kwargs.pop('parser', None)
+        if parser:
+            self.parser = parser
+        else:
+            global _bbcode_parser
+            _bbcode_parser = BBCodeParser()
+            self.parser = _bbcode_parser
 
+    def load_parser(self):
+        # Init BBCode placeholders
+        self.init_default_bbcode_placeholders()
 
-def _init_custom_bbcode_tags(parser):
-    """
-    Find the user-defined BBCode tags and initializes their associated renderers.
-    """
-    BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')
-    if BBCodeTag:
-        custom_tags = BBCodeTag.objects.all()
-        for tag in custom_tags:
-            args, kwargs = tag.parser_args
-            parser.add_default_renderer(*args, **kwargs)
+        # Init renderers registered in 'bbcode_tags' modules
+        self.init_bbcode_tags()
 
+        # Init custom renderers defined in BBCodeTag model instances
+        if bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
+            self.init_custom_bbcode_tags()
 
-def _init_bbcode_smilies(parser):
-    """
-    Find the user-defined smilies tags and register them to the BBCode parser.
-    """
-    SmileyTag = get_model('precise_bbcode', 'SmileyTag')
-    if SmileyTag:
-        custom_smilies = SmileyTag.objects.all()
-        for smiley in custom_smilies:
-            parser.add_smiley(smiley.code, smiley.html_code)
+        # Init smilies
+        if bbcode_settings.BBCODE_ALLOW_SMILIES:
+            self.init_bbcode_smilies()
 
+    def init_default_bbcode_placeholders(self):
+        import precise_bbcode.bbcode.defaults.placeholder
+        for placeholder_klass in get_subclasses(
+                precise_bbcode.bbcode.defaults.placeholder, BaseBBCodePlaceholder):
+            placeholder = placeholder_klass()
+            placeholder_name = placeholder.name.upper()
+            self.parser.add_placeholder(placeholder_name, placeholder.validate)
 
-def _load_parser():
-    global _bbcode_parser
-    _bbcode_parser = BBCodeParser()
+    def init_bbcode_tags(self):
+        """
+        Call the BBCode tag pool to fetch all the module-based tags and initializes
+        their associated renderers.
+        """
+        from precise_bbcode.tag_pool import tag_pool
+        tags = tag_pool.get_tags()
+        for tag_def in tags:
+            tag = tag_def()
+            self.parser.add_renderer(tag.tag_name, tag.render, **tag._options())
 
-    # Init renderers registered in 'bbcode_tags' modules
-    _init_bbcode_tags(_bbcode_parser)
+    def init_custom_bbcode_tags(self):
+        """
+        Find the user-defined BBCode tags and initializes their associated renderers.
+        """
+        BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')
+        if BBCodeTag:
+            custom_tags = BBCodeTag.objects.all()
+            for tag in custom_tags:
+                args, kwargs = tag.parser_args
+                self.parser.add_default_renderer(*args, **kwargs)
 
-    # Init custom renderers defined in BBCodeTag model instances
-    if bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
-        _init_custom_bbcode_tags(_bbcode_parser)
-
-    # Init smilies
-    if bbcode_settings.BBCODE_ALLOW_SMILIES:
-        _init_bbcode_smilies(_bbcode_parser)
-
-
-from .parser import *
+    def init_bbcode_smilies(self):
+        """
+        Find the user-defined smilies tags and register them to the BBCode parser.
+        """
+        SmileyTag = get_model('precise_bbcode', 'SmileyTag')
+        if SmileyTag:
+            custom_smilies = SmileyTag.objects.all()
+            for smiley in custom_smilies:
+                self.parser.add_smiley(smiley.code, smiley.html_code)

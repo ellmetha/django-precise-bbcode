@@ -52,28 +52,36 @@ class BBCodeParser(object):
     # A list of the default BBCode tags handled by the parser
     DEFAULT_TAGS = ('b', 'i', 'u', 's', 'list', '*', 'code', 'quote', 'center', 'color', 'url', 'img')
 
-    # A list of all placeholder types supported by the parser and their corresponding regex
-    PLACEHOLDERS_RE = {
-        'URL': _url_re,
-        'EMAIL': _email_re,
-        'TEXT': _text_re,
-        'SIMPLETEXT': _simpletext_re,
-        'COLOR': _color_re,
-        'NUMBER': _number_re,
-    }
-
     # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
     _TAG_OPENING = '['
     _TAG_ENDING = ']'
 
     def __init__(self, *args, **kwargs):
+        # Settings
         self.newline_char = bbcode_settings.BBCODE_NEWLINE
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
+
+        # Stores
+        self.placeholders = {}
         self.bbcodes = {}
         self.smilies = {}
+
         # Init default renderers
         self.init_renderers()
+
+    def add_placeholder(self, placeholder_name, validate_func):
+        """
+        Installs a placeholder. A placeholder is a function used to
+        validate any content embedded in a BBCode tag. A placeholder
+        validation function is defined by the following signature:
+
+        def validate(content)
+
+            content
+                The content used to fill the placeholder that must be validated.
+        """
+        self.placeholders[placeholder_name] = validate_func
 
     def add_renderer(self, tag_name, render_func, **kwargs):
         """
@@ -174,7 +182,7 @@ class BBCodeParser(object):
         for placeholder_name, content in format_dict.items():
             placeholder_type = re.sub('\d+$', '', placeholder_name)
             try:
-                valid_content = re.search(self.PLACEHOLDERS_RE[placeholder_type], content)
+                valid_content = self.placeholders[placeholder_type](content)
                 assert valid_content is not None
             except KeyError:
                 raise InvalidBBCodePlaholder(placeholder_type)
