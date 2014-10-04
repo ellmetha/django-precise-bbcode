@@ -15,6 +15,7 @@ from precise_bbcode.bbcode.defaults.placeholder import _number_re
 from precise_bbcode.bbcode.defaults.placeholder import _simpletext_re
 from precise_bbcode.bbcode.defaults.placeholder import _text_re
 from precise_bbcode.bbcode.defaults.placeholder import _url_re
+from precise_bbcode.test import gen_bbcode_tag_klass
 
 
 class TestParser(TestCase):
@@ -72,36 +73,68 @@ class TestParser(TestCase):
     CUSTOM_TAGS_RENDERING_TESTS = {
         'tags': {
             'justify': {
-                'args': ('justify', '[justify]{TEXT}[/justify]', '<div style="text-align:justify;">{TEXT}</div>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'justify',
+                    'definition_string': '[justify]{TEXT}[/justify]',
+                    'format_string': '<div style="text-align:justify;">{TEXT}</div>',
+                },
+                'Options': {},
             },
             'spoiler': {
-                'args': ('spoiler', '[spoiler]{TEXT}[/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'spoiler',
+                    'definition_string': '[spoiler]{TEXT}[/spoiler]',
+                    'format_string': '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>',
+                },
+                'Options': {},
             },
             'youtube': {
-                'args': ('youtube', '[youtube]{TEXT}[/youtube]', '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/{TEXT}"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/{TEXT}" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'youtube',
+                    'definition_string': '[youtube]{TEXT}[/youtube]',
+                    'format_string': '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/{TEXT}"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/{TEXT}" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>',
+                },
+                'Options': {},
             },
             'h1': {
-                'args': ('h1', '[h1={COLOR}]{TEXT}[/h1]', '<span style="border-left:6px {COLOR} solid;border-bottom:1px {COLOR} dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:{COLOR};">{TEXT}</span><br />'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'h1',
+                    'definition_string': '[h1={COLOR}]{TEXT}[/h1]',
+                    'format_string': '<span style="border-left:6px {COLOR} solid;border-bottom:1px {COLOR} dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:{COLOR};">{TEXT}</span><br />',
+                },
+                'Options': {},
             },
             'hr': {
-                'args': ('hr', '[hr]', '<hr />'),
-                'kwargs': {'standalone': True},
+                'Tag': {
+                    'name': 'hr',
+                    'definition_string': '[hr]',
+                    'format_string': '<hr />',
+                },
+                'Options': {'standalone': True},
             },
             'size': {
-                'args': ('size', '[size={NUMBER}]{TEXT}[/size]', '<span style="font-size:{NUMBER}px;">{TEXT}</span>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'size',
+                    'definition_string': '[size={NUMBER}]{TEXT}[/size]',
+                    'format_string': '<span style="font-size:{NUMBER}px;">{TEXT}</span>',
+                },
+                'Options': {},
             },
             'mailto': {
-                'args': ('email', '[email]{EMAIL}[/email]', '<a href="mailto:{EMAIL}">{EMAIL}</a>'),
-                'kwargs': {'replace_links': False},
+                'Tag': {
+                    'name': 'email',
+                    'definition_string': '[email]{EMAIL}[/email]',
+                    'format_string': '<a href="mailto:{EMAIL}">{EMAIL}</a>',
+                },
+                'Options': {'replace_links': False},
             },
             'simpletext': {
-                'args': ('simpletext', '[simpletext]{SIMPLETEXT}[/simpletext]', '<span>{SIMPLETEXT}</span>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'simpletext',
+                    'definition_string': '[simpletext]{SIMPLETEXT}[/simpletext]',
+                    'format_string': '<span>{SIMPLETEXT}</span>',
+                },
+                'Options': {},
             }
         },
         'tests': (
@@ -240,7 +273,7 @@ class TestParser(TestCase):
     def test_can_render_custom_tags(self):
         # Setup
         for _, tag_def in self.CUSTOM_TAGS_RENDERING_TESTS['tags'].items():
-            self.parser.add_default_renderer(*tag_def['args'], **tag_def['kwargs'])
+            self.parser.add_bbcode_tag(gen_bbcode_tag_klass(tag_def['Tag'], tag_def['Options']))
         # Run & check
         for bbcodes_text, expected_html_text in self.CUSTOM_TAGS_RENDERING_TESTS['tests']:
             result = self.parser.render(bbcodes_text)

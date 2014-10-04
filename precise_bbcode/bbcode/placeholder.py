@@ -8,7 +8,11 @@ import re
 # Local application / specific library imports
 
 
-class BaseBBCodePlaceholder(object):
+# Placeholder regex
+placeholder_re = re.compile(r'{(\w+)}')
+
+
+class BBCodePlaceholder(object):
     name = None
     pattern = None
 

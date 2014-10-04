@@ -7,14 +7,16 @@ import re
 # Third party imports
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.encoding import force_bytes
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
 from . import get_parser
-from .bbcode.parser import placeholder_re
+from .bbcode.placeholder import placeholder_re
 from .bbcode.tag import bbcodde_standalone_re
 from .bbcode.tag import bbcodde_standard_re
+from .bbcode.tag import BBCodeTag as ParserBBCodeTag
 from .bbcode.tag import BBCodeTagOptions
 from .conf import settings as bbcode_settings
 from .fields import SmileyCodeField
@@ -127,27 +129,26 @@ class BBCodeTag(models.Model):
 
         super(BBCodeTag, self).save(*args, **kwargs)
         # Ok, now the tag should be added to the BBCode parser for later use
-        args, kwargs = self.parser_args
+        parser_tag_klass = self.parser_tag_klass
         parser = get_parser()
-        parser.add_default_renderer(*args, **kwargs)
+        parser.add_bbcode_tag(parser_tag_klass)
 
     @property
-    def parser_args(self):
-        """
-        Returns a tuple of the form: (args, kwargs). This is aimed to be used as arguments for adding the current tag
-        to the tags list of a BBCode parser.
-        """
-        # Constructs the positional arguments list
-        args = [self.tag_name, self.tag_definition, self.html_replacement]
-        # Constructs the keyword arguments dict
-        kwargs = {}
+    def parser_tag_klass(self):
+        # Construc the inner Options class
         opts = self._meta
         tag_option_attrs = vars(BBCodeTagOptions)
-        for f in opts.fields:
-            if f.name in tag_option_attrs:
-                kwargs[f.name] = f.value_from_object(self)
-
-        return (args, kwargs)
+        options_klass_attrs = {f.name: f.value_from_object(self) for f in opts.fields if f.name in tag_option_attrs}
+        options_klass = type(force_bytes('Options'), (), options_klass_attrs)
+        # Construct the outer BBCodeTag class
+        tag_klass_attrs = {
+            'name': self.tag_name,
+            'definition_string': self.tag_definition,
+            'format_string': self.html_replacement,
+            'Options': options_klass,
+        }
+        tag_klass = type(force_bytes('{}Tag'.format(self.tag_name)), (ParserBBCodeTag, ), tag_klass_attrs)
+        return tag_klass
 
 
 @python_2_unicode_compatible

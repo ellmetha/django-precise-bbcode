@@ -11,38 +11,44 @@ from django.test import TestCase
 # Local application / specific library imports
 from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
+from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
 from precise_bbcode.models import BBCodeTag
-from precise_bbcode.tag_base import TagBase
 from precise_bbcode.tag_pool import TagAlreadyRegistered
 from precise_bbcode.tag_pool import TagNotRegistered
 from precise_bbcode.tag_pool import tag_pool
 
 
-class FooTag(TagBase):
-    tag_name = "foo"
-    render_embedded = False
+class FooTag(ParserBBCodeTag):
+    name = 'foo'
 
-    def render(self, name, value, option=None, parent=None):
+    class Options:
+        render_embedded = False
+
+    def render(self, value, option=None, parent=None):
         return '<pre>{}</pre>'.format(value)
 
 
-class FooTagAlt(TagBase):
-    tag_name = "foo"
-    render_embedded = False
+class FooTagAlt(ParserBBCodeTag):
+    name = 'foo'
 
-    def render(self, name, value, option=None, parent=None):
+    class Options:
+        render_embedded = False
+
+    def render(self, value, option=None, parent=None):
         return '<pre>{}</pre>'.format(value)
 
 
-class FooTagSub(FooTag):
-    tag_name = "foo2"
-    render_embedded = False
+class FooTagSub(ParserBBCodeTag):
+    name = 'foo2'
+
+    class Options:
+        render_embedded = False
 
 
-class BarTag(TagBase):
-    tag_name = "bar"
+class BarTag(ParserBBCodeTag):
+    name = 'bar'
 
-    def render(self, name, value, option=None, parent=None):
+    def render(self, value, option=None, parent=None):
         if not option:
             return '<div class="bar">{}</div>'.format(value)
         return '<div class="bar" style="color:{};">{}</div>'.format(option, value)
@@ -78,14 +84,14 @@ class TestBbcodeTagPool(TestCase):
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
         with self.assertRaises(ImproperlyConfigured):
-            class ErrnoneousTag1(TagBase):
+            class ErrnoneousTag1(ParserBBCodeTag):
                 pass
         with self.assertRaises(ImproperlyConfigured):
-            class ErrnoneousTag2(TagBase):
-                delattr(TagBase, 'tag_name')
-        with self.assertRaises(ValueError):
-            class ErrnoneousTag3(TagBase):
-                tag_name = "it's a bad tag name"
+            class ErrnoneousTag2(ParserBBCodeTag):
+                delattr(ParserBBCodeTag, 'name')
+        with self.assertRaises(ImproperlyConfigured):
+            class ErrnoneousTag3(ParserBBCodeTag):
+                name = 'it\'s a bad tag name'
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
@@ -183,16 +189,16 @@ class TestBbcodeTag(TestCase):
             except ValidationError:
                 self.fail("The following BBCode failed to validate: {}".format(tag_dict))
 
-    def test_should_provide_the_required_parser_args(self):
+    def test_should_provide_the_required_parser_bbcode_tag_class(self):
         # Setup
         tag = BBCodeTag(**{'tag_definition': '[io]{TEXT}[/io]', 'html_replacement': '<b>{TEXT}</b>'})
         tag.save()
         # Run & check
-        self.assertEqual(tag.parser_args, (['io', '[io]{TEXT}[/io]', '<b>{TEXT}</b>'],
-                         {'display_on_editor': True, 'end_tag_closes': False, 'escape_html': True,
-                          'helpline': None, 'newline_closes': False, 'render_embedded': True,
-                          'replace_links': True, 'same_tag_closes': False, 'standalone': False, 'strip': False,
-                          'swallow_trailing_newline': False, 'transform_newlines': True}))
+        parser_tag_klass = tag.parser_tag_klass
+        self.assertTrue(issubclass(parser_tag_klass, ParserBBCodeTag))
+        self.assertEqual(parser_tag_klass.name, 'io')
+        self.assertEqual(parser_tag_klass.definition_string, '[io]{TEXT}[/io]')
+        self.assertEqual(parser_tag_klass.format_string, '<b>{TEXT}</b>')
 
     def test_can_be_rendered(self):
         # Setup

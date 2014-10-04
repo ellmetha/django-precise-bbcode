@@ -8,7 +8,8 @@ from django.db.models import get_model
 
 # Local application / specific library imports
 from .parser import BBCodeParser
-from .placeholder import BaseBBCodePlaceholder
+from .placeholder import BBCodePlaceholder
+from .tag import BBCodeTag
 from precise_bbcode.conf import settings as bbcode_settings
 from precise_bbcode.core.loading import get_subclasses
 
@@ -38,8 +39,11 @@ class BBCodeParserLoader(object):
             self.parser = _bbcode_parser
 
     def load_parser(self):
-        # Init BBCode placeholders
+        # Init default BBCode placeholders
         self.init_default_bbcode_placeholders()
+
+        # Init default BBCode tags
+        self.init_default_bbcode_tags()
 
         # Init renderers registered in 'bbcode_tags' modules
         self.init_bbcode_tags()
@@ -55,10 +59,14 @@ class BBCodeParserLoader(object):
     def init_default_bbcode_placeholders(self):
         import precise_bbcode.bbcode.defaults.placeholder
         for placeholder_klass in get_subclasses(
-                precise_bbcode.bbcode.defaults.placeholder, BaseBBCodePlaceholder):
-            placeholder = placeholder_klass()
-            placeholder_name = placeholder.name.upper()
-            self.parser.add_placeholder(placeholder_name, placeholder.validate)
+                precise_bbcode.bbcode.defaults.placeholder, BBCodePlaceholder):
+            self.parser.add_placeholder(placeholder_klass)
+
+    def init_default_bbcode_tags(self):
+        import precise_bbcode.bbcode.defaults.tag
+        for tag_klass in get_subclasses(
+                precise_bbcode.bbcode.defaults.tag, BBCodeTag):
+            self.parser.add_bbcode_tag(tag_klass)
 
     def init_bbcode_tags(self):
         """
@@ -68,8 +76,7 @@ class BBCodeParserLoader(object):
         from precise_bbcode.tag_pool import tag_pool
         tags = tag_pool.get_tags()
         for tag_def in tags:
-            tag = tag_def()
-            self.parser.add_renderer(tag.tag_name, tag.render, **tag._options())
+            self.parser.add_bbcode_tag(tag_def)
 
     def init_custom_bbcode_tags(self):
         """
@@ -79,8 +86,7 @@ class BBCodeParserLoader(object):
         if BBCodeTag:
             custom_tags = BBCodeTag.objects.all()
             for tag in custom_tags:
-                args, kwargs = tag.parser_args
-                self.parser.add_default_renderer(*args, **kwargs)
+                self.parser.add_bbcode_tag(tag.parser_tag_klass)
 
     def init_bbcode_smilies(self):
         """

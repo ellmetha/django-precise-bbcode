@@ -6,7 +6,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
 # Local application / specific library imports
-from .tag_base import TagBase
+from .bbcode.tag import BBCodeTag
 from .core.loading import load
 
 
@@ -40,9 +40,9 @@ class TagPool(object):
         If a tag appears to be already registered, a TagAlreadyRegistered exception will be raised.
         """
         # A registered tag must be a subclass of TagBase
-        if not issubclass(tag, TagBase):
+        if not issubclass(tag, BBCodeTag):
             raise ImproperlyConfigured(
-                'BBCode Tags must be subclasses of TagBase, {!r} is not'.format(tag)
+                'BBCode Tags must be subclasses of BBCodeTag, {!r} is not'.format(tag)
             )
         # Two tag with the same names can't be registered
         tag_name = tag.__name__
