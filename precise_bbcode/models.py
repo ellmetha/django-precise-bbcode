@@ -7,7 +7,6 @@ import re
 # Third party imports
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.encoding import force_bytes
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -19,6 +18,7 @@ from .bbcode.tag import bbcodde_standard_re
 from .bbcode.tag import BBCodeTag as ParserBBCodeTag
 from .bbcode.tag import BBCodeTagOptions
 from .conf import settings as bbcode_settings
+from .core.compat import force_str
 from .fields import SmileyCodeField
 
 
@@ -139,7 +139,7 @@ class BBCodeTag(models.Model):
         opts = self._meta
         tag_option_attrs = vars(BBCodeTagOptions)
         options_klass_attrs = {f.name: f.value_from_object(self) for f in opts.fields if f.name in tag_option_attrs}
-        options_klass = type(force_bytes('Options'), (), options_klass_attrs)
+        options_klass = type(force_str('Options'), (), options_klass_attrs)
         # Construct the outer BBCodeTag class
         tag_klass_attrs = {
             'name': self.tag_name,
@@ -147,7 +147,7 @@ class BBCodeTag(models.Model):
             'format_string': self.html_replacement,
             'Options': options_klass,
         }
-        tag_klass = type(force_bytes('{}Tag'.format(self.tag_name)), (ParserBBCodeTag, ), tag_klass_attrs)
+        tag_klass = type(force_str('{}Tag'.format(self.tag_name)), (ParserBBCodeTag, ), tag_klass_attrs)
         return tag_klass
 
 
