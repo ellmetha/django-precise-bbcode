@@ -12,9 +12,9 @@ from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
 from . import get_parser
-from .bbcode.placeholder import placeholder_re
-from .bbcode.tag import bbcodde_standalone_re
-from .bbcode.tag import bbcodde_standard_re
+from .bbcode.regexes import bbcodde_standalone_re
+from .bbcode.regexes import bbcodde_standard_re
+from .bbcode.regexes import placeholder_re
 from .bbcode.tag import BBCodeTag as ParserBBCodeTag
 from .bbcode.tag import BBCodeTagOptions
 from .conf import settings as bbcode_settings

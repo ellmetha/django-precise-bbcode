@@ -10,16 +10,11 @@ from django.core.exceptions import ImproperlyConfigured
 
 # Local application / specific library imports
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
-from precise_bbcode.bbcode.placeholder import placeholder_re
+from precise_bbcode.bbcode.regexes import placeholder_content_re
+from precise_bbcode.bbcode.regexes import placeholder_re
 from precise_bbcode.conf import settings as bbcode_settings
 from precise_bbcode.core.compat import with_metaclass
 from precise_bbcode.core.utils import replace
-
-
-# BBCode regex
-bbcodde_standard_re = r'^\[(?P<start_name>[^\s=\[\]]*)(=\{[A-Za-z0-9]*\})?\]\{[A-Za-z0-9]*\}\[/(?P<end_name>[^\s=\[\]]*)\]$'
-bbcodde_standalone_re = r'^\[(?P<start_name>[^\s=\[\]]*)(=\{[A-Za-z0-9]*\})?\]\{?[A-Za-z0-9]*\}?$'
-bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*\]')
 
 
 class BBCodeTagBase(type):
@@ -148,11 +143,13 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
         eg. {TEXT} or {TEXT1} refer to the 'TEXT' BBCode placeholder type.
         Each content is validated according to its associated placeholder type.
         """
-        for placeholder_name, content in format_dict.items():
-            placeholder_type = re.sub('\d+$', '', placeholder_name)
+        for placeholder_string, content in format_dict.items():
             try:
-                valid_content = parser.placeholders[placeholder_type.upper()].validate(content)
-                assert valid_content is not None
+                placeholder_results = re.findall(placeholder_content_re, placeholder_string)
+                assert len(placeholder_results)
+                placeholder_type, _, extra_context = placeholder_results[0]
+                valid_content = parser.placeholders[placeholder_type.upper()].validate(content, extra_context=extra_context[1:])
+                assert valid_content and valid_content is not None
             except KeyError:
                 raise InvalidBBCodePlaholder(placeholder_type)
             except AssertionError:

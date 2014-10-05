@@ -7,6 +7,7 @@ import re
 # Third party imports
 # Local application / specific library imports
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
+from precise_bbcode.bbcode.regexes import url_re
 
 __all__ = [
     'UrlBBCodePlaceholder',
@@ -15,11 +16,11 @@ __all__ = [
     'SimpleTextBBCodePlaceholder',
     'ColorBBCodePlaceholder',
     'NumberBBCodePlaceholder',
+    'RangeBBCodePlaceholder',
 ]
 
 
-# Placeholder regex
-_url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
+# Placeholder regexes
 _email_re = re.compile(r'(\w+[.|\w])*@\[?(\w+[.])*\w+\]?', re.IGNORECASE)
 _text_re = re.compile(r'^\s*([\w]+)|([\w]+\S*)\s*$', flags=re.UNICODE)
 _simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
@@ -29,7 +30,7 @@ _number_re = re.compile(r'^[+-]?\d+(?:(\.|,)\d+)?$')
 
 class UrlBBCodePlaceholder(BBCodePlaceholder):
     name = 'url'
-    pattern = _url_re
+    pattern = url_re
 
 
 class EmailBBCodePlaceholder(BBCodePlaceholder):
@@ -55,3 +56,24 @@ class ColorBBCodePlaceholder(BBCodePlaceholder):
 class NumberBBCodePlaceholder(BBCodePlaceholder):
     name = 'number'
     pattern = _number_re
+
+
+class RangeBBCodePlaceholder(BBCodePlaceholder):
+    name = 'range'
+
+    def validate(self, content, extra_context):
+        try:
+            value = float(content)
+        except ValueError:
+            return False
+
+        try:
+            min_content, max_content = extra_context.split(',')
+            min_value, max_value = float(min_content), float(max_content)
+        except ValueError:
+            return False
+
+        if not (value >= min_value and value <= max_value):
+            return False
+
+        return True

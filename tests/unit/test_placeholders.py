@@ -14,7 +14,7 @@ from precise_bbcode.bbcode.defaults.placeholder import _email_re
 from precise_bbcode.bbcode.defaults.placeholder import _number_re
 from precise_bbcode.bbcode.defaults.placeholder import _simpletext_re
 from precise_bbcode.bbcode.defaults.placeholder import _text_re
-from precise_bbcode.bbcode.defaults.placeholder import _url_re
+from precise_bbcode.bbcode.defaults.placeholder import url_re
 
 
 class TestPlaceholder(TestCase):
@@ -40,7 +40,7 @@ class TestPlaceholder(TestCase):
             )
         },
         'url': {
-            're': _url_re,
+            're': url_re,
             'tests': (
                 'http://foo.com/blah_blah',
                 '(Something like http://foo.com/blah_blah)',
