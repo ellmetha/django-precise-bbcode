@@ -92,6 +92,10 @@ class TestBbcodeTagPool(TestCase):
         with self.assertRaises(ImproperlyConfigured):
             class ErrnoneousTag3(ParserBBCodeTag):
                 name = 'it\'s a bad tag name'
+        with self.assertRaises(ImproperlyConfigured):
+            class ErrnoneousTag4(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = ['[ooo]{TEXT}[/ooo]']
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 

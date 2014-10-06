@@ -15,6 +15,24 @@ from precise_bbcode.bbcode.defaults.placeholder import _number_re
 from precise_bbcode.bbcode.defaults.placeholder import _simpletext_re
 from precise_bbcode.bbcode.defaults.placeholder import _text_re
 from precise_bbcode.bbcode.defaults.placeholder import url_re
+from precise_bbcode.bbcode.tag import BBCodeTag
+from precise_bbcode.tag_pool import tag_pool
+
+
+class SizeTag(BBCodeTag):
+    name = 's'
+    definition_string = '[s={RANGE=4,7}]{TEXT}[/s]'
+    format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
+
+
+class ErroredSizeTag(BBCodeTag):
+    name = 's2'
+    definition_string = '[s2={RANGE=a,7}]{TEXT}[/s2]'
+    format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
+
+
+tag_pool.register_tag(SizeTag)
+tag_pool.register_tag(ErroredSizeTag)
 
 
 class TestPlaceholder(TestCase):
@@ -120,6 +138,20 @@ class TestPlaceholder(TestCase):
         }
     }
 
+    DEFAULT_PLACEHOLDERS_TESTS = (
+        ('[s=4]hello world![/s]', '<span style="font-size:4px;">hello world!</span>'),
+        ('[s=5]hello world![/s]', '<span style="font-size:5px;">hello world!</span>'),
+        ('[s=6]hello world![/s]', '<span style="font-size:6px;">hello world!</span>'),
+        ('[s=7]hello world![/s]', '<span style="font-size:7px;">hello world!</span>'),
+        ('[s=3]hello world![/s]', '[s=3]hello world![/s]'),
+        ('[s=8]hello world![/s]', '[s=8]hello world![/s]'),
+        ('[s=test]hello world![/s]', '[s=test]hello world![/s]'),
+    )
+
+    ERRORED_DEFAULT_PLACEHOLDERS_TESTS = (
+        ('[s2=4]hello world![/s2]', '[s2=4]hello world![/s2]'),
+    )
+
     def setUp(self):
         self.parser = get_parser()
 
@@ -128,3 +160,13 @@ class TestPlaceholder(TestCase):
         for _, re_tests in self.DEFAULT_PLACEHOLDERS_RE_TESTS.items():
             for test in re_tests['tests']:
                 self.assertIsNotNone(re.search(re_tests['re'], test))
+
+    def test_default_placeholders_are_valid(self):
+        for bbcodes_text, expected_html_text in self.DEFAULT_PLACEHOLDERS_TESTS:
+            result = self.parser.render(bbcodes_text)
+            self.assertEqual(result, expected_html_text)
+
+    def test_provided_by_default_cannot_be_rendered_if_they_are_not_used_correctly(self):
+        for bbcodes_text, expected_html_text in self.ERRORED_DEFAULT_PLACEHOLDERS_TESTS:
+            result = self.parser.render(bbcodes_text)
+            self.assertEqual(result, expected_html_text)

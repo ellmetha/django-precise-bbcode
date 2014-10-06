@@ -27,7 +27,7 @@ class PreTag(BBCodeTag):
 class SizeTag(BBCodeTag):
     name = 'size'
     definition_string = '[size={RANGE=4,7}]{TEXT}[/size]'
-    format_string = '<span class="font-size:{RANGE=4,7};">{TEXT}</span>'
+    format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
 
 
 tag_pool.register_tag(SubTag)
