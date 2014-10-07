@@ -6,8 +6,6 @@ from collections import defaultdict
 import re
 
 # Third party imports
-from django.utils.encoding import python_2_unicode_compatible
-
 # Local application / specific library imports
 from precise_bbcode.conf import settings as bbcode_settings
 
@@ -16,7 +14,6 @@ from precise_bbcode.conf import settings as bbcode_settings
 _url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
 
 
-@python_2_unicode_compatible
 class BBCodeToken(object):
     TK_START_TAG = "start_tag"
     TK_END_TAG = "end_tag"
@@ -33,6 +30,9 @@ class BBCodeToken(object):
         return '<BBCodeToken instance "({0}, {1}, {2}, {3})">'.format(self.type, self.tag_name, self.option, self.text)
 
     def __str__(self):
+        return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
+
+    def __unicode__(self):
         return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
 
