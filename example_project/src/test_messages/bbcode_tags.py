@@ -30,6 +30,13 @@ class SizeTag(BBCodeTag):
     format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
 
 
+class FruitTag(BBCodeTag):
+    name = 'fruit'
+    definition_string = '[fruit]{CHOICE=tomato,orange,apple}[/fruit]'
+    format_string = '<h5>{CHOICE=tomato,orange,apple}</h5>'
+
+
 tag_pool.register_tag(SubTag)
 tag_pool.register_tag(PreTag)
 tag_pool.register_tag(SizeTag)
+tag_pool.register_tag(FruitTag)
