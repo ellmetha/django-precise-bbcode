@@ -6,10 +6,9 @@ import inspect
 import re
 
 # Third party imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Local application / specific library imports
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
+from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
 from precise_bbcode.bbcode.regexes import placeholder_content_re
 from precise_bbcode.bbcode.regexes import placeholder_re
 from precise_bbcode.conf import settings as bbcode_settings
@@ -41,15 +40,15 @@ class BBCodeTagBase(type):
 
         # Validates the tag name
         if not hasattr(new_tag, 'name'):
-            raise ImproperlyConfigured(
+            raise InvalidBBCodeTag(
                 'BBCodeTag subclasses must have a \'name\' attribute'
             )
         if not new_tag.name:
-            raise ImproperlyConfigured(
+            raise InvalidBBCodeTag(
                 'The \'name\' attribute associated with BBCodeTag subclasses cannot be None'
             )
         if not re.match('^[^\s=]+$', new_tag.name):
-            raise ImproperlyConfigured(
+            raise InvalidBBCodeTag(
                 """The \'name\' attribute associated with {!r} is not valid: a tag name must be strictly
                 composed of non-white-space characters""".format(name)
             )
@@ -58,7 +57,7 @@ class BBCodeTagBase(type):
         # created without a format string. The reverse is also true.
         if (new_tag.definition_string and not new_tag.format_string) \
                 or (not new_tag.definition_string and new_tag.format_string):
-            raise ImproperlyConfigured(
+            raise InvalidBBCodeTag(
                 """{!r} is not valid: the \'definition_string\' attribute cannot be specified without defining
                 the related \'format_string\'""".format(name)
             )

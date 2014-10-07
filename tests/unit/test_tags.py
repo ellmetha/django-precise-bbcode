@@ -12,6 +12,7 @@ from django.test import TestCase
 from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
+from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.tag_pool import TagAlreadyRegistered
 from precise_bbcode.tag_pool import TagNotRegistered
@@ -83,16 +84,16 @@ class TestBbcodeTagPool(TestCase):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
-        with self.assertRaises(ImproperlyConfigured):
+        with self.assertRaises(InvalidBBCodeTag):
             class ErrnoneousTag1(ParserBBCodeTag):
                 pass
-        with self.assertRaises(ImproperlyConfigured):
+        with self.assertRaises(InvalidBBCodeTag):
             class ErrnoneousTag2(ParserBBCodeTag):
                 delattr(ParserBBCodeTag, 'name')
-        with self.assertRaises(ImproperlyConfigured):
+        with self.assertRaises(InvalidBBCodeTag):
             class ErrnoneousTag3(ParserBBCodeTag):
                 name = 'it\'s a bad tag name'
-        with self.assertRaises(ImproperlyConfigured):
+        with self.assertRaises(InvalidBBCodeTag):
             class ErrnoneousTag4(ParserBBCodeTag):
                 name = 'ooo'
                 definition_string = ['[ooo]{TEXT}[/ooo]']
