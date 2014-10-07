@@ -31,8 +31,15 @@ class ErroredSizeTag(BBCodeTag):
     format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
 
 
+class DayTag(BBCodeTag):
+    name = 'day'
+    definition_string = '[day]{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}[/day]'
+    format_string = '<h5>{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}</h5>'
+
+
 tag_pool.register_tag(SizeTag)
 tag_pool.register_tag(ErroredSizeTag)
+tag_pool.register_tag(DayTag)
 
 
 class TestPlaceholder(TestCase):
@@ -146,6 +153,11 @@ class TestPlaceholder(TestCase):
         ('[s=3]hello world![/s]', '[s=3]hello world![/s]'),
         ('[s=8]hello world![/s]', '[s=8]hello world![/s]'),
         ('[s=test]hello world![/s]', '[s=test]hello world![/s]'),
+        ('[day]tuesday[/day]', '<h5>tuesday</h5>'),
+        ('[day]monday[/day]', '<h5>monday</h5>'),
+        ('[day]sunday[/day]', '<h5>sunday</h5>'),
+        ('[day]sun[/day]', '[day]sun[/day]'),
+        ('[day]test, test[/day]', '[day]test, test[/day]'),
     )
 
     ERRORED_DEFAULT_PLACEHOLDERS_TESTS = (

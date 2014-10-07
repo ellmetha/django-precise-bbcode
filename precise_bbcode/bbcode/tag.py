@@ -127,7 +127,7 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
         if not valid and option:
             return self.definition_string.format(**fmt)
         elif not valid:
-            return self.definition_string.replace('=', '').format(**fmt)
+            return self.definition_string.format(**fmt).replace('=', '')
 
         # Before rendering, it's necessary to escape the included braces: '{' and '}' ; some of them could not be placeholders
         escaped_format_string = self.format_string.replace('{', '{{').replace('}', '}}')

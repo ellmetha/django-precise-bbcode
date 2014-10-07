@@ -17,6 +17,7 @@ __all__ = [
     'ColorBBCodePlaceholder',
     'NumberBBCodePlaceholder',
     'RangeBBCodePlaceholder',
+    'ChoiceBBCodePlaceholder',
 ]
 
 
@@ -77,3 +78,11 @@ class RangeBBCodePlaceholder(BBCodePlaceholder):
             return False
 
         return True
+
+
+class ChoiceBBCodePlaceholder(BBCodePlaceholder):
+    name = 'choice'
+
+    def validate(self, content, extra_context):
+        choices = extra_context.split(',')
+        return content in choices
