@@ -28,7 +28,7 @@ class SizeTag(BBCodeTag):
 class ErroredSizeTag(BBCodeTag):
     name = 's2'
     definition_string = '[s2={RANGE=a,7}]{TEXT}[/s2]'
-    format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
+    format_string = '<span style="font-size:{RANGE=a,7}px;">{TEXT}</span>'
 
 
 class DayTag(BBCodeTag):

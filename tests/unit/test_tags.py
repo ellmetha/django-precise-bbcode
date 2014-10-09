@@ -96,7 +96,27 @@ class TestBbcodeTagPool(TestCase):
         with self.assertRaises(InvalidBBCodeTag):
             class ErrnoneousTag4(ParserBBCodeTag):
                 name = 'ooo'
-                definition_string = ['[ooo]{TEXT}[/ooo]']
+                definition_string = '[ooo]{TEXT}[/ooo]'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag5(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = 'bad definition'
+                format_string = 'bad format string'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag6(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo]{TEXT}[/aaa]'
+                format_string = 'bad format string'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag7(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo]{TEXT}[/ooo]'
+                format_string = '<span></span>'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag8(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo={TEXT}]{TEXT}[/ooo]'
+                format_string = '<span>{TEXT}</span>'
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
@@ -132,7 +152,7 @@ class TestBbcodeTagPool(TestCase):
             self.assertEqual(result, expected_html_text)
 
 
-class TestBbcodeTag(TestCase):
+class TestDbBbcodeTag(TestCase):
     ERRONEOUS_TAGS_TESTS = (
         {'tag_definition': '[tag]', 'html_replacement': ''},
         {'tag_definition': 'it\s not a tag', 'html_replacement': ''},
@@ -143,7 +163,6 @@ class TestBbcodeTag(TestCase):
         {'tag_definition': '[start]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT1}</p>'},
         {'tag_definition': '[start]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT2}</p>'},
         {'tag_definition': '[start={TEXT1}]{TEXT1}[/end]', 'html_replacement': '<p style="color:{TEXT1};">{TEXT1}</p>'},
-        {'tag_definition': '[b]{TEXT1}[/b]', 'html_replacement': '<b>{TEXT1}</b>'},
         {'tag_definition': '[justify]{TEXT1}[/justify]', 'html_replacement': '<div style="text-align:justify;"></div>'},
         {'tag_definition': '[center][/center]', 'html_replacement': '<div style="text-align:center;">{TEXT1}</div>'},
         {'tag_definition': '[spe={COLOR}]{TEXT}[/spe]', 'html_replacement': '<div class="spe">{TEXT}</div>'},
@@ -156,12 +175,14 @@ class TestBbcodeTag(TestCase):
         {'tag_definition': '[test]{TEXT1}[/ test ]', 'html_replacement': '<span>{TEXT}</span>'},
         {'tag_definition': '[test]{TEXT1}[/test ]', 'html_replacement': '<span>{TEXT}</span>'},
         {'tag_definition': '[foo]{TEXT1}[/foo ]', 'html_replacement': '<span>{TEXT}</span>'},
+        {'tag_definition': '[foo]{TEXT}[/foo]', 'html_replacement': '<span>{TEXT}</span>'},  # Already registered
     )
 
     VALID_TAG_TESTS = (
         {'tag_definition': '[pre]{TEXT}[/pre]', 'html_replacement': '<pre>{TEXT}</pre>'},
         {'tag_definition': '[pre2={COLOR}]{TEXT1}[/pre2]', 'html_replacement': '<pre style="color:{COLOR};">{TEXT1}</pre>'},
         {'tag_definition': '[hrcustom]', 'html_replacement': '<hr />', 'standalone': True},
+        {'tag_definition': '[oo]{TEXT}', 'html_replacement': '<li>{TEXT}</li>', 'same_tag_closes': True},
         {'tag_definition': '[h]{TEXT}[/h]', 'html_replacement': '<strong>{TEXT}</strong>', 'helpline': 'Display your text in bold'},
         {'tag_definition': '[hbold]{TEXT}[/hbold]', 'html_replacement': '<strong>{TEXT}</strong>', 'display_on_editor': False},
         {'tag_definition': '[pre3]{TEXT}[/pre3]', 'html_replacement': '<pre>{TEXT}</pre>', 'newline_closes': True},
@@ -173,6 +194,9 @@ class TestBbcodeTag(TestCase):
         {'tag_definition': '[link]{URL}[/link]', 'html_replacement': '<div class="idea">{URL}</div>', 'replace_links': False},
         {'tag_definition': '[link1]{URL}[/link1]', 'html_replacement': '<div class="idea">{URL}</div>', 'strip': True},
         {'tag_definition': '[mailto]{EMAIL}[/mailto]', 'html_replacement': '<a href="mailto:{EMAIL}">{EMAIL}</a>', 'swallow_trailing_newline': True},
+        {'tag_definition': '[food]{CHOICE=apple,tomato,orange}[/food]', 'html_replacement': '<span>{CHOICE=apple,tomato,orange}</span>'},
+        {'tag_definition': '[food++={CHOICE2=red,blue}]{CHOICE1=apple,tomato,orange}[/food++]', 'html_replacement': '<span data-choice="{CHOICE2=red,blue}">{CHOICE1=apple,tomato,orange}</span>'},
+        {'tag_definition': '[big]{RANGE=2,15}[/big]', 'html_replacement': '<span>{RANGE=2,15}</span>'},
     )
 
     def setUp(self):
@@ -192,7 +216,16 @@ class TestBbcodeTag(TestCase):
             try:
                 tag.clean()
             except ValidationError:
-                self.fail("The following BBCode failed to validate: {}".format(tag_dict))
+                self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
+
+    def test_should_save_default_bbcode_tags_rewrites(self):
+        # Setup
+        tag = BBCodeTag(tag_definition='[b]{TEXT1}[/b]', html_replacement='<b>{TEXT1}</b>')
+        # Run & check
+        try:
+            tag.clean()
+        except ValidationError:
+            self.fail('The following BBCode failed to validate: {}'.format(tag))
 
     def test_should_provide_the_required_parser_bbcode_tag_class(self):
         # Setup
