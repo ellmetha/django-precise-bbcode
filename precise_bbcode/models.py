@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from . import get_parser
 from .bbcode.regexes import bbcodde_standalone_re
 from .bbcode.regexes import bbcodde_standard_re
+from .bbcode.regexes import placeholder_content_re
 from .bbcode.regexes import placeholder_re
 from .bbcode.tag import BBCodeTag as ParserBBCodeTag
 from .bbcode.tag import BBCodeTagOptions
@@ -87,37 +88,32 @@ class BBCodeTag(models.Model):
 
         tag_re = bbcodde_standard_re if not self.standalone else bbcodde_standalone_re
         valid_bbcode_tag = re.search(tag_re, self.tag_definition)
+        def_placeholders = re.findall(placeholder_re, self.tag_definition)
 
         # First, try to validate the tag according to the correct regex
         if not valid_bbcode_tag:
-            raise ValidationError(_("The BBCode definition you provided is not valid"))
+            raise ValidationError(_('The BBCode definition you provided is not valid'))
         re_groups = re.search(tag_re, self.tag_definition).groupdict()
 
-        # The beginning and end tag names must be the same
-        if not self.standalone and re_groups['start_name'] != re_groups['end_name']:
-            raise ValidationError(_("This BBCode tag dit not validate because the start tag and the tag names are not the same"))
+        # Validates the tag definition by trying to create the corresponding BBCode class
+        try:
+            self.get_parser_tag_klass(tag_name=re_groups['start_name'])
+        except Exception as e:
+            raise ValidationError(e)
 
-        if re_groups['start_name'] in parser.bbcodes.keys():
-            raise ValidationError(_("A BBCode tag with this name appears to already exist"))
-
-        # The used placeholders must be the same in the tag definition and in the HTML replacement code
-        def_placeholders = re.findall(placeholder_re, self.tag_definition)
-        html_placeholders = re.findall(placeholder_re, self.html_replacement)
-        if set(def_placeholders) != set(html_placeholders):
-            raise ValidationError(_("The placeholders defined in the tag definition must be present in the HTML replacement code!"))
-
-        # ... and two placeholders must not have the same name
-        def_placeholders_uniques = list(set(def_placeholders))
-        if def_placeholders != sorted(def_placeholders_uniques):
-            raise ValidationError(_("The placeholders defined in the tag definition must be strictly uniques"))
+        if re_groups['start_name'] in parser.bbcodes.keys() \
+                and not hasattr(parser.bbcodes[re_groups['start_name']], 'default_tag'):
+            raise ValidationError(_('A BBCode tag with this name appears to already exist'))
 
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
         # with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT' placeholders are needed
-        placeholder_types = [re.sub('\d+$', '', placeholder) for placeholder in def_placeholders]
+        placeholder_types = [re.findall(placeholder_content_re, placeholder) for placeholder in def_placeholders]
+        placeholder_types = [placeholder_data[0][0] for placeholder_data in placeholder_types if placeholder_data]
         valid_placeholder_types = [placeholder for placeholder in placeholder_types if placeholder in parser.placeholders.keys()]
-        if valid_placeholder_types != placeholder_types:
-            raise ValidationError(_("You can only use placeholder names among: " + str(parser.placeholders.keys())
-                                  + ". If you need many placeholders of a specific type, you can append numbers to them (eg. {TEXT1} or {TEXT2})"))
+
+        if (not len(valid_placeholder_types) and not self.standalone) or valid_placeholder_types != placeholder_types:
+            raise ValidationError(_('You can only use placeholder names among: ' + str(parser.placeholders.keys())
+                                  + '. If you need many placeholders of a specific type, you can append numbers to them (eg. {TEXT1} or {TEXT2})'))
 
         super(BBCodeTag, self).clean()
 
@@ -133,8 +129,7 @@ class BBCodeTag(models.Model):
         parser = get_parser()
         parser.add_bbcode_tag(parser_tag_klass)
 
-    @property
-    def parser_tag_klass(self):
+    def get_parser_tag_klass(self, tag_name=None):
         # Construc the inner Options class
         opts = self._meta
         tag_option_attrs = vars(BBCodeTagOptions)
@@ -142,13 +137,17 @@ class BBCodeTag(models.Model):
         options_klass = type(force_str('Options'), (), options_klass_attrs)
         # Construct the outer BBCodeTag class
         tag_klass_attrs = {
-            'name': self.tag_name,
+            'name': self.tag_name if not tag_name else tag_name,
             'definition_string': self.tag_definition,
             'format_string': self.html_replacement,
             'Options': options_klass,
         }
         tag_klass = type(force_str('{}Tag'.format(self.tag_name)), (ParserBBCodeTag, ), tag_klass_attrs)
         return tag_klass
+
+    @property
+    def parser_tag_klass(self):
+        return self.get_parser_tag_klass()
 
 
 @python_2_unicode_compatible

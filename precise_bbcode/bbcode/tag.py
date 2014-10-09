@@ -9,6 +9,8 @@ import re
 # Local application / specific library imports
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
+from precise_bbcode.bbcode.regexes import bbcodde_standalone_re
+from precise_bbcode.bbcode.regexes import bbcodde_standard_re
 from precise_bbcode.bbcode.regexes import placeholder_content_re
 from precise_bbcode.bbcode.regexes import placeholder_re
 from precise_bbcode.conf import settings as bbcode_settings
@@ -53,6 +55,14 @@ class BBCodeTagBase(type):
                 composed of non-white-space characters""".format(name)
             )
 
+        # Initializes the '_options' attribute
+        if options_klass:
+            option_attrs = inspect.getmembers(options_klass, lambda a: not(inspect.isroutine(a)))
+            options_kwargs = dict([a for a in option_attrs if not(a[0].startswith('__') and a[0].endswith('__'))])
+            setattr(new_tag, '_options', BBCodeTagOptions(**options_kwargs))
+        else:
+            setattr(new_tag, '_options', BBCodeTagOptions())
+
         # Validates the BBCode definition: a BBCode class with a definition string cannot be
         # created without a format string. The reverse is also true.
         if (new_tag.definition_string and not new_tag.format_string) \
@@ -61,15 +71,31 @@ class BBCodeTagBase(type):
                 """{!r} is not valid: the \'definition_string\' attribute cannot be specified without defining
                 the related \'format_string\'""".format(name)
             )
-        # TODO: Some additional checks should be added here
 
-        # Initializes the '_options' attribute
-        if options_klass:
-            option_attrs = inspect.getmembers(options_klass, lambda a: not(inspect.isroutine(a)))
-            options_kwargs = dict([a for a in option_attrs if not(a[0].startswith('__') and a[0].endswith('__'))])
-            setattr(new_tag, '_options', BBCodeTagOptions(**options_kwargs))
-        else:
-            setattr(new_tag, '_options', BBCodeTagOptions())
+        if new_tag.definition_string and new_tag.format_string:
+            # Check whether the tag is correctly formed defined according to a bbcode tag regex
+            tag_re = bbcodde_standard_re if not new_tag._options.standalone else bbcodde_standalone_re
+            valid_bbcode_tag = re.search(tag_re, new_tag.definition_string)
+            if not valid_bbcode_tag:
+                raise InvalidBBCodeTag('The BBCode definition you provided is not valid')
+
+            re_groups = re.search(tag_re, new_tag.definition_string).groupdict()
+
+            # The beginning and end tag names must be the same
+            if not (new_tag._options.standalone or new_tag._options.newline_closes or new_tag._options.same_tag_closes
+                    or new_tag._options.end_tag_closes) and re_groups['start_name'] != re_groups['end_name']:
+                raise InvalidBBCodeTag('This BBCode tag dit not validate because the start tag and the tag names are not the same')
+
+            # The used placeholders must be the same in the tag definition and in the HTML replacement code
+            def_placeholders = re.findall(placeholder_re, new_tag.definition_string)
+            html_placeholders = re.findall(placeholder_re, new_tag.format_string)
+            if set(def_placeholders) != set(html_placeholders):
+                raise InvalidBBCodeTag('The placeholders defined in the tag definition must be present in the HTML replacement code!')
+
+            # ... and two placeholders must not have the same name
+            def_placeholders_uniques = list(set(def_placeholders))
+            if sorted(def_placeholders) != sorted(def_placeholders_uniques):
+                raise InvalidBBCodeTag('The placeholders defined in the tag definition must be strictly uniques')
 
         return new_tag
 

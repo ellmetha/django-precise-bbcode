@@ -66,6 +66,7 @@ class BBCodeParserLoader(object):
         import precise_bbcode.bbcode.defaults.tag
         for tag_klass in get_subclasses(
                 precise_bbcode.bbcode.defaults.tag, BBCodeTag):
+            setattr(tag_klass, 'default_tag', True)
             self.parser.add_bbcode_tag(tag_klass)
 
     def init_bbcode_tags(self):
