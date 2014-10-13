@@ -5,10 +5,57 @@ from __future__ import unicode_literals
 import re
 
 # Third party imports
+from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
+from precise_bbcode.core.compat import with_metaclass
+
 # Local application / specific library imports
 
 
-class BBCodePlaceholder(object):
+class BBCodePlaceholderBase(type):
+    """
+    Metaclass for all BBCode placehplders.
+    This metaclass ensure that the BBCode placeholders subclasses have the required values
+    and proceed to some validations.
+    """
+    def __new__(cls, name, bases, attrs):
+        super_new = super(BBCodePlaceholderBase, cls).__new__
+        parents = [base for base in bases if isinstance(base, BBCodePlaceholderBase)]
+
+        if not parents:
+            # Stop here if we are considering the top-level class to which the
+            # current metaclass was applied and not one of its subclasses.
+            # eg. BBCodeTag
+            return super_new(cls, name, bases, attrs)
+
+        # Construct the BBCode placeholder class
+        new_placeholder = super_new(cls, name, bases, attrs)
+
+        # Validates the placeholder name
+        if not hasattr(new_placeholder, 'name'):
+            raise InvalidBBCodePlaholder(
+                'BBCodePlaceholderBase subclasses must have a \'name\' attribute'
+            )
+        if not new_placeholder.name:
+            raise InvalidBBCodePlaholder(
+                'The \'name\' attribute associated with InvalidBBCodePlaholder subclasses cannot be None'
+            )
+        if not re.match('^[\w]+$', new_placeholder.name):
+            raise InvalidBBCodePlaholder(
+                """The \'name\' attribute associated with {!r} is not valid: a placeholder name must be strictly
+                composed of alphanumeric character""".format(name)
+            )
+
+        # Validates the placeholder pattern if present
+        if new_placeholder.pattern and not isinstance(new_placeholder.pattern, re._pattern_type):
+            raise InvalidBBCodePlaholder(
+                """The \'pattern\' attribute associated with {!r} is not valid: a placeholder pattern must be an
+                instance of a valid regex type""".format(name)
+            )
+
+        return new_placeholder
+
+
+class BBCodePlaceholder(with_metaclass(BBCodePlaceholderBase)):
     name = None
     pattern = None
 

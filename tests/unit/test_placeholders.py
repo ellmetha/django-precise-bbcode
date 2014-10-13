@@ -15,6 +15,8 @@ from precise_bbcode.bbcode.defaults.placeholder import _number_re
 from precise_bbcode.bbcode.defaults.placeholder import _simpletext_re
 from precise_bbcode.bbcode.defaults.placeholder import _text_re
 from precise_bbcode.bbcode.defaults.placeholder import url_re
+from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
+from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
 from precise_bbcode.bbcode.tag import BBCodeTag
 
 
@@ -179,3 +181,19 @@ class TestPlaceholder(TestCase):
         for bbcodes_text, expected_html_text in self.ERRORED_DEFAULT_PLACEHOLDERS_TESTS:
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
+
+    def test_that_are_invalid_should_raise_at_runtime(self):
+        # Run & check
+        with self.assertRaises(InvalidBBCodePlaholder):
+            class InvalidePlaceholder1(BBCodePlaceholder):
+                pass
+        with self.assertRaises(InvalidBBCodePlaholder):
+            class InvalidePlaceholder2(BBCodePlaceholder):
+                delattr(BBCodePlaceholder, 'name')
+        with self.assertRaises(InvalidBBCodePlaholder):
+            class InvalidePlaceholder3(BBCodePlaceholder):
+                name = 'bad placeholder name'
+        with self.assertRaises(InvalidBBCodePlaholder):
+            class InvalidePlaceholder4(BBCodePlaceholder):
+                name = 'correctname'
+                pattern = 'incorrect pattern'
