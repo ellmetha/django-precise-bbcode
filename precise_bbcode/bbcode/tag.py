@@ -52,7 +52,7 @@ class BBCodeTagBase(type):
         if not re.match('^[^\s=]+$', new_tag.name):
             raise InvalidBBCodeTag(
                 """The \'name\' attribute associated with {!r} is not valid: a tag name must be strictly
-                composed of non-white-space characters""".format(name)
+                composed of non-white-space characters and the '=' character is not allowed""".format(name)
             )
 
         # Initializes the '_options' attribute
