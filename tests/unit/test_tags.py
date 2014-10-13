@@ -14,6 +14,7 @@ from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
 from precise_bbcode.models import BBCodeTag
+from precise_bbcode.tag_pool import TagAlreadyCreated
 from precise_bbcode.tag_pool import TagAlreadyRegistered
 from precise_bbcode.tag_pool import TagNotRegistered
 from precise_bbcode.tag_pool import tag_pool
@@ -30,7 +31,7 @@ class FooTag(ParserBBCodeTag):
 
 
 class FooTagAlt(ParserBBCodeTag):
-    name = 'foo'
+    name = 'fooalt'
 
     class Options:
         render_embedded = False
@@ -57,10 +58,10 @@ class BarTag(ParserBBCodeTag):
 
 class TestBbcodeTagPool(TestCase):
     TAGS_TESTS = (
-        ('[foo]hello world![/foo]', '<pre>hello world!</pre>'),
+        ('[fooalt]hello world![/fooalt]', '<pre>hello world!</pre>'),
         ('[bar]hello world![/bar]', '<div class="bar">hello world!</div>'),
-        ('[foo]hello [bar]world![/bar][/foo]', '<pre>hello [bar]world![/bar]</pre>'),
-        ('[bar]hello [foo]world![/foo][/bar]', '<div class="bar">hello <pre>world!</pre></div>'),
+        ('[fooalt]hello [bar]world![/bar][/fooalt]', '<pre>hello [bar]world![/bar]</pre>'),
+        ('[bar]hello [fooalt]world![/fooalt][/bar]', '<div class="bar">hello <pre>world!</pre></div>'),
         ('[bar]안녕하세요![/bar]', '<div class="bar">안녕하세요!</div>'),
     )
 
@@ -80,7 +81,7 @@ class TestBbcodeTagPool(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_can_not_register_erroneous_tags(self):
+    def test_cannot_register_erroneous_tags(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
@@ -120,7 +121,7 @@ class TestBbcodeTagPool(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_can_not_register_invalid_tags(self):
+    def test_cannot_register_tags_with_incorrect_parent_classes(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
@@ -131,7 +132,19 @@ class TestBbcodeTagPool(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_can_not_unregister_a_non_registered_tag(self):
+    def test_cannot_register_tags_that_are_already_stored_in_the_database(self):
+        # Setup
+        BBCodeTag.objects.create(
+            tag_definition='[tt]{TEXT}[/tt]', html_replacement='<span>{TEXT}</span>')
+        # Run
+        with self.assertRaises(TagAlreadyCreated):
+            class ErrnoneousTag9(ParserBBCodeTag):
+                name = 'tt'
+                definition_string = '[tt]{TEXT}[/tt]'
+                format_string = '<span>{TEXT}</span>'
+            tag_pool.register_tag(ErrnoneousTag9)
+
+    def test_cannot_unregister_a_non_registered_tag(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
@@ -140,7 +153,7 @@ class TestBbcodeTagPool(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_owns_tags_that_can_be_rendered(self):
+    def test_tags_can_be_rendered(self):
         # Setup
         parser_loader = BBCodeParserLoader(parser=self.parser)
         tag_pool.register_tag(FooTagAlt)
@@ -175,7 +188,7 @@ class TestDbBbcodeTag(TestCase):
         {'tag_definition': '[test]{TEXT1}[/ test ]', 'html_replacement': '<span>{TEXT}</span>'},
         {'tag_definition': '[test]{TEXT1}[/test ]', 'html_replacement': '<span>{TEXT}</span>'},
         {'tag_definition': '[foo]{TEXT1}[/foo ]', 'html_replacement': '<span>{TEXT}</span>'},
-        {'tag_definition': '[foo]{TEXT}[/foo]', 'html_replacement': '<span>{TEXT}</span>'},  # Already registered
+        {'tag_definition': '[bar]{TEXT}[/bar]', 'html_replacement': '<span>{TEXT}</span>'},  # Already registered
     )
 
     VALID_TAG_TESTS = (
@@ -197,6 +210,7 @@ class TestDbBbcodeTag(TestCase):
         {'tag_definition': '[food]{CHOICE=apple,tomato,orange}[/food]', 'html_replacement': '<span>{CHOICE=apple,tomato,orange}</span>'},
         {'tag_definition': '[food++={CHOICE2=red,blue}]{CHOICE1=apple,tomato,orange}[/food++]', 'html_replacement': '<span data-choice="{CHOICE2=red,blue}">{CHOICE1=apple,tomato,orange}</span>'},
         {'tag_definition': '[big]{RANGE=2,15}[/big]', 'html_replacement': '<span>{RANGE=2,15}</span>'},
+        {'tag_definition': '[b]{TEXT}[/b]', 'html_replacement': '<b>{TEXT}</b>'},  # Default tag overriding
     )
 
     def setUp(self):

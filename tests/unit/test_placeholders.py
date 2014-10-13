@@ -16,12 +16,11 @@ from precise_bbcode.bbcode.defaults.placeholder import _simpletext_re
 from precise_bbcode.bbcode.defaults.placeholder import _text_re
 from precise_bbcode.bbcode.defaults.placeholder import url_re
 from precise_bbcode.bbcode.tag import BBCodeTag
-from precise_bbcode.tag_pool import tag_pool
 
 
 class SizeTag(BBCodeTag):
-    name = 's'
-    definition_string = '[s={RANGE=4,7}]{TEXT}[/s]'
+    name = 'siz'
+    definition_string = '[siz={RANGE=4,7}]{TEXT}[/siz]'
     format_string = '<span style="font-size:{RANGE=4,7}px;">{TEXT}</span>'
 
 
@@ -35,11 +34,6 @@ class DayTag(BBCodeTag):
     name = 'day'
     definition_string = '[day]{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}[/day]'
     format_string = '<h5>{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}</h5>'
-
-
-tag_pool.register_tag(SizeTag)
-tag_pool.register_tag(ErroredSizeTag)
-tag_pool.register_tag(DayTag)
 
 
 class TestPlaceholder(TestCase):
@@ -146,13 +140,13 @@ class TestPlaceholder(TestCase):
     }
 
     DEFAULT_PLACEHOLDERS_TESTS = (
-        ('[s=4]hello world![/s]', '<span style="font-size:4px;">hello world!</span>'),
-        ('[s=5]hello world![/s]', '<span style="font-size:5px;">hello world!</span>'),
-        ('[s=6]hello world![/s]', '<span style="font-size:6px;">hello world!</span>'),
-        ('[s=7]hello world![/s]', '<span style="font-size:7px;">hello world!</span>'),
-        ('[s=3]hello world![/s]', '[s=3]hello world![/s]'),
-        ('[s=8]hello world![/s]', '[s=8]hello world![/s]'),
-        ('[s=test]hello world![/s]', '[s=test]hello world![/s]'),
+        ('[siz=4]hello world![/siz]', '<span style="font-size:4px;">hello world!</span>'),
+        ('[siz=5]hello world![/siz]', '<span style="font-size:5px;">hello world!</span>'),
+        ('[siz=6]hello world![/siz]', '<span style="font-size:6px;">hello world!</span>'),
+        ('[siz=7]hello world![/siz]', '<span style="font-size:7px;">hello world!</span>'),
+        ('[siz=3]hello world![/siz]', '[siz=3]hello world![/siz]'),
+        ('[siz=8]hello world![/siz]', '[siz=8]hello world![/siz]'),
+        ('[siz=test]hello world![/siz]', '[siz=test]hello world![/siz]'),
         ('[day]tuesday[/day]', '<h5>tuesday</h5>'),
         ('[day]monday[/day]', '<h5>monday</h5>'),
         ('[day]sunday[/day]', '<h5>sunday</h5>'),
@@ -166,6 +160,9 @@ class TestPlaceholder(TestCase):
 
     def setUp(self):
         self.parser = get_parser()
+        self.parser.add_bbcode_tag(SizeTag)
+        self.parser.add_bbcode_tag(ErroredSizeTag)
+        self.parser.add_bbcode_tag(DayTag)
 
     def test_regex_provided_by_default_are_valid(self):
         # Run & check
