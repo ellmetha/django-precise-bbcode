@@ -81,46 +81,6 @@ class TestBbcodeTagPool(TestCase):
         number_of_tags_after = len(tag_pool.get_tags())
         self.assertEqual(number_of_tags_before, number_of_tags_after)
 
-    def test_cannot_register_erroneous_tags(self):
-        # Setup
-        number_of_tags_before = len(tag_pool.get_tags())
-        # Run & check
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag1(ParserBBCodeTag):
-                pass
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag2(ParserBBCodeTag):
-                delattr(ParserBBCodeTag, 'name')
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag3(ParserBBCodeTag):
-                name = 'it\'s a bad tag name'
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag4(ParserBBCodeTag):
-                name = 'ooo'
-                definition_string = '[ooo]{TEXT}[/ooo]'
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag5(ParserBBCodeTag):
-                name = 'ooo'
-                definition_string = 'bad definition'
-                format_string = 'bad format string'
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag6(ParserBBCodeTag):
-                name = 'ooo'
-                definition_string = '[ooo]{TEXT}[/aaa]'
-                format_string = 'bad format string'
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag7(ParserBBCodeTag):
-                name = 'ooo'
-                definition_string = '[ooo]{TEXT}[/ooo]'
-                format_string = '<span></span>'
-        with self.assertRaises(InvalidBBCodeTag):
-            class ErrnoneousTag8(ParserBBCodeTag):
-                name = 'ooo'
-                definition_string = '[ooo={TEXT}]{TEXT}[/ooo]'
-                format_string = '<span>{TEXT}</span>'
-        number_of_tags_after = len(tag_pool.get_tags())
-        self.assertEqual(number_of_tags_before, number_of_tags_after)
-
     def test_cannot_register_tags_with_incorrect_parent_classes(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
@@ -163,6 +123,44 @@ class TestBbcodeTagPool(TestCase):
         for bbcodes_text, expected_html_text in self.TAGS_TESTS:
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
+
+
+class TestBbcodeTag(TestCase):
+    def test_that_are_invalid_should_raise_at_runtime(self):
+        # Run & check
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag1(ParserBBCodeTag):
+                pass
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag2(ParserBBCodeTag):
+                delattr(ParserBBCodeTag, 'name')
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag3(ParserBBCodeTag):
+                name = 'it\'s a bad tag name'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag4(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo]{TEXT}[/ooo]'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag5(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = 'bad definition'
+                format_string = 'bad format string'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag6(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo]{TEXT}[/aaa]'
+                format_string = 'bad format string'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag7(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo]{TEXT}[/ooo]'
+                format_string = '<span></span>'
+        with self.assertRaises(InvalidBBCodeTag):
+            class ErrnoneousTag8(ParserBBCodeTag):
+                name = 'ooo'
+                definition_string = '[ooo={TEXT}]{TEXT}[/ooo]'
+                format_string = '<span>{TEXT}</span>'
 
 
 class TestDbBbcodeTag(TestCase):
@@ -252,7 +250,7 @@ class TestDbBbcodeTag(TestCase):
         self.assertEqual(parser_tag_klass.definition_string, '[io]{TEXT}[/io]')
         self.assertEqual(parser_tag_klass.format_string, '<b>{TEXT}</b>')
 
-    def test_can_be_rendered(self):
+    def test_can_be_rendered_by_the_bbcode_parser(self):
         # Setup
         parser_loader = BBCodeParserLoader(parser=self.parser)
         tag = BBCodeTag(**{'tag_definition': '[mail]{EMAIL}[/mail]',

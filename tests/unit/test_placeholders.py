@@ -164,13 +164,13 @@ class TestPlaceholder(TestCase):
         self.parser.add_bbcode_tag(ErroredSizeTag)
         self.parser.add_bbcode_tag(DayTag)
 
-    def test_regex_provided_by_default_are_valid(self):
+    def test_regexes_provided_by_default_are_valid(self):
         # Run & check
         for _, re_tests in self.DEFAULT_PLACEHOLDERS_RE_TESTS.items():
             for test in re_tests['tests']:
                 self.assertIsNotNone(re.search(re_tests['re'], test))
 
-    def test_default_placeholders_are_valid(self):
+    def test_provided_by_default_are_valid(self):
         for bbcodes_text, expected_html_text in self.DEFAULT_PLACEHOLDERS_TESTS:
             result = self.parser.render(bbcodes_text)
             self.assertEqual(result, expected_html_text)
