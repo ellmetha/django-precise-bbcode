@@ -112,7 +112,7 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
         The default implementation will use a generic rendering method if the
         BBCode tag is defined by a definition string and a format string. In
         any other case, the 'render' method will be called. The latest should
-        be overidden in any subclasses that is not based on a defintion string
+        be overidden in any subclasses that is not based on a definition string
         and a format string.
         """
         if self.definition_string and self.format_string:

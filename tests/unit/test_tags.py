@@ -12,6 +12,7 @@ from django.test import TestCase
 from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
+from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.tag_pool import TagAlreadyCreated
@@ -126,6 +127,9 @@ class TestBbcodeTagPool(TestCase):
 
 
 class TestBbcodeTag(TestCase):
+    def setUp(self):
+        self.parser = get_parser()
+
     def test_that_are_invalid_should_raise_at_runtime(self):
         # Run & check
         with self.assertRaises(InvalidBBCodeTag):
@@ -161,6 +165,17 @@ class TestBbcodeTag(TestCase):
                 name = 'ooo'
                 definition_string = '[ooo={TEXT}]{TEXT}[/ooo]'
                 format_string = '<span>{TEXT}</span>'
+
+    def test_containing_invalid_placeholders_should_raise_during_rendering(self):
+        # Setup
+        class TagWithInvalidPlaceholders(ParserBBCodeTag):
+            name = 'bad'
+            definition_string = '[bad]{FOOD}[/bad]'
+            format_string = '<span>{FOOD}</span>'
+        self.parser.add_bbcode_tag(TagWithInvalidPlaceholders)
+        # Run
+        with self.assertRaises(InvalidBBCodePlaholder):
+            self.parser.render('[bad]apple[/bad]')
 
 
 class TestDbBbcodeTag(TestCase):
