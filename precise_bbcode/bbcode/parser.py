@@ -7,11 +7,8 @@ import re
 
 # Third party imports
 # Local application / specific library imports
+from precise_bbcode.bbcode.regexes import url_re
 from precise_bbcode.conf import settings as bbcode_settings
-
-
-# Other regex
-_url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
 
 
 class BBCodeToken(object):
@@ -366,7 +363,7 @@ class BBCodeParser(object):
             # The links must be pulled out before doing any character replacement
             pos = 0
             while True:
-                match = _url_re.search(data, pos)
+                match = url_re.search(data, pos)
                 if not match:
                     break
                 # Replace any link with a token that will be substitude back after replacements
