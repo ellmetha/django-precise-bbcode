@@ -5,10 +5,12 @@ from __future__ import unicode_literals
 import re
 
 # Third party imports
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
 # Local application / specific library imports
 from precise_bbcode import get_parser
+from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode.defaults.placeholder import _color_re
 from precise_bbcode.bbcode.defaults.placeholder import _email_re
 from precise_bbcode.bbcode.defaults.placeholder import _number_re
@@ -18,6 +20,10 @@ from precise_bbcode.bbcode.defaults.placeholder import url_re
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
 from precise_bbcode.bbcode.tag import BBCodeTag
+from precise_bbcode.placeholder_pool import placeholder_pool
+from precise_bbcode.placeholder_pool import PlaceholderAlreadyRegistered
+from precise_bbcode.placeholder_pool import PlaceholderNotRegistered
+from precise_bbcode.tag_pool import tag_pool
 
 
 class SizeTag(BBCodeTag):
@@ -36,6 +42,87 @@ class DayTag(BBCodeTag):
     name = 'day'
     definition_string = '[day]{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}[/day]'
     format_string = '<h5>{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}</h5>'
+
+
+class FooPlaceholder(BBCodePlaceholder):
+    name = 'foo'
+    pattern = re.compile(r'^[\d]*$')
+
+
+class DummyPlaceholder(BBCodePlaceholder):
+    name = 'dummy'
+    pattern = re.compile(r'^[\w]*$')
+
+
+class FooBBCodeTag(BBCodeTag):
+    name = 'xyz'
+    definition_string = '[xyz]{FOO}[/xyz]'
+    format_string = '<span class="foo">{FOO}</span>'
+
+
+class DummyBBCodeTag(BBCodeTag):
+    name = 'dummy'
+    definition_string = '[dummy]{DUMMY}[/dummy]'
+    format_string = '<span class="dummy">{DUMMY}</span'
+
+
+class TestPlaceholderPool(TestCase):
+    TAGS_TESTS = (
+        ('[xyz]hello world![/xyz]', '[xyz]hello world![/xyz]'),
+        ('[xyz]12[/xyz]', '<span class="foo">12</span>'),
+    )
+
+    def setUp(self):
+        self.parser = get_parser()
+
+    def test_should_raise_if_a_placeholder_is_registered_twice(self):
+        # Setup
+        number_of_placeholders_before = len(placeholder_pool.get_placeholders())
+        placeholder_pool.register_placeholder(FooPlaceholder)
+        # Run & check
+        # Let's add it a second time. We should catch an exception
+        with self.assertRaises(PlaceholderAlreadyRegistered):
+            placeholder_pool.register_placeholder(FooPlaceholder)
+        # Let's make sure we have the same number of tags as before
+        placeholder_pool.unregister_placeholder(FooPlaceholder)
+        number_of_placeholders_after = len(placeholder_pool.get_placeholders())
+        self.assertEqual(number_of_placeholders_before, number_of_placeholders_after)
+
+    def test_cannot_register_placeholders_with_incorrect_parent_classes(self):
+        # Setup
+        number_of_placeholders_before = len(placeholder_pool.get_placeholders())
+        # Run & check
+        with self.assertRaises(ImproperlyConfigured):
+            class ErrnoneousPlaceholder:
+                pass
+            placeholder_pool.register_placeholder(ErrnoneousPlaceholder)
+        number_of_placeholders_after = len(placeholder_pool.get_placeholders())
+        self.assertEqual(number_of_placeholders_before, number_of_placeholders_after)
+
+    def test_cannot_unregister_a_non_registered_placeholder(self):
+        # Setup
+        number_of_placeholders_before = len(placeholder_pool.get_placeholders())
+        # Run & check
+        with self.assertRaises(PlaceholderNotRegistered):
+            placeholder_pool.unregister_placeholder(FooPlaceholder)
+        number_of_placeholders_after = len(placeholder_pool.get_placeholders())
+        self.assertEqual(number_of_placeholders_before, number_of_placeholders_after)
+
+    def test_placeholders_can_be_used_with_tags(self):
+        # Setup
+        parser_loader = BBCodeParserLoader(parser=self.parser)
+        placeholder_pool.register_placeholder(FooPlaceholder)
+        placeholder_pool.register_placeholder(DummyPlaceholder)
+        tag_pool.register_tag(FooBBCodeTag)
+        tag_pool.register_tag(DummyBBCodeTag)
+        parser_loader.init_bbcode_placeholders()
+        parser_loader.init_bbcode_tags()
+        # Run & check
+        for bbcodes_text, expected_html_text in self.TAGS_TESTS:
+            result = self.parser.render(bbcodes_text)
+            self.assertEqual(result, expected_html_text)
+        placeholder_pool.unregister_placeholder(FooPlaceholder)
+        placeholder_pool.unregister_placeholder(DummyPlaceholder)
 
 
 class TestPlaceholder(TestCase):
