@@ -29,8 +29,7 @@ class BBCodeToken(object):
     def __str__(self):
         return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
-    def __unicode__(self):
-        return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
+    __unicode__ = __str__
 
 
 class BBCodeParser(object):
