@@ -12,10 +12,10 @@ from precise_bbcode.conf import settings as bbcode_settings
 
 
 class BBCodeToken(object):
-    TK_START_TAG = "start_tag"
-    TK_END_TAG = "end_tag"
-    TK_DATA = "data"
-    TK_NEWLINE = "newline"
+    TK_START_TAG = 'start_tag'
+    TK_END_TAG = 'end_tag'
+    TK_DATA = 'data'
+    TK_NEWLINE = 'newline'
 
     def __init__(self, type, tag_name, option, text):
         self.type = type
