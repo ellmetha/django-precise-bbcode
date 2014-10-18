@@ -1,13 +1,22 @@
+#################################################
 Welcome to django-precise-bbcode's documentation!
-=================================================
+#################################################
 
-.. image:: https://badge.fury.io/py/django-precise-bbcode.png
-    :target: http://badge.fury.io/py/django-precise-bbcode
-.. image::  https://travis-ci.org/ellmetha/django-precise-bbcode.png?branch=master
-  :target: http://travis-ci.org/ellmetha/django-precise-bbcode
-  :alt: build-status
+.. image:: https://pypip.in/version/django-precise-bbcode/badge.png
+    :target: https://pypi.python.org/pypi/django-precise-bbcode/
+    :alt: Latest Version
+.. image:: https://travis-ci.org/ellmetha/django-precise-bbcode.svg?branch=master
+    :target: https://travis-ci.org/ellmetha/django-precise-bbcode
+    :alt: Travis status
 .. image:: https://coveralls.io/repos/ellmetha/django-precise-bbcode/badge.png?branch=master
-  :target: https://coveralls.io/r/ellmetha/django-precise-bbcode?branch=master 
+    :target: https://coveralls.io/r/ellmetha/django-precise-bbcode
+    :alt: Coveralls status
+.. image:: https://pypip.in/download/django-precise-bbcode/badge.png
+    :target: https://pypi.python.org/pypi//django-precise-bbcode/
+    :alt: Download
+.. image:: https://pypip.in/wheel/django-precise-bbcode/badge.png
+    :target: https://pypi.python.org/pypi/django-precise-bbcode/
+    :alt: Wheel Status
 
 |
 
@@ -15,7 +24,7 @@ Welcome to django-precise-bbcode's documentation!
 
   BBCode is a special implementation of HTML. BBCode itself is similar in style to HTML, tags are enclosed in square brackets [ and ] rather than < and > and it offers greater control over what and how something is displayed.
 
-This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, ``i``, etc) and allows the definition of custom BBCode tags.
+This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, ``i``, etc) and allows the definition of custom BBCode tags, placeholders and smilies.
 
 Features
 --------
@@ -26,6 +35,7 @@ Features
 
   * Simple custom bbcodes can be defined in the Django admin
   * ... or they can be registered using a plugin system by defining some Python classes
+* Support for custom bbcode placeholders
 * Support for custom smilies and emoticons
 
 
@@ -35,9 +45,9 @@ Using django-precise-bbcode
 .. toctree::
    :maxdepth: 2
 
-   quickstart
-   custom_tags
-   smilies
+   getting_started
+   basic_reference/index
+   extending_precise_bbcode/index
    settings
 
 

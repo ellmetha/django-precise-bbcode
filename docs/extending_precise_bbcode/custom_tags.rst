@@ -1,5 +1,6 @@
+##################
 Custom BBCode tags
-==================
+##################
 
 While *django-precise-bbcode* comes with some built-in BBCode tags, there will be times when you need to add your own.
 
@@ -15,7 +16,7 @@ Adding a custom BBCode tag consists in defining at least two values in the assoc
 Tag definition
 ~~~~~~~~~~~~~~~
 
-The tag definition is the expression of the bbcode usage. It's where you enter your bbcode. All you need to do is to add a string containing your BBCode and the associated placeholders (special uppercase words surrounded by { and } -- they are similar to the "replacement fields" that you define in python format strings)::
+The tag definition is the expression of the bbcode usage. It's where you enter your bbcode. All you need to do is to add a string containing your BBCode and the associated placeholders (special uppercase words surrounded by { and } -- they are similar to the "replacement fields" that you define in Python format strings)::
 
     [foo]{TEXT}[/foo]
 
@@ -23,25 +24,7 @@ In this example, we have a bbcode named ``foo`` which can contain some text (``{
 
 So a bbcode definition takes the form of what users will enter when using this bbcode, except that all parts of the bbcode where data is required are expressed as placeholders. The placeholders that you can use in such a tag definition are typed. This means that some semantic verifications are done before rendering in order to ensure that data containing non-allowed characters are not converted to HTML.
 
-*django-precise-bbcode* provides the following placeholders:
-
-+-----------------+--------------------------------------------------+
-| Placeholder     | Definition                                       |
-+=================+==================================================+
-| ``{TEXT}``      | matches anything                                 |
-+-----------------+--------------------------------------------------+
-| ``{SIMPLETEXT}``| matches latin characters, numbers, spaces,       |
-|                 |                                                  |
-|                 | commas, dots, minus, plus, hyphen and underscore |
-+-----------------+--------------------------------------------------+
-| ``{COLOR}``     | matches a colour (eg. ``red`` or ``#000FFF``)    |
-+-----------------+--------------------------------------------------+
-| ``{NUMBER}``    | matches a number                                 |
-+-----------------+--------------------------------------------------+
-| ``{URL}``       | matches a valid URL                              |
-+-----------------+--------------------------------------------------+
-| ``{EMAIL}``     | matches a valid e-mail address                   |
-+-----------------+--------------------------------------------------+
+*Django-precise-bbcode* provides some placeholders by default, such as ``{TEXT}``, ``{SIMPLETEXT}``, ``{COLOR}``, ``{NUMBER}``, ``{URL}`` or ``{EMAIL}``.  For a full list of the available placeholders and the techniques used to define custom placeholders, please refer to :doc:`custom_placeholders`.
 
 Note that you can specify an option to your bbcode in its definition::
 
@@ -94,52 +77,84 @@ Defining BBCode tags plugins
 
 While the previous bbcode tag system allows you to easily define various bbcodes, you may want to do more complex treatments with your bbcodes (eg. handle other types of data). You may also want to write some **reusable** or **generic** bbcode tags.
 
-To do this, you will have to write a subclass of ``precise_bbcode.tag_base.TagBase`` for any tag you want to create. These class-based bbcodes must be defined inside a ``bbcode_tags`` module in your Django application.
+To do so, you will have to write a subclass of ``precise_bbcode.bbcode.tag.BBCodeTag`` for any tag you want to create. These class-based bbcode tags must be defined inside a ``bbcode_tags`` Python module in your Django application (just add a file called ``bbcode_tags.py`` to an existing Django application). And last, but not least, your class-based bbcode tags must be registered to the ``precise_bbcode.tag_pool.tag_pool`` object by using its ``register_tag`` method to be available to the BBCode parser.
 
-Each of this tag must provide a ``tag_name`` attribute and a ``render`` method and must be registered to a tag pool in order to be available to the BBCode parser. The ``render`` method is used to transform your bbcode tag and its context (value, option if provided) to the corresponding HTML output. The ``render`` method takes three arguments:
+Each of these tags must provide a ``name`` attribute and can operate in two different ways:
 
-* **tag_name**: the name of the tag being rendered
+* The ``BBCodeTag`` subclass provides a ``definition_string`` attribute and a ``format_string`` attribute. In this case, the tag will operate as previously described. The ``definition_string`` corresponds to the tag definition and defines how the tag should be used. The ``format_string`` is the HTML replacement code that will be used to generate the final HTML output
+* The ``BBCodeTag`` subclass implements a ``render`` method that will be used to transform the bbcode tag and its context (value, option if provided) to the corresponding  HTML output
+
+Defining bbcodes based on a definition string and a format string
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this case, you have to provide a ``definition_string`` attribute and a ``format_string`` attribute to your ``BBCodeTag``, in addition to the ``name`` attribute.
+
+Let's write a simple example. Consider we are trying to write a ``bar`` bbcode which will strike any text placed inside its tags. So we could write::
+
+    # bbcode_tags.py
+    from precise_bbcode.bbcode.tag import BBCodeTag
+    from precise_bbcode.tag_pool import tag_pool
+
+    class BarBBCodeTag(BBCodeTag):
+        name = 'bar'
+        definition_string = '[bar]{TEXT}[/bar]'
+        format_string = '<strike>{TEXT}</strike>'
+
+    tag_pool.register_tag(BarBBCodeTag)
+
+Note that you can use any BBCode options specified previously to alter the default behavior of your class-based tags (see `BBCode options`_). To do so, give your bbcode tag options by using an inner class ``Options``, like so::
+
+    # bbcode_tags.py
+    from precise_bbcode.bbcode.tag import BBCodeTag
+    from precise_bbcode.tag_pool import tag_pool
+
+    class BarBBCodeTag(BBCodeTag):
+        name = 'bar'
+        definition_string = '[bar]{TEXT}[/bar]'
+        format_string = '<strike>{TEXT}</strike>'
+
+        class Options:
+            render_embedded = False
+            strip = False
+
+    tag_pool.register_tag(BarBBCodeTag)
+
+Defining bbcodes based on a ``render`` method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this case, each of your ``BBCodeTag`` subclasses must provide a ``name`` attribute and must implement a ``render`` method. The ``render`` method is used to transform your bbcode tag and its context (value, option if provided) to the corresponding HTML output. The ``render`` method takes three arguments:
+
 * **value**: the context between the start end the end tags, or None for standalone tags. Whether this has been rendered depends on the ``render_embedded`` tag option
-* **option**: The value of an option passed to the tag, defaults to None
-* **parent**: The options (instance of ``precise_bbcode.parser.BBCodeTagOptions``) associated with the parent bbcode if the tag is being rendered inside another tag, otherwise None
+* **option**: The value of an option passed to the tag ; defaults to None
+* **parent**: The options (instance of ``precise_bbcode.bbcode.tag.BBCodeTagOptions``) associated with the parent bbcode if the tag is being rendered inside another tag, otherwise None
 
-Keep in mind that your ``render`` method may have to validate the data associated with your tag before rendering it. Any validation process should be triggered from this ``render`` method. And last, but not least, your class-based bbcode tag must be registered to the ``precise_bbcode.tag_pool.tag_pool`` object by using its ``register_tag`` method to be available to the BBCode parser.
+Keep in mind that your ``render`` method may have to validate the data associated with your tag before rendering it. Any validation process should be triggered from this ``render`` method.
 
-Let's write a simple example. Consider we are trying to write a ``bar`` bbcode which will strike any text placed inside its tags. If provided, any option passed to the tag is assumed to be a colour in order to modify the resulting HTML code. So we could write::
+Let's write another example. Consider we are trying to write a ``rounded`` bbcode which will surround inside a rounded frame any text placed inside the tags. If provided, the option passed to the tag is assumed to be a colour in order to modify the resulting HTML code. So we could write::
 
+    # bbcode_tags.py
     import re
-    from precise_bbcode.tag_base import TagBase
+    from precise_bbcode.bbcode.tag import BBCodeTag
     from precise_bbcode.tag_pool import tag_pool
 
     color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
 
-    class BarTag(TagBase):
-        tag_name = "bar"
+    class RoundedBBCodeTag(BBCodeTag):
+        name = 'rounded'
 
-        def render(self, name, value, option=None, parent=None):
+        class Options:
+            strip = False
+
+        def render(self, value, option=None, parent=None):
             if option and re.search(color_re, option) is not None:
-                return '<strike style="color:%s;">%s</strike>' % (option, value)
-            return '<strike>%s</strike>' % value
+                return '<div class="rounded" style="border-color:{};">{}</div>'.format(option, value)
+            return '<div class="rounded">{}</div>'.format(value)
 
-    tag_pool.register_tag(BarTag)
+    tag_pool.register_tag(RoundedBBCodeTag)
 
-Note that you can use any BBCode option specified previously as class atributes to alter the default behavior of your class-based tags (see `BBCode options`_)::
+Again, you can use any BBCode options as previously stated (see `BBCode options`_).
 
+Overriding default BBCode tags
+------------------------------
 
-    import re
-    from precise_bbcode.tag_base import TagBase
-    from precise_bbcode.tag_pool import tag_pool
-
-    color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
-
-    class BarTag(TagBase):
-        tag_name = "bar"
-        render_embedded = False
-        strip = False
-
-        def render(self, name, value, option=None, parent=None):
-            if option and re.search(color_re, option) is not None:
-                return '<strike style="color:%s;">%s</strike>' % (option, value)
-            return '<strike>%s</strike>' % value
-
-    tag_pool.register_tag(BarTag)
+When loaded, the parser provided by *django-precise-bbcode* provides some default bbcode tags (please refer to :doc:`../basic_reference/builtin_bbcodes` for the full list of default tags). These default tags can be overriden. You just have to create another tag with the same name either by defining it in the admin site or by defining it in a ``bbcode_tags`` Python module as previously explained.

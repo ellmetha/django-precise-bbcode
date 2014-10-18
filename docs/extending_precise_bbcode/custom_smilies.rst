@@ -1,5 +1,6 @@
-Smilies
-=======
+##############
+Custom smilies
+##############
 
 *Django-precise-bbcode* does not come with some built-in smilies but supports adding custom smilies and emoticons through the Django admin.
 
