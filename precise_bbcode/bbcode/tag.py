@@ -73,7 +73,7 @@ class BBCodeTagBase(type):
             )
 
         if new_tag.definition_string and new_tag.format_string:
-            # Check whether the tag is correctly formed defined according to a bbcode tag regex
+            # Check whether the tag is correctly defined according to a bbcode tag regex
             tag_re = bbcodde_standard_re if not new_tag._options.standalone else bbcodde_standalone_re
             valid_bbcode_tag = re.search(tag_re, new_tag.definition_string)
             if not valid_bbcode_tag:
