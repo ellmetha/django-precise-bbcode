@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+import re
 
 # Third party imports
 from precise_bbcode.bbcode.tag import BBCodeTag
 from precise_bbcode.tag_pool import tag_pool
 
 # Local application / specific library imports
+
+
+color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
 
 
 class SubTag(BBCodeTag):
@@ -53,9 +57,22 @@ class StartsWithATag(BBCodeTag):
     format_string = '<span>{STARTSWITH=a}</span>'
 
 
+class RoundedBBCodeTag(BBCodeTag):
+    name = 'rounded'
+
+    class Options:
+        strip = False
+
+    def render(self, value, option=None, parent=None):
+        if option and re.search(color_re, option) is not None:
+            return '<div class="rounded" style="border-color:{};">{}</div>'.format(option, value)
+        return '<div class="rounded">{}</div>'.format(value)
+
+
 tag_pool.register_tag(SubTag)
 tag_pool.register_tag(PreTag)
 tag_pool.register_tag(SizeTag)
 tag_pool.register_tag(FruitTag)
 tag_pool.register_tag(PhoneLinkTag)
 tag_pool.register_tag(StartsWithATag)
+tag_pool.register_tag(RoundedBBCodeTag)
