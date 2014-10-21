@@ -87,7 +87,7 @@ Each of these tags must provide a ``name`` attribute and can operate in two diff
 Defining bbcodes based on a definition string and a format string
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this case, you have to provide a ``definition_string`` attribute and a ``format_string`` attribute to your ``BBCodeTag``, in addition to the ``name`` attribute.
+In this case, you have to provide a ``definition_string`` attribute and a ``format_string`` attribute to your ``BBCodeTag`` subclass, in addition to the ``name`` attribute.
 
 Let's write a simple example. Consider we are trying to write a ``bar`` bbcode which will strike any text placed inside its tags. So we could write::
 
