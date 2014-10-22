@@ -65,3 +65,47 @@ So if this placeholder is used inside, let's say, a ``[telto]`` bbcode tag, ``+3
 
 Defining placeholders based on a ``validate`` method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this case, each of your ``BBCodePlaceholder`` subclasses must provide a ``name`` attribute and must implement a ``validate`` method. This method is used to check whether the input associated with a placeholder is valid and can be rendered. The ``validate`` method takes two arguments:
+
+* **content**: the content used to fill the placeholder that must be validated
+* **extra_context**: the extra context of the placeholder if defined in a tag definition
+
+Note that the extra context is a string defined in the placeholder in a bbcode tag definition. For example, ``CHOICE`` is the placeholder name and ``apple,tomato`` is the extra context if the ``CHOICE`` placeholder is used as follows inside a bbcode tag definition: ``{CHOICE=apple,tomato}``.
+
+Let's write an example. Consider we are trying to write a ``{RANGE}`` placeholder which will allow end-users to fill some bbcode tags with a number that will be valid only if it is within a specific range. So we could write::
+
+    # bbcode_placeholders.py
+    import re
+    from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
+    from precise_bbcode.placeholder_pool import placeholder_pool
+
+    class RangeBBCodePlaceholder(BBCodePlaceholder):
+        name = 'range'
+
+        def validate(self, content, extra_context):
+            try:
+                value = float(content)
+            except ValueError:
+                return False
+
+            try:
+                min_content, max_content = extra_context.split(',')
+                min_value, max_value = float(min_content), float(max_content)
+            except ValueError:
+                return False
+
+            if not (value >= min_value and value <= max_value):
+                return False
+
+        return True
+
+
+    placeholder_pool.register_placeholder(RangeBBCodePlaceholder)
+
+The ``validate`` method allows you to implement your own validation logic for your custom placeholders.
+
+Overriding default BBCode placeholders
+--------------------------------------
+
+When loaded, the parser provided by *django-precise-bbcode* provides some default bbcode placeholders (please refer to `Built-in placeholders`_ for the full list of default placeholders). These default placeholders can be overridden. You just have to register another placeholder with the same name and it will override the default one.
