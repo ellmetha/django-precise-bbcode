@@ -2,19 +2,13 @@
 
 # Standard library imports
 from __future__ import unicode_literals
-import re
 
 # Third party imports
 from django.test import TestCase
 
 # Local application / specific library imports
-from precise_bbcode.parser import get_parser
-from precise_bbcode.parser import _color_re
-from precise_bbcode.parser import _email_re
-from precise_bbcode.parser import _number_re
-from precise_bbcode.parser import _simpletext_re
-from precise_bbcode.parser import _text_re
-from precise_bbcode.parser import _url_re
+from precise_bbcode import get_parser
+from precise_bbcode.test import gen_bbcode_tag_klass
 
 
 class TestParser(TestCase):
@@ -72,36 +66,68 @@ class TestParser(TestCase):
     CUSTOM_TAGS_RENDERING_TESTS = {
         'tags': {
             'justify': {
-                'args': ('justify', '[justify]{TEXT}[/justify]', '<div style="text-align:justify;">{TEXT}</div>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'justify',
+                    'definition_string': '[justify]{TEXT}[/justify]',
+                    'format_string': '<div style="text-align:justify;">{TEXT}</div>',
+                },
+                'Options': {},
             },
             'spoiler': {
-                'args': ('spoiler', '[spoiler]{TEXT}[/spoiler]', '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'spoiler',
+                    'definition_string': '[spoiler]{TEXT}[/spoiler]',
+                    'format_string': '<div style="margin:20px; margin-top:5px"><div class="quotetitle"><strong> </strong>   <input type="button" value="Afficher" style="width:60px;font-size:10px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != '') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = '';        this.innerText = ''; this.value = \'Masquer\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = ''; this.value = \'Afficher\'; }" /></div><div class="quotecontent"><div style="display: none;">{TEXT}</div></div></div>',
+                },
+                'Options': {},
             },
             'youtube': {
-                'args': ('youtube', '[youtube]{TEXT}[/youtube]', '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/{TEXT}"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/{TEXT}" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'youtube',
+                    'definition_string': '[youtube]{TEXT}[/youtube]',
+                    'format_string': '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/{TEXT}"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/{TEXT}" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>',
+                },
+                'Options': {},
             },
             'h1': {
-                'args': ('h1', '[h1={COLOR}]{TEXT}[/h1]', '<span style="border-left:6px {COLOR} solid;border-bottom:1px {COLOR} dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:{COLOR};">{TEXT}</span><br />'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'h1',
+                    'definition_string': '[h1={COLOR}]{TEXT}[/h1]',
+                    'format_string': '<span style="border-left:6px {COLOR} solid;border-bottom:1px {COLOR} dotted;margin-left:8px;padding-left:4px;font-variant:small-caps;font-familly:Arial;font-weight:bold;font-size:150%;letter-spacing:0.2em;color:{COLOR};">{TEXT}</span><br />',
+                },
+                'Options': {},
             },
             'hr': {
-                'args': ('hr', '[hr]', '<hr />'),
-                'kwargs': {'standalone': True},
+                'Tag': {
+                    'name': 'hr',
+                    'definition_string': '[hr]',
+                    'format_string': '<hr />',
+                },
+                'Options': {'standalone': True},
             },
             'size': {
-                'args': ('size', '[size={NUMBER}]{TEXT}[/size]', '<span style="font-size:{NUMBER}px;">{TEXT}</span>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'size',
+                    'definition_string': '[size={NUMBER}]{TEXT}[/size]',
+                    'format_string': '<span style="font-size:{NUMBER}px;">{TEXT}</span>',
+                },
+                'Options': {},
             },
             'mailto': {
-                'args': ('email', '[email]{EMAIL}[/email]', '<a href="mailto:{EMAIL}">{EMAIL}</a>'),
-                'kwargs': {'replace_links': False},
+                'Tag': {
+                    'name': 'email',
+                    'definition_string': '[email]{EMAIL}[/email]',
+                    'format_string': '<a href="mailto:{EMAIL}">{EMAIL}</a>',
+                },
+                'Options': {'replace_links': False},
             },
             'simpletext': {
-                'args': ('simpletext', '[simpletext]{SIMPLETEXT}[/simpletext]', '<span>{SIMPLETEXT}</span>'),
-                'kwargs': {},
+                'Tag': {
+                    'name': 'simpletext',
+                    'definition_string': '[simpletext]{SIMPLETEXT}[/simpletext]',
+                    'format_string': '<span>{SIMPLETEXT}</span>',
+                },
+                'Options': {},
             }
         },
         'tests': (
@@ -126,108 +152,6 @@ class TestParser(TestCase):
         )
     }
 
-    PLACEHOLDERS_RE_TESTS = {
-        'text': {
-            're': _text_re,
-            'tests': (
-                'hello world',
-                'hello\nworld',
-                '   hello world     ',
-                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
-                '12902',
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer pretium, mi ac molestie ornare, urna sem fermentum erat, malesuada interdum sapien turpis sit amet eros.\nPhasellus quis mi velit. Cras porttitor dui faucibus rhoncus fringilla. Cras non fringilla est. \nCurabitur sollicitudin nisi quis sem sodales, quis blandit massa rhoncus. Nam porta at lacus semper gravida.\n',
-                '안녕하세요!',
-            )
-        },
-        'simpletext': {
-            're': _simpletext_re,
-            'tests': (
-                'hello world',
-                'slugify-u-21'
-                'hello91',
-            )
-        },
-        'url': {
-            're': _url_re,
-            'tests': (
-                'http://foo.com/blah_blah',
-                '(Something like http://foo.com/blah_blah)',
-                'http://foo.com/blah_blah_(wikipedia)',
-                'http://foo.com/more_(than)_one_(parens)',
-                '(Something like http://foo.com/blah_blah_(wikipedia))',
-                'http://foo.com/blah_(wikipedia)#cite-1',
-                'http://foo.com/blah_(wikipedia)_blah#cite-1',
-                'http://foo.com/(something)?after=parens',
-                'http://foo.com/blah_blah.',
-                'http://foo.com/blah_blah/.',
-                '<http://foo.com/blah_blah>',
-                '<http://foo.com/blah_blah/>',
-                'http://foo.com/blah_blah,',
-                'http://www.extinguishedscholar.com/wpglob/?p=364.',
-                '<tag>http://example.com</tag>',
-                'Just a www.example.com link.',
-                'http://example.com/something?with,commas,in,url, but not at end',
-                'bit.ly/foo',
-                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
-                'http://something.xx:8080'
-            )
-        },
-        'email': {
-            're': _email_re,
-            'tests': (
-                'president@whitehouse.gov',
-                'xyz.xyz@xy.com',
-                'hello_world@rt.rt',
-                '"email"@domain.com',
-                'a@b.cc',
-                'joe@aol.com',
-                'joe@wrox.co.uk',
-                'joe@domain.info',
-                'asmith@mactec.com',
-                'foo12@foo.edu ',
-                'bob.smith@foo.tv',
-                'bob-smith@foo.com',
-                'bob.smith@foo.com',
-                'bob_smith@foo.com',
-                'bob@somewhere.com',
-                'bob.jones@[1.1.1.1]',
-                'bob@a.b.c.d.info',
-                '&lt;ab@cd.ef&gt;',
-                'bob A. jones &lt;ab@cd.ef&gt;',
-                'bob A. jones &lt;ab@[1.1.1.111]&gt;',
-                'blah@127.0.0.1',
-                'whatever@somewhere.museum',
-                'foreignchars@myforeigncharsdomain.nu',
-                'me+mysomething@mydomain.com',
-                'u-s_e.r1@s-ub2.domain-name.museum:8080',
-            )
-        },
-        'color': {
-            're': _color_re,
-            'tests': (
-                'red',
-                'blue',
-                'pink',
-                '#FFFFFF',
-                '#fff000',
-                '#FFF',
-                '#3089a2',
-            )
-        },
-        'number': {
-            're': _number_re,
-            'tests': (
-                '12',
-                '1289101',
-                '-121',
-                '89.12',
-                '100000000000001',
-                '10000000000000,1',
-                '-12,1990000000000000001',
-            )
-        }
-    }
-
     def setUp(self):
         self.parser = get_parser()
 
@@ -240,7 +164,7 @@ class TestParser(TestCase):
     def test_can_render_custom_tags(self):
         # Setup
         for _, tag_def in self.CUSTOM_TAGS_RENDERING_TESTS['tags'].items():
-            self.parser.add_default_renderer(*tag_def['args'], **tag_def['kwargs'])
+            self.parser.add_bbcode_tag(gen_bbcode_tag_klass(tag_def['Tag'], tag_def['Options']))
         # Run & check
         for bbcodes_text, expected_html_text in self.CUSTOM_TAGS_RENDERING_TESTS['tests']:
             result = self.parser.render(bbcodes_text)
@@ -252,9 +176,3 @@ class TestParser(TestCase):
         dst = '<div style="text-align:center;">ƒünk¥ 你好 • §tüƒƒ 你好</div>'
         # Run & check
         self.assertEqual(self.parser.render(src), dst)
-
-    def test_uses_valid_placeholder_regex(self):
-        # Run & check
-        for _, re_tests in self.PLACEHOLDERS_RE_TESTS.items():
-            for test in re_tests['tests']:
-                self.assertIsNotNone(re.search(re_tests['re'], test))

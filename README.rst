@@ -22,12 +22,12 @@ django-precise-bbcode
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Wheel Status
 
-
-**Django-precise-bbcode** is a Django application providing a way to create textual contents based on BBCodes.
+|
+*Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
 
   BBCode is a special implementation of HTML. BBCode itself is similar in style to HTML, tags are enclosed in square brackets [ and ] rather than < and > and it offers greater control over what and how something is displayed.
 
-This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, etc) and allows the use of smilies and custom BBCode tags. These can be added in two different ways:
+This application includes a BBCode compiler aimed to render any BBCode content to HTML and allows the use of BBCodes tags in models, forms and admin forms. The BBCode parser comes with built-in tags (the default ones ; ``b``, ``u``, etc) and allows the use of smilies, custom BBCode placeholders and custom BBCode tags. These can be added in two different ways:
 
 * Custom tags can be defined in the Django administration panel and stored into the database ; doing this allows any non-technical admin to add BBCode tags by defining the HTML replacement string associated with each tag
 * Tags can also be manually registered to be used by the parser by defining a tag class aimed to render a given bbcode tag and its content to the corresponding HTML markup
@@ -51,8 +51,8 @@ Just run:
 ::
 
   pip install django-precise-bbcode
-
-Once installed you can configure your project to use django-precise-bbcode with the following steps.
+  
+Once installed you can configure your project to use *django-precise-bbcode* with the following steps.
 
 Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
 
@@ -68,16 +68,8 @@ Then install the models:
 ::
 
   python manage.py syncdb
-  
-If you are using South **and** Django 1.6 or below you have to customize the ``SOUTH_MIGRATION_MODULES`` setting as follow:
 
-::
-
-  SOUTH_MIGRATION_MODULES = {
-      'precise_bbcode': 'precise_bbcode.south_migrations',
-  }
-
-Then you can use the migration command provided by South:
+If you are using Django 1.6 or below, you should use South 1.0 in order to benefit from the migrations. This way you can use the migration command provided by South:
 
 ::
 
@@ -90,9 +82,9 @@ Usage
 Rendering bbcodes
 *****************
 
-Django-precise-bbcode comes with a BBCode parser that allows you to transform a textual content containing BBCode tags to the corresponding HTML markup. To do this, simply import the ``get_parser`` shortcut and use the ``render`` method of the BBCode parser::
+*Django-precise-bbcode* comes with a BBCode parser that allows you to transform a textual content containing BBCode tags to the corresponding HTML markup. To do this, simply import the ``get_parser`` shortcut and use the ``render`` method of the BBCode parser::
 
-  >>> from precise_bbcode.parser import get_parser
+  >>> from precise_bbcode import get_parser
   >>> parser = get_parser()
   >>> parser.render('[b]Hello [u]world![/u][/b]')
   '<strong>Hello <u>world!</u></strong>'
@@ -110,7 +102,7 @@ The BBCode content included in the ``entry.bbcode_content``  field will be conve
 Storing bbcodes
 ***************
 
-While you can use the Django built-in ``models.TextField`` to add your BBCode contents to your models, a common need is to store both the BBCode content and the corresponding HTML markup in the database. To address this Django-precise-bbcode provides a ``BBCodeTextField``.
+While you can use the Django built-in ``models.TextField`` to add your BBCode contents to your models, a common need is to store both the BBCode content and the corresponding HTML markup in the database. To address this *django-precise-bbcode* provides a ``BBCodeTextField``.
 
 ::
   
@@ -129,7 +121,7 @@ This field will store both the BBCode content and the correspondign HTML markup.
 And more...
 ***********
 
-Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/latest/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags and smilies.
+Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/latest/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags, placeholders and smilies.
 
 Author
 ------

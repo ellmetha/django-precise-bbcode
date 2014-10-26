@@ -1,5 +1,6 @@
-Precise BBcodes settings
-========================
+########
+Settings
+########
 
 This is a comprehensive list of all the settings *Django-precise-bbcode* provides. All settings are optional.
 

@@ -12,7 +12,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
-from .parser import get_parser
+from .bbcode import get_parser
 
 
 _rendered_content_field_name = lambda name: '_{}_rendered'.format(name)

@@ -27,11 +27,11 @@ setup(
     long_description=read_relative_file('README.rst'),
     zip_safe=False,
     install_requires=[
-        "django>=1.4",
-        "pillow>=2.2.1",
+        'django>=1.4',
+        'pillow>=2.2.1',
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',

@@ -6,11 +6,17 @@ import sys
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 # Third party imports
+# Local application / specific library imports
+
+
+# python_2_unicode_compatible
 try:
     from django.utils.encoding import python_2_unicode_compatible
 except ImportError:
     python_2_unicode_compatible = lambda x: x
 
+
+# Provides string_types if six is not available
 try:
     from django.utils.six import string_types
 except ImportError:
@@ -18,7 +24,13 @@ except ImportError:
         string_types = str,
     else:
         string_types = basestring,
-# Local application / specific library imports
+
+
+# force_str
+try:
+    from django.utils.encoding import force_str
+except ImportError:
+    from django.utils.encoding import smart_str as force_str
 
 
 def with_metaclass(meta, *bases):

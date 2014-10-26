@@ -9,9 +9,9 @@ from django.core.files import File
 from django.test import TestCase
 
 # Local application / specific library imports
+from precise_bbcode import get_parser
+from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.models import SmileyTag
-from precise_bbcode.parser import get_parser
-from precise_bbcode.parser import _init_bbcode_smilies
 
 
 class TestSmiley(TestCase):
@@ -24,6 +24,7 @@ class TestSmiley(TestCase):
 
     def setUp(self):
         self.parser = get_parser()
+        self.parser_loader = BBCodeParserLoader(parser=self.parser)
         # Set up an image used for doing smilies tests
         f = open(settings.MEDIA_ROOT + "/icon_e_wink.gif", "rb")
         image_file = File(f)
@@ -33,7 +34,7 @@ class TestSmiley(TestCase):
         smiley.code = ':test:'
         smiley.image.save('icon_e_wink.gif', self.image)
         smiley.save()
-        _init_bbcode_smilies(self.parser)
+        self.parser_loader.init_bbcode_smilies()
 
     def tearDown(self):
         self.image.close()

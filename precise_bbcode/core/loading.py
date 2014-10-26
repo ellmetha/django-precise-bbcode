@@ -3,6 +3,7 @@
 # Standard library imports
 from __future__ import unicode_literals
 import imp
+import inspect
 
 # Third party imports
 from django.conf import settings
@@ -37,3 +38,12 @@ def load(modname):
     """
     for app in settings.INSTALLED_APPS:
         get_module(app, modname)
+
+
+def get_subclasses(mod, cls):
+    """
+    Yield the classes in module 'mod' that inherit from 'cls'.
+    """
+    for name, obj in inspect.getmembers(mod):
+        if obj != cls and inspect.isclass(obj) and issubclass(obj, cls):
+            yield obj

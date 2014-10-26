@@ -6,70 +6,16 @@ from collections import defaultdict
 import re
 
 # Third party imports
-from django.db.models import get_model
-from django.utils.encoding import python_2_unicode_compatible
-
 # Local application / specific library imports
-from .conf import settings as bbcode_settings
+from precise_bbcode.bbcode.regexes import url_re
+from precise_bbcode.conf import settings as bbcode_settings
 
 
-# BBCode regex
-bbcodde_standard_re = r"^\[(?P<start_name>[A-Za-z0-9]*)(=\{[A-Za-z0-9]*\})?\]\{[A-Za-z0-9]*\}\[/(?P<end_name>[A-Za-z0-9]*)\]$"
-bbcodde_standalone_re = r"^\[(?P<start_name>[A-Za-z0-9]*)(=\{[A-Za-z0-9]*\})?\]\{?[A-Za-z0-9]*\}?$"
-bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*\]')
-
-# Other regex
-placeholder_re = re.compile(r'{(\w+)}')
-_url_re = re.compile(r'(?im)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^\s`!()\[\]{};:\'".,<>?]))')
-_domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')
-_email_re = re.compile(r'(\w+[.|\w])*@\[?(\w+[.])*\w+\]?', re.IGNORECASE)
-_text_re = re.compile(r'^\s*([\w]+)|([\w]+\S*)\s*$', flags=re.UNICODE)
-_simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
-_color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
-_number_re = re.compile(r'^[+-]?\d+(?:(\.|,)\d+)?$')
-
-
-class InvalidBBCodePlaholder(Exception):
-    pass
-
-
-class BBCodeTagOptions(object):
-    # Force the closing of this tag after a newline
-    newline_closes = False
-    # Force the closing of this tag after the start of the same tag
-    same_tag_closes = False
-    # Force the closing of this tag after the end of another tag
-    end_tag_closes = False
-    # This tag does not have a closing tag
-    standalone = False
-    # The embedded tags will be rendered
-    render_embedded = True
-    # The embedded newlines will be converted to markup
-    transform_newlines = True
-    # The HTML characters inside this tag will be escaped
-    escape_html = True
-    # Replace URLs with link markups inside this tag
-    replace_links = True
-    # Strip leading and trailing whitespace inside this tag
-    strip = False
-    # Swallow the first trailing newline
-    swallow_trailing_newline = False
-
-    # The following options will be usefull for BBCode editors
-    helpline = None
-    display_on_editor = True
-
-    def __init__(self, **kwargs):
-        for attr, value in list(kwargs.items()):
-            setattr(self, attr, bool(value))
-
-
-@python_2_unicode_compatible
 class BBCodeToken(object):
-    TK_START_TAG = "start_tag"
-    TK_END_TAG = "end_tag"
-    TK_DATA = "data"
-    TK_NEWLINE = "newline"
+    TK_START_TAG = 'start_tag'
+    TK_END_TAG = 'end_tag'
+    TK_DATA = 'data'
+    TK_NEWLINE = 'newline'
 
     def __init__(self, type, tag_name, option, text):
         self.type = type
@@ -83,43 +29,47 @@ class BBCodeToken(object):
     def __str__(self):
         return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
+    __unicode__ = __str__
+
 
 class BBCodeParser(object):
-    # A list of the default BBCode tags handled by the parser
-    DEFAULT_TAGS = ('b', 'i', 'u', 's', 'list', '*', 'code', 'quote', 'center', 'color', 'url', 'img')
-
-    # A list of all placeholder types supported by the parser and their corresponding regex
-    PLACEHOLDERS_RE = {
-        'URL': _url_re,
-        'EMAIL': _email_re,
-        'TEXT': _text_re,
-        'SIMPLETEXT': _simpletext_re,
-        'COLOR': _color_re,
-        'NUMBER': _number_re,
-    }
-
     # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
     _TAG_OPENING = '['
     _TAG_ENDING = ']'
 
     def __init__(self, *args, **kwargs):
+        # Settings
         self.newline_char = bbcode_settings.BBCODE_NEWLINE
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
+
+        # Initializes the placeholders, bbcodes and smilies stores
+        self.placeholders = {}
         self.bbcodes = {}
         self.smilies = {}
-        # Init default renderers
-        self.init_renderers()
 
-    def add_renderer(self, tag_name, render_func, **kwargs):
+    def add_placeholder(self, placeholder_klass):
         """
-        Installs a renderer for the specified tag. A renderer is a function defined
-        by the following signature:
+        Installs a placeholder. A placeholder is an instance of the BBCodePlaceholder
+        class. Each placeholder can be used to validate any content embedded in a
+        BBCode tag. A placeholder instance must implement a 'validate' method, which is
+        definated by the following signature:
 
-        def render(tag_name, value, option=None, parent=None)
+        def validate(self, content)
 
-            tag_name
-                The name of the tag being rendered.
+            content
+                The content used to fill the placeholder that must be validated.
+        """
+        self.placeholders[placeholder_klass.name.upper()] = placeholder_klass()
+
+    def add_bbcode_tag(self, tag_klass):
+        """
+        Installs a renderer for the specified tag. A renderer is an instance of the
+        BBCodeTag class. Each BBCode tag instance must implement a 'render' method,
+        which is defined by the following signature:
+
+        def render(self, value, option=None, parent=None)
+
             value
                 The context between start and end tags, or None for standalone tags.
                 Whether this has been rendered depends on render_embedded tag option.
@@ -129,94 +79,7 @@ class BBCodeParser(object):
                 The parent BBCodeTagOptions, if the tag is being rendered inside another tag,
                 otherwise None.
         """
-        options = BBCodeTagOptions(**kwargs)
-        self.bbcodes[tag_name] = (render_func, options)
-
-    def add_default_renderer(self, tag_name, tag_def, format_string, **kwargs):
-        """
-        Installs a renderer that constructs a dictionary composed of the value of the
-        tag and its possible option and use it to semantically validate the tag and to
-        format the rendered string.
-        """
-        def _render_default(name, value, option=None, parent=None):
-            placeholders = re.findall(placeholder_re, tag_def)
-            # Get the format data
-            fmt = {}
-            if len(placeholders) == 1:
-                fmt.update({placeholders[0]: value})
-            elif len(placeholders) == 2:
-                fmt.update({placeholders[1]: value, placeholders[0]: self._replace(option, self.replace_html) if option else ''})
-
-            # Semantic validation
-            valid = self._validate_format(fmt)
-            if not valid and option:
-                return tag_def.format(**fmt)
-            elif not valid:
-                return tag_def.replace('=', '').format(**fmt)
-
-            # Before rendering, it's necessary to escape the included braces: '{' and '}' ; some of them could not be placeholders
-            escaped_format_string = format_string.replace('{', '{{').replace('}', '}}')
-            for placeholder in fmt.keys():
-                escaped_format_string = escaped_format_string.replace('{' + placeholder + '}', placeholder)
-
-            # Return the rendered data
-            return escaped_format_string.format(**fmt)
-        self.add_renderer(tag_name, _render_default, **kwargs)
-
-    def init_renderers(self):
-        """
-        Initializes some renderers for the default bbcode tags:
-
-            b, i, u, s, list (and \*), code, quote, center, color, url and img
-        """
-        def _render_list(name, value, option=None, parent=None):
-            css_opts = {
-                '1': 'decimal', '01': 'decimal-leading-zero',
-                'a': 'lower-alpha', 'A': 'upper-alpha',
-                'i': 'lower-roman', 'I': 'upper-roman',
-            }
-            list_tag = 'ol' if option in css_opts else 'ul'
-            list_tag_css = ' style="list-style-type:{};"'.format(css_opts[option]) if list_tag == 'ol' else ''
-            rendered = '<{tag}{css}>{content}</{tag}>'.format(tag=list_tag, css=list_tag_css, content=value)
-            return rendered
-
-        def _render_url(name, value, option=None, parent=None):
-            href = self._replace(option, self.replace_html) if option else value
-            if '://' not in href and _domain_re.match(href):
-                href = 'http://' + href
-            content = value if option else href
-            # Render
-            return '<a href="{}">{}</a>'.format(href, content or href)
-
-        self.add_default_renderer('b', '[b]{TEXT}[/b]', '<strong>{TEXT}</strong>')
-        self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
-        self.add_default_renderer('u', '[u]{TEXT}[/u]', '<u>{TEXT}</u>')
-        self.add_default_renderer('s', '[s]{TEXT}[/s]', '<strike>{TEXT}</strike>')
-        self.add_renderer('list', _render_list, transform_newlines=True, strip=True)
-        self.add_default_renderer('*', '[*]{TEXT}', '<li>{TEXT}</li>', newline_closes=True, same_tag_closes=True, end_tag_closes=True, strip=True)
-        self.add_default_renderer('quote', '[quote]{TEXT}[/quote]', '<blockquote>{TEXT}</blockquote>', strip=True)
-        self.add_default_renderer('code', '[code]{TEXT}[/code]', '<code>{TEXT}</code>', render_embedded=False)
-        self.add_default_renderer('center', '[center]{TEXT}[/center]', '<div style="text-align:center;">{TEXT}</div>')
-        self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR};">{TEXT}</span>')
-        self.add_renderer('url', _render_url, replace_links=False)
-        self.add_default_renderer('img', '[img]{URL}[/img]', '<img src="{URL}" alt="" />', replace_links=False)
-
-    def _validate_format(self, format_dict):
-        """
-        Validates the given format dictionary. Each key of this dict refers to a specific BBCode placeholder type.
-        eg. {TEXT} or {TEXT1} refer to the 'TEXT' BBCode placeholder type.
-        Each content is validated according to its associated placeholder type.
-        """
-        for placeholder_name, content in format_dict.items():
-            placeholder_type = re.sub('\d+$', '', placeholder_name)
-            try:
-                valid_content = re.search(self.PLACEHOLDERS_RE[placeholder_type], content)
-                assert valid_content is not None
-            except KeyError:
-                raise InvalidBBCodePlaholder(placeholder_type)
-            except AssertionError:
-                return False
-        return True
+        self.bbcodes[tag_klass.name] = tag_klass()
 
     def add_smiley(self, code, img):
         """
@@ -337,16 +200,16 @@ class BBCodeParser(object):
         opening_tags = []
         for index, token in enumerate(tokens):
             if token.type == BBCodeToken.TK_START_TAG:
-                _, tag_options = self.bbcodes[token.tag_name]
+                tag_options = self.bbcodes[token.tag_name]._options
                 if tag_options.same_tag_closes and len(opening_tags) > 0 and opening_tags[-1][0].tag_name == token.tag_name:
                     opening_tags.pop()
                 if not tag_options.standalone:
                     opening_tags.append((token, index))
             elif token.type == BBCodeToken.TK_END_TAG:
-                _, tag_options = self.bbcodes[token.tag_name]
+                tag_options = self.bbcodes[token.tag_name]._options
                 if len(opening_tags) > 0:
                     previous_tag, _ = opening_tags[-1]
-                    _, previous_tag_options = self.bbcodes[previous_tag.tag_name]
+                    previous_tag_options = self.bbcodes[previous_tag.tag_name]._options
                     if previous_tag_options.end_tag_closes:
                         opening_tags.pop()
 
@@ -377,7 +240,7 @@ class BBCodeParser(object):
                 else:
                     previous_tag = None
                 if previous_tag:
-                    _, previous_tag_options = self.bbcodes[previous_tag.tag_name]
+                    previous_tag_options = self.bbcodes[previous_tag.tag_name]._options
                     if previous_tag_options.newline_closes:
                         opening_tags.pop()
         # The remaining tags do not have a closing tag, they must be converted to testual tokens)
@@ -440,10 +303,11 @@ class BBCodeParser(object):
             # Try to render it according to its type
             if token.type == BBCodeToken.TK_START_TAG:
                 # Fetch some data about the current tag
-                call_rendering_function, tag_options = self.bbcodes[token.tag_name]
+                call_rendering_function = self.bbcodes[token.tag_name].do_render
+                tag_options = self.bbcodes[token.tag_name]._options
 
                 if tag_options.standalone:
-                    rendered.append(call_rendering_function(token.tag_name, None, token.option, parent_tag))
+                    rendered.append(call_rendering_function(self, None, token.option, parent_tag))
                 else:
                     # First find the closing tag associated with this tag
                     token_end, consume_now = self._find_closing_token(token.tag_name, tag_options, tokens, itk + 1)
@@ -466,7 +330,7 @@ class BBCodeParser(object):
                         inner = inner.replace('\n', self.newline_char)
 
                     # Append the rendered data
-                    rendered.append(call_rendering_function(token.tag_name, inner, token.option, parent_tag))
+                    rendered.append(call_rendering_function(self, inner, token.option, parent_tag))
 
                     # Swallow the first trailing newline if necessary
                     if tag_options.swallow_trailing_newline:
@@ -498,7 +362,7 @@ class BBCodeParser(object):
             # The links must be pulled out before doing any character replacement
             pos = 0
             while True:
-                match = _url_re.search(data, pos)
+                match = url_re.search(data, pos)
                 if not match:
                     break
                 # Replace any link with a token that will be substitude back after replacements
@@ -542,67 +406,3 @@ class BBCodeParser(object):
         lexical_units = self._drop_syntactic_errors(self.get_tokens(data))
         rendered = self._render_tokens(lexical_units)
         return rendered
-
-
-_bbcode_parser = None
-# The easiest way to use the BBcode parser is to import the following get_parser function (except if
-# you need many BBCodeParser instances at a time or you want to subclass it).
-# 
-# Note if you create a new instance of BBCodeParser, the built in bbcode tags are still installed.
-
-
-def get_parser():
-    if not _bbcode_parser:
-        _load_parser()
-    return _bbcode_parser
-
-
-def _init_bbcode_tags(parser):
-    """
-    Call the BBCode tag pool to fetch all the module-based tags and initializes
-    their associated renderers.
-    """
-    from precise_bbcode.tag_pool import tag_pool
-    tags = tag_pool.get_tags()
-    for tag_def in tags:
-        tag = tag_def()
-        parser.add_renderer(tag.tag_name, tag.render, **tag._options())
-
-
-def _init_custom_bbcode_tags(parser):
-    """
-    Find the user-defined BBCode tags and initializes their associated renderers.
-    """
-    BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')
-    if BBCodeTag:
-        custom_tags = BBCodeTag.objects.all()
-        for tag in custom_tags:
-            args, kwargs = tag.parser_args
-            parser.add_default_renderer(*args, **kwargs)
-
-
-def _init_bbcode_smilies(parser):
-    """
-    Find the user-defined smilies tags and register them to the BBCode parser.
-    """
-    SmileyTag = get_model('precise_bbcode', 'SmileyTag')
-    if SmileyTag:
-        custom_smilies = SmileyTag.objects.all()
-        for smiley in custom_smilies:
-            parser.add_smiley(smiley.code, smiley.html_code)
-
-
-def _load_parser():
-    global _bbcode_parser
-    _bbcode_parser = BBCodeParser()
-
-    # Init renderers registered in 'bbcode_tags' modules
-    _init_bbcode_tags(_bbcode_parser)
-
-    # Init custom renderers defined in BBCodeTag model instances
-    if bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
-        _init_custom_bbcode_tags(_bbcode_parser)
-
-    # Init smilies
-    if bbcode_settings.BBCODE_ALLOW_SMILIES:
-        _init_bbcode_smilies(_bbcode_parser)
