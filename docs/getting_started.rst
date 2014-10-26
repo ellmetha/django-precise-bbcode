@@ -41,15 +41,7 @@ Then install the models::
 
     python manage.py syncdb
 
-If you are using South **and** Django 1.6 or below you may want to customize the ``SOUTH_MIGRATION_MODULES`` setting as follow:
-
-::
-
-  SOUTH_MIGRATION_MODULES = {
-      'precise_bbcode': 'precise_bbcode.south_migrations',
-  }
-
-Then you can use the migration command provided by South:
+If you are using Django 1.6 or below, you should use South 1.0 in order to benefit from the migrations. This way you can use the migration command provided by South:
 
 ::
 

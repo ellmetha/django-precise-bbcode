@@ -9,7 +9,7 @@ Defining BBCode tags through the admin site
 
 *The easy way.*
 
-*Django-precise-bbcode* provides a ``BBCodeTag`` model which can be seen as a helper to allow end users to easily define BBCode tags. Just go to the admin page and you will see a new 'BBCode tags' section. In this section you can create and edit custom BBCode tags. These are then used by the built-in BBCode parser to render any BBCode content.
+*Django-precise-bbcode* provides a ``BBCodeTag`` model which can be seen as a helper to allow end users to easily define BBCode tags. Just go to the admin page and you will see a new 'BBCodes' section. In this section you can create and edit custom BBCode tags. These are then used by the built-in BBCode parser to render any BBCode content.
 
 Adding a custom BBCode tag consists in defining at least two values in the associated admin form, both its usage (tag definition) and its HTML replacement code.
 

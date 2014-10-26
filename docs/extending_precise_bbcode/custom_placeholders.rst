@@ -40,8 +40,8 @@ To do so, you will have to write a subclass of ``precise_bbcode.bbcode.placehold
 
 Each bbcode placeholder must have a ``name`` attribute and can operate in two different ways:
 
-* The ``BBCodePlaceholder`` subclass provides a ``pattern`` attribute, which is a valid regular expression. In this case, a given content will be valid in the context of the placeholder if it match this regular expression
-* The ``BBCodePlaceholder`` subclass implements a ``validate`` method. This method is used to check whether a given content is valid according to the placeholder definition associated to it
+* The ``BBCodePlaceholder`` subclass provides a ``pattern`` attribute, which is a valid regular expression. In this case, a given content will be valid in the context of the placeholder if it matches this regular expression
+* The ``BBCodePlaceholder`` subclass implements a ``validate`` method. This method is used to check whether a given content is valid according to the placeholder definition associated to it and should return ``True`` or ``False``
 
 Defining placeholders based on a regular expression pattern
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
