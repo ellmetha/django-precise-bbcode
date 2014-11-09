@@ -22,6 +22,8 @@ django-precise-bbcode
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Wheel Status
 
+.. image:: https://d2weczhvl823v0.cloudfront.net/ellmetha/django-precise-bbcode/trend.png
+        :target: https://bitdeli.com/ellmetha
 
 *Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
 
