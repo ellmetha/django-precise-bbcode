@@ -30,7 +30,7 @@ except ImportError:
 try:
     from django.utils.encoding import force_str
 except ImportError:
-    from django.utils.encoding import smart_str as force_str
+    from django.utils.encoding import smart_str as force_str  # noqa
 
 
 def with_metaclass(meta, *bases):
