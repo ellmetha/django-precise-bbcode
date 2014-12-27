@@ -109,7 +109,7 @@ class UrlBBCodeTag(BBCodeTag):
         if '://' not in href and self._domain_re.match(href):
             href = 'http://' + href
         content = value if option else href
-        # Render
+        # Render
         return '<a href="{}">{}</a>'.format(href, content or href)
 
 

@@ -34,10 +34,10 @@ class BBCodeTagBase(type):
             # eg. BBCodeTag
             return super_new(cls, name, bases, attrs)
 
-        # Pop the option metadata from the class attributes
+        # Pop the option metadata from the class attributes
         options_klass = attrs.pop('Options', None)
 
-        # Construct the BBCode tag class
+        # Construct the BBCode tag class
         new_tag = super_new(cls, name, bases, attrs)
 
         # Validates the tag name
@@ -55,7 +55,7 @@ class BBCodeTagBase(type):
                 composed of non-white-space characters and the '=' character is not allowed""".format(name)
             )
 
-        # Initializes the '_options' attribute
+        # Initializes the '_options' attribute
         if options_klass:
             option_attrs = inspect.getmembers(options_klass, lambda a: not(inspect.isroutine(a)))
             options_kwargs = dict([a for a in option_attrs if not(a[0].startswith('__') and a[0].endswith('__'))])
@@ -63,7 +63,7 @@ class BBCodeTagBase(type):
         else:
             setattr(new_tag, '_options', BBCodeTagOptions())
 
-        # Validates the BBCode definition: a BBCode class with a definition string cannot be
+        # Validates the BBCode definition: a BBCode class with a definition string cannot be
         # created without a format string. The reverse is also true.
         if (new_tag.definition_string and not new_tag.format_string) \
                 or (not new_tag.definition_string and new_tag.format_string):
@@ -133,8 +133,8 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
                 The parent BBCodeTagOptions, if the tag is being rendered inside another tag,
                 otherwise None.
         """
-        # The default implementation will raise a NotImplementedError to ensure
-        # that any subclasses must override this method if the definition string
+        # The default implementation will raise a NotImplementedError to ensure
+        # that any subclasses must override this method if the definition string
         # and the format string are not used.
         raise NotImplementedError
 
@@ -159,7 +159,7 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
         for placeholder in fmt.keys():
             escaped_format_string = escaped_format_string.replace('{' + placeholder + '}', placeholder)
 
-        # Return the rendered data
+        # Return the rendered data
         return escaped_format_string.format(**fmt)
 
     def _validate_format(self, parser, format_dict):
@@ -189,19 +189,19 @@ class BBCodeTagOptions(object):
     same_tag_closes = False
     # Force the closing of this tag after the end of another tag
     end_tag_closes = False
-    # This tag does not have a closing tag
+    # This tag does not have a closing tag
     standalone = False
     # The embedded tags will be rendered
     render_embedded = True
     # The embedded newlines will be converted to markup
     transform_newlines = True
-    # The HTML characters inside this tag will be escaped
+    # The HTML characters inside this tag will be escaped
     escape_html = True
-    # Replace URLs with link markups inside this tag
+    # Replace URLs with link markups inside this tag
     replace_links = True
-    # Strip leading and trailing whitespace inside this tag
+    # Strip leading and trailing whitespace inside this tag
     strip = False
-    # Swallow the first trailing newline
+    # Swallow the first trailing newline
     swallow_trailing_newline = False
 
     # The following options will be usefull for BBCode editors

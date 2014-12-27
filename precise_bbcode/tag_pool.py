@@ -58,7 +58,7 @@ class TagPool(object):
                 'Cannot register {!r}, a tag with this name ({!r}) is already registered'.format(tag, tag_name)
             )
 
-        # The tag cannot be registered if it is already stored as bbcode tag in the database
+        # The tag cannot be registered if it is already stored as bbcode tag in the database
         bbcode_tag_qs = DbBBCodeTag.objects.filter(tag_name=tag_name)
         if bbcode_tag_qs.exists() and bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
             raise TagAlreadyCreated(
