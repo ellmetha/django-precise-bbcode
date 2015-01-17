@@ -37,6 +37,7 @@ TEST_SETTINGS = {
     'MIDDLEWARE_CLASSES': default_settings.MIDDLEWARE_CLASSES,
     'ADMINS': ('admin@example.com',),
     'MEDIA_ROOT': os.path.join(TEST_ROOT, '_testdata/media/'),
+    'SITE_ID': 1,
 }
 
 
