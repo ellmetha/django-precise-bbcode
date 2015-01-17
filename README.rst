@@ -25,6 +25,7 @@ django-precise-bbcode
 .. image:: https://d2weczhvl823v0.cloudfront.net/ellmetha/django-precise-bbcode/trend.png
         :target: https://bitdeli.com/ellmetha
 
+|
 *Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
 
   BBCode is a special implementation of HTML. BBCode itself is similar in style to HTML, tags are enclosed in square brackets [ and ] rather than < and > and it offers greater control over what and how something is displayed.

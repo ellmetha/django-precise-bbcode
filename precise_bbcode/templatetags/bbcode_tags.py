@@ -7,8 +7,8 @@ import re
 from django import template
 from django.template import Node
 from django.template import TemplateSyntaxError
-from django.template import TokenParser
 from django.template import Variable
+from django.template.base import TokenParser
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 

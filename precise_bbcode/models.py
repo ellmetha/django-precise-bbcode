@@ -71,7 +71,7 @@ class BBCodeTag(models.Model):
         help_text=_('Set this option to swallow the first trailing newline'),
         default=False)
 
-    # For later use
+    # For later use
     helpline = models.CharField(max_length=120, verbose_name=_('Help text for this tag'), null=True, blank=True)
     display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
 
@@ -84,6 +84,10 @@ class BBCodeTag(models.Model):
         return '{}'.format(self.tag_name)
 
     def clean(self):
+        old_instance = None
+        if self.pk:
+            old_instance = self.__class__._default_manager.get(pk=self.pk)
+
         parser = get_parser()
 
         tag_re = bbcodde_standard_re if not self.standalone else bbcodde_standalone_re
@@ -102,11 +106,12 @@ class BBCodeTag(models.Model):
             raise ValidationError(e)
 
         if re_groups['start_name'] in parser.bbcodes.keys() \
-                and not hasattr(parser.bbcodes[re_groups['start_name']], 'default_tag'):
+                and not hasattr(parser.bbcodes[re_groups['start_name']], 'default_tag') \
+                and not (old_instance is not None and old_instance.tag_name == re_groups['start_name']):
             raise ValidationError(_('A BBCode tag with this name appears to already exist'))
 
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
-        # with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT' placeholders are needed
+        # with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT' placeholders are needed
         placeholder_types = [re.findall(placeholder_content_re, placeholder) for placeholder in def_placeholders]
         placeholder_types = [placeholder_data[0][0] for placeholder_data in placeholder_types if placeholder_data]
         valid_placeholder_types = [placeholder for placeholder in placeholder_types if placeholder in parser.placeholders.keys()]
@@ -130,12 +135,12 @@ class BBCodeTag(models.Model):
         parser.add_bbcode_tag(parser_tag_klass)
 
     def get_parser_tag_klass(self, tag_name=None):
-        # Construc the inner Options class
+        # Construct the inner Options class
         opts = self._meta
         tag_option_attrs = vars(BBCodeTagOptions)
         options_klass_attrs = {f.name: f.value_from_object(self) for f in opts.fields if f.name in tag_option_attrs}
         options_klass = type(force_str('Options'), (), options_klass_attrs)
-        # Construct the outer BBCodeTag class
+        # Construct the outer BBCodeTag class
         tag_klass_attrs = {
             'name': self.tag_name if not tag_name else tag_name,
             'definition_string': self.tag_definition,

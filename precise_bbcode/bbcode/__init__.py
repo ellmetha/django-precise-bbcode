@@ -16,8 +16,7 @@ from precise_bbcode.core.loading import get_subclasses
 
 _bbcode_parser = None
 # The easiest way to use the BBcode parser is to import the following get_parser function (except if
-# you need many BBCodeParser instances at a time or you want to subclass it).
-# 
+# you need many BBCodeParser instances at a time or you want to subclass it).
 # Note if you create a new instance of BBCodeParser, the built in bbcode tags will not be installed.
 
 
@@ -39,7 +38,7 @@ class BBCodeParserLoader(object):
             self.parser = _bbcode_parser
 
     def load_parser(self):
-        # Init default BBCode placeholders
+        # Init default BBCode placeholders
         self.init_default_bbcode_placeholders()
 
         # Init placeholders registered in 'bbcode_placeholders' modules
@@ -55,7 +54,7 @@ class BBCodeParserLoader(object):
         if bbcode_settings.BBCODE_ALLOW_CUSTOM_TAGS:
             self.init_custom_bbcode_tags()
 
-        # Init smilies
+        # Init smilies
         if bbcode_settings.BBCODE_ALLOW_SMILIES:
             self.init_bbcode_smilies()
 

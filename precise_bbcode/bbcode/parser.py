@@ -33,12 +33,12 @@ class BBCodeToken(object):
 
 
 class BBCodeParser(object):
-    # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
+    # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
     _TAG_OPENING = '['
     _TAG_ENDING = ']'
 
     def __init__(self, *args, **kwargs):
-        # Settings
+        # Settings
         self.newline_char = bbcode_settings.BBCODE_NEWLINE
         self.replace_html = bbcode_settings.BBCODE_ESCAPE_HTML
         self.normalize_newlines = bbcode_settings.BBCODE_NORMALIZE_NEWLINES
@@ -92,7 +92,7 @@ class BBCodeParser(object):
         Given a string assumed to be an opening tag or a ending tag, validates it and return a 4-tuple of the form:
             (valid, tag_name, closing, option)
         """
-        # Validates the considered tag
+        # Validates the considered tag
         if ((not (tag.startswith(self._TAG_OPENING) and tag.endswith(self._TAG_ENDING))) or ('\n' in tag) or ('\r' in tag)
                 or (tag.count(self._TAG_OPENING) > 1) or (tag.count(self._TAG_ENDING) > 1)):
             return (False, tag, False, None)
@@ -105,7 +105,7 @@ class BBCodeParser(object):
         if tag_name.startswith('/'):
             tag_name = tag_name[1:]
             closing = True
-        # Parses the option inside the tag
+        # Parses the option inside the tag
         if ('=' in tag_name) and closing:
             return (False, tag, False, None)
         elif ('=' in tag_name):
@@ -141,11 +141,11 @@ class BBCodeParser(object):
 
             if pos_diff >= 0:
                 # There can be data between the index of the current tag opening character and the previous position
-                # These textual data are tokenised
+                # These textual data are tokenised
                 if pos_diff:
                     tokens.extend(self._get_textual_tokens(data[pos:tag_start]))
 
-                # Try to find the apparent end of the current tag
+                # Try to find the apparent end of the current tag
                 tag_end = data.find(self._TAG_ENDING, tag_start)
                 # Is a new tag starting from here?
                 new_tag_start = data.find(self._TAG_OPENING, tag_start + len(self._TAG_OPENING))
@@ -171,7 +171,7 @@ class BBCodeParser(object):
                     break
             else:
                 break
-        # Tokenize the remaining data if a break occured
+        # Tokenize the remaining data if a break occured
         if pos < len(data):
             tokens.extend(self._get_textual_tokens(data[pos:]))
         return tokens
@@ -219,7 +219,7 @@ class BBCodeParser(object):
                     if (opening_tags[-1][0].tag_name != token.tag_name and token.tag_name in [x[0].tag_name for x in opening_tags]
                             and tag_options.render_embedded):
                         # In this case, we iterate to the first opening of the current tag : all the tags between the current tag
-                        # and its opening are converted to textual tokens
+                        # and its opening are converted to textual tokens
                         for tag in reversed(opening_tags):
                             tk, index = tag
                             if tk.tag_name == token.tag_name:
@@ -297,7 +297,7 @@ class BBCodeParser(object):
         itk = 0
         rendered = []
         while itk < len(tokens):
-            # Fetch the considered token
+            # Fetch the considered token
             token = tokens[itk]
 
             # Try to render it according to its type
@@ -309,7 +309,7 @@ class BBCodeParser(object):
                 if tag_options.standalone:
                     rendered.append(call_rendering_function(self, None, token.option, parent_tag))
                 else:
-                    # First find the closing tag associated with this tag
+                    # First find the closing tag associated with this tag
                     token_end, consume_now = self._find_closing_token(token.tag_name, tag_options, tokens, itk + 1)
                     embedded_tokens = tokens[itk + 1:token_end]
 
@@ -323,7 +323,7 @@ class BBCodeParser(object):
                         inner = self._render_textual_content(''.join(tk.text for tk in embedded_tokens),
                                                              tag_options.escape_html, tag_options.replace_links, tag_options.render_embedded)
 
-                    # Strip and replaces newlines if specified in the tag options
+                    # Strip and replaces newlines if specified in the tag options
                     if tag_options.strip:
                         inner = inner.strip()
                     if tag_options.transform_newlines:
@@ -332,7 +332,7 @@ class BBCodeParser(object):
                     # Append the rendered data
                     rendered.append(call_rendering_function(self, inner, token.option, parent_tag))
 
-                    # Swallow the first trailing newline if necessary
+                    # Swallow the first trailing newline if necessary
                     if tag_options.swallow_trailing_newline:
                         next_itk = token_end + 1
                         if next_itk < len(tokens) and tokens[next_itk].type == BBCodeToken.TK_NEWLINE:
@@ -359,7 +359,7 @@ class BBCodeParser(object):
         url_matches = []
 
         if replace_links:
-            # The links must be pulled out before doing any character replacement
+            # The links must be pulled out before doing any character replacement
             pos = 0
             while True:
                 match = url_re.search(data, pos)

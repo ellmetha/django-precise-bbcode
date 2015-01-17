@@ -27,7 +27,7 @@ class BBCodePlaceholderBase(type):
             # eg. BBCodeTag
             return super_new(cls, name, bases, attrs)
 
-        # Construct the BBCode placeholder class
+        # Construct the BBCode placeholder class
         new_placeholder = super_new(cls, name, bases, attrs)
 
         # Validates the placeholder name
@@ -88,6 +88,6 @@ class BBCodePlaceholder(with_metaclass(BBCodePlaceholderBase)):
             # specified regex pattern.
             return re.search(self.pattern, content)
 
-        # In any other case a NotImplementedError is raised to ensure
-        # that any subclasses must override this method
+        # In any other case a NotImplementedError is raised to ensure
+        # that any subclasses must override this method
         raise NotImplementedError

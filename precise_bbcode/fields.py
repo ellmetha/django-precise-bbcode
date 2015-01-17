@@ -69,7 +69,7 @@ class BBCodeTextField(models.TextField):
     """
     def __init__(self, *args, **kwargs):
         # For South FakeORM / Django 1.7 migration serializer compatibility: the frozen version of a
-        #BBCodeTextField can't try to add a '*_rendered' field, because the '*_rendered' field itself
+        # BBCodeTextField can't try to add a '*_rendered' field, because the '*_rendered' field itself
         # is frozen / serialized as well.
         self.add_rendered_field = not kwargs.pop('no_rendered_field', False)
         super(BBCodeTextField, self).__init__(*args, **kwargs)
@@ -94,8 +94,8 @@ class BBCodeTextField(models.TextField):
 
             # Create a hidden 'rendered' field
             rendered = models.TextField(editable=False, null=True, blank=True)
-            # Ensure that the 'rendered' field appears before the actual field in
-            # the models _meta.fields
+            # Ensure that the 'rendered' field appears before the actual field in
+            # the models _meta.fields
             rendered.creation_counter = self.creation_counter
             cls.add_to_class(self.rendered_field_name, rendered)
 
@@ -105,8 +105,8 @@ class BBCodeTextField(models.TextField):
         # Add the default text field
         super(BBCodeTextField, self).contribute_to_class(cls, name)
 
-        # Associates the name of this field to a special descriptor that will return
-        # an appropriate BBCodeContent object each time the field is accessed
+        # Associates the name of this field to a special descriptor that will return
+        # an appropriate BBCodeContent object each time the field is accessed
         self.set_descriptor_class(cls)
 
     def set_descriptor_class(self, cls):
@@ -148,16 +148,16 @@ try:
     from south.modelsinspector import add_introspection_rules
 
     # For a normal BBCodeTextField, the add_rendered_field attribute is always True,
-    # which means that the no_rendered_field arg will always be True in a frozen BBCodeTextField,
-    # which is what we want. The use of this flag will tell South not to make the _rendered
-    # fields again.
+    # which means that the no_rendered_field arg will always be True in a frozen BBCodeTextField,
+    # which is what we want. The use of this flag will tell South not to make the _rendered
+    # fields again.
     add_introspection_rules(rules=[((BBCodeTextField,),
                                     [],
                                     {'no_rendered_field': ('add_rendered_field',
                                                            {})})],
                             patterns=['precise_bbcode\.fields\.BBCodeTextField'])
 
-    # SmileyCodeField
+    # SmileyCodeField
     add_introspection_rules([], ['^precise_bbcode\.fields\.SmileyCodeField'])
 except ImportError:  # pragma: no cover
     pass

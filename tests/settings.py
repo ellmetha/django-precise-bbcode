@@ -37,6 +37,13 @@ TEST_SETTINGS = {
     'MIDDLEWARE_CLASSES': default_settings.MIDDLEWARE_CLASSES,
     'ADMINS': ('admin@example.com',),
     'MEDIA_ROOT': os.path.join(TEST_ROOT, '_testdata/media/'),
+    'SITE_ID': 1,
+
+
+    # Setting this explicitly prevents Django 1.7+ from showing a
+    # warning regarding a changed default test runner. The test
+    # suite is run with nose, so it does not matter.
+    'SILENCED_SYSTEM_CHECKS': ['1_6.W001'],
 }
 
 
