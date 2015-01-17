@@ -245,6 +245,19 @@ class TestDbBbcodeTag(TestCase):
             except ValidationError:
                 self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
 
+    def test_should_allow_tag_updates_if_the_name_does_not_change(self):
+        # Setup
+        tag_dict = {'tag_definition': '[pr]{TEXT}[/pr]', 'html_replacement': '<pre>{TEXT}</pre>'}
+        tag = BBCodeTag(**tag_dict)
+        tag.save()
+        # Run
+        tag.html_replacement = '<span>{TEXT}</span>'
+        # Check
+        try:
+            tag.clean()
+        except ValidationError:
+            self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
+
     def test_should_save_default_bbcode_tags_rewrites(self):
         # Setup
         tag = BBCodeTag(tag_definition='[b]{TEXT1}[/b]', html_replacement='<b>{TEXT1}</b>')

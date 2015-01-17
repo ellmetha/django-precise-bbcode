@@ -84,6 +84,10 @@ class BBCodeTag(models.Model):
         return '{}'.format(self.tag_name)
 
     def clean(self):
+        old_instance = None
+        if self.pk:
+            old_instance = self.__class__._default_manager.get(pk=self.pk)
+
         parser = get_parser()
 
         tag_re = bbcodde_standard_re if not self.standalone else bbcodde_standalone_re
@@ -102,7 +106,8 @@ class BBCodeTag(models.Model):
             raise ValidationError(e)
 
         if re_groups['start_name'] in parser.bbcodes.keys() \
-                and not hasattr(parser.bbcodes[re_groups['start_name']], 'default_tag'):
+                and not hasattr(parser.bbcodes[re_groups['start_name']], 'default_tag') \
+                and not (old_instance is not None and old_instance.tag_name == re_groups['start_name']):
             raise ValidationError(_('A BBCode tag with this name appears to already exist'))
 
         # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
