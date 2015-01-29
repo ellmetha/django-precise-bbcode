@@ -134,6 +134,15 @@ class BBCodeTag(models.Model):
         parser = get_parser()
         parser.add_bbcode_tag(parser_tag_klass)
 
+    def delete(self, *args, **kwargs):
+        tag_name = self.tag_name
+        super(BBCodeTag, self).delete(*args, **kwargs)
+
+        # Remove the delete tag from the BBCode parser pool of
+        # available bbcode tags
+        parser = get_parser()
+        parser.bbcodes.pop(tag_name)
+
     def get_parser_tag_klass(self, tag_name=None):
         # Construct the inner Options class
         opts = self._meta
