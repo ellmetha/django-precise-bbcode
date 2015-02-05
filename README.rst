@@ -2,28 +2,21 @@
 django-precise-bbcode
 =====================
 
-.. image:: https://pypip.in/version/django-precise-bbcode/badge.png
+.. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Latest Version
 
-.. image:: https://travis-ci.org/ellmetha/django-precise-bbcode.svg?branch=master
-    :target: https://travis-ci.org/ellmetha/django-precise-bbcode
-    :alt: Travis status
+.. image:: http://img.shields.io/travis/ellmetha/django-precise-bbcode.svg?style=flat-square
+    :target: http://travis-ci.org/ellmetha/django-precise-bbcode
+    :alt: Build status
 
-.. image:: https://coveralls.io/repos/ellmetha/django-precise-bbcode/badge.png?branch=master
+.. image:: http://img.shields.io/coveralls/ellmetha/django-precise-bbcode.svg?style=flat-square
     :target: https://coveralls.io/r/ellmetha/django-precise-bbcode
     :alt: Coveralls status
 
-.. image:: https://pypip.in/download/django-precise-bbcode/badge.png
+.. image:: http://img.shields.io/pypi/dm/django-precise-bbcode.svg?style=flat-square
     :target: https://pypi.python.org/pypi//django-precise-bbcode/
     :alt: Download
-
-.. image:: https://pypip.in/wheel/django-precise-bbcode/badge.png
-    :target: https://pypi.python.org/pypi/django-precise-bbcode/
-    :alt: Wheel Status
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/ellmetha/django-precise-bbcode/trend.png
-        :target: https://bitdeli.com/ellmetha
 
 |
 *Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
