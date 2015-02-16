@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load compressed %}
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -10,9 +9,6 @@
             <title>{% block title %}{{ site.name }}{% endblock %}</title>
             <meta name="description" content="{% block meta-description %}{% endblock %}" />
             <meta name="keywords" content="{% block meta-keywords %}{% endblock %}"/>
-            
-            <!-- hide address bar script -->
-            {% compressed_js 'hide-address-bar' %}
 
             <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
             <!--[if lt IE 9]>
@@ -23,7 +19,6 @@
         {% block css %}
             <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
             <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
-            {% compressed_css 'theme' %}
         {% endblock css %}
         
         {% block extra-css %}
@@ -50,10 +45,10 @@
                     </div>
                 </div>
             {% endblock header %}
-        	<br />
+        	<br /><br /><br /><br /><br />
             <div class="container-fluid">
                 <div class="row-fluid">
-                    <div class="span12">
+                    <div class="col-md-8 col-md-offset-1">
                     	{% block content %}
                     	{% endblock content %}
                     </div>
