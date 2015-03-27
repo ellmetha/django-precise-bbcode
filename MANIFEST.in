@@ -3,3 +3,4 @@ include VERSION
 include MANIFEST.in
 include README.rst
 recursive-include precise_bbcode/locale *
+global-exclude *.pyc
