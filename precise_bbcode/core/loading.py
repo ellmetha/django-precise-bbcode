@@ -3,11 +3,11 @@
 # Standard library imports
 from __future__ import unicode_literals
 import imp
+import importlib
 import inspect
 
 # Third party imports
 from django.conf import settings
-from django.utils.importlib import import_module
 
 # Local application / specific library imports
 
@@ -18,7 +18,7 @@ def get_module(app, modname):
     """
     # Find out the app's __path__
     try:
-        app_path = import_module(app).__path__
+        app_path = importlib.import_module(app).__path__
     except AttributeError:
         return
 
@@ -29,7 +29,7 @@ def get_module(app, modname):
         return
 
     # Import the app's module file
-    import_module('{}.{}'.format(app, modname))
+    importlib.import_module('{}.{}'.format(app, modname))
 
 
 def load(modname):

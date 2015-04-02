@@ -73,8 +73,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
-
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '833090dhkgrfgdfg#ddfggdfdf*fds5645456fg'
 
@@ -96,7 +94,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-    'pipeline.middleware.MinifyHTMLMiddleware',
 )
 
 ROOT_URLCONF = 'example_project.urls'
@@ -116,7 +113,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # Third party apps
-    'pipeline',
     'crispy_forms',
 
     # Precise BBCode app
@@ -125,23 +121,6 @@ INSTALLED_APPS = (
     # Test apps
     'example_project',
     'test_messages',
-)
-
-# Django pipeline setings
-# --------------------------------------
-PIPELINE_CSS = {
-    'theme': {
-        'source_filenames': (
-          'less/theme.less',
-        ),
-        'output_filename': 'css/theme.css',
-    },
-}
-
-PIPELINE_JS = {}
-
-PIPELINE_COMPILERS = (
-    'pipeline.compilers.less.LessCompiler',
 )
 
 # Crispy forms settings

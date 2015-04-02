@@ -1,34 +1,27 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import precise_bbcode.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'TestMessage'
-        db.create_table('test_messages_testmessage', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('_bbcode_content_rendered', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('bbcode_content', self.gf('precise_bbcode.fields.BBCodeTextField')(no_rendered_field=True)),
-        ))
-        db.send_create_signal('test_messages', ['TestMessage'])
+    dependencies = [
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'TestMessage'
-        db.delete_table('test_messages_testmessage')
-
-
-    models = {
-        'test_messages.testmessage': {
-            'Meta': {'object_name': 'TestMessage'},
-            '_bbcode_content_rendered': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'bbcode_content': ('precise_bbcode.fields.BBCodeTextField', [], {'no_rendered_field': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        }
-    }
-
-    complete_apps = ['test_messages']
+    operations = [
+        migrations.CreateModel(
+            name='TestMessage',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('_bbcode_content_rendered', models.TextField(null=True, editable=False, blank=True)),
+                ('bbcode_content', precise_bbcode.fields.BBCodeTextField(no_rendered_field=True, verbose_name='BBCode content')),
+            ],
+            options={
+                'verbose_name': 'Test message',
+                'verbose_name_plural': 'Test messages',
+            },
+            bases=(models.Model,),
+        ),
+    ]
