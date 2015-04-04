@@ -34,7 +34,7 @@ Requirements
 ------------
 
 * ``python >= 2.7`` (tested with version 2.7, 3.2, 3.3, 3.4)
-* ``django >= 1.4.2`` (tested with version 1.4.2, 1.5, 1.6, 1.7)
+* ``django >= 1.4.2`` (tested with version 1.4.2, 1.5, 1.6, 1.7, 1.8)
 * ``PIL`` or ``Pillow`` (required for smiley tags)
 * ``setuptools``
 

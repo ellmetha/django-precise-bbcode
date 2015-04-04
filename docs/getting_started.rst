@@ -5,14 +5,14 @@ Requirements
 ------------
 
 * `Python`_ 2.7, 3.2, 3.3 or 3.4
-* `Django`_ 1.4.x, 1.5.x, 1.6.x or 1.7.x
+* `Django`_ 1.4.x, 1.5.x, 1.6.x, 1.7.x or 1.8.x
 * `Pillow`_ 2.2. or higher
 * `South`_ 1.0.1 or higher if you are using Django < 1.7
 
 
-.. warning:: While *django-precise-bbcode* is compatible with Django 1.5.x, this version of Django
-             is no longer supported by the Django team. Please upgrade to
-             Django 1.6.x or 1.7.x immediately.
+.. warning:: While *django-precise-bbcode* is compatible with Django 1.5.x and Django 1.6.x, these versions of Django
+             are no longer supported by the Django team. Please upgrade to
+             Django 1.7.x or 1.8.x immediately.
 
 .. _Python: https://www.python.org
 .. _Django: https://www.djangoproject.com
