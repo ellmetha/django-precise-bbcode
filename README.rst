@@ -28,7 +28,7 @@ This application includes a BBCode compiler aimed to render any BBCode content t
 * Custom tags can be defined in the Django administration panel and stored into the database ; doing this allows any non-technical admin to add BBCode tags by defining the HTML replacement string associated with each tag
 * Tags can also be manually registered to be used by the parser by defining a tag class aimed to render a given bbcode tag and its content to the corresponding HTML markup
 
-Read more in the `documentation <http://django-precise-bbcode.readthedocs.org/en/latest/>`_ (latest version).
+Read more in the `documentation <http://django-precise-bbcode.readthedocs.org/en/>`_ (latest version).
 
 Requirements
 ------------
@@ -117,7 +117,7 @@ This field will store both the BBCode content and the correspondign HTML markup.
 And more...
 ***********
 
-Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/latest/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags, placeholders and smilies.
+Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags, placeholders and smilies.
 
 Author
 ------
