@@ -9,8 +9,7 @@ upgrade:
 		python setup.py develop --upgrade
 
 coverage:
-		coverage run --source=precise_bbcode ./runtests.py
-		coverage report -m
+		py.test --cov-report term-missing --cov precise_bbcode
 
 travis: install coverage
 
