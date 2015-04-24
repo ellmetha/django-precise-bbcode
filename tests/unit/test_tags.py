@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+import pytest
 
 # Local application / specific library imports
 from precise_bbcode import get_parser
@@ -75,30 +76,30 @@ class TestBbcodeTagPool(TestCase):
         tag_pool.register_tag(FooTag)
         # Run & check
         # Let's add it a second time. We should catch an exception
-        with self.assertRaises(TagAlreadyRegistered):
+        with pytest.raises(TagAlreadyRegistered):
             tag_pool.register_tag(FooTag)
         # Let's make sure we have the same number of tags as before
         tag_pool.unregister_tag(FooTag)
         number_of_tags_after = len(tag_pool.get_tags())
-        self.assertEqual(number_of_tags_before, number_of_tags_after)
+        assert number_of_tags_before == number_of_tags_after
 
     def test_cannot_register_tags_with_incorrect_parent_classes(self):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
-        with self.assertRaises(ImproperlyConfigured):
+        with pytest.raises(ImproperlyConfigured):
             class ErrnoneousTag4:
                 pass
             tag_pool.register_tag(ErrnoneousTag4)
         number_of_tags_after = len(tag_pool.get_tags())
-        self.assertEqual(number_of_tags_before, number_of_tags_after)
+        assert number_of_tags_before == number_of_tags_after
 
     def test_cannot_register_tags_that_are_already_stored_in_the_database(self):
         # Setup
         BBCodeTag.objects.create(
             tag_definition='[tt]{TEXT}[/tt]', html_replacement='<span>{TEXT}</span>')
         # Run
-        with self.assertRaises(TagAlreadyCreated):
+        with pytest.raises(TagAlreadyCreated):
             class ErrnoneousTag9(ParserBBCodeTag):
                 name = 'tt'
                 definition_string = '[tt]{TEXT}[/tt]'
@@ -109,10 +110,10 @@ class TestBbcodeTagPool(TestCase):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
-        with self.assertRaises(TagNotRegistered):
+        with pytest.raises(TagNotRegistered):
             tag_pool.unregister_tag(FooTagSub)
         number_of_tags_after = len(tag_pool.get_tags())
-        self.assertEqual(number_of_tags_before, number_of_tags_after)
+        assert number_of_tags_before == number_of_tags_after
 
     def test_tags_can_be_rendered(self):
         # Setup
@@ -123,7 +124,7 @@ class TestBbcodeTagPool(TestCase):
         # Run & check
         for bbcodes_text, expected_html_text in self.TAGS_TESTS:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text
 
 
 class TestBbcodeTag(TestCase):
@@ -132,35 +133,35 @@ class TestBbcodeTag(TestCase):
 
     def test_that_are_invalid_should_raise_at_runtime(self):
         # Run & check
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag1(ParserBBCodeTag):
                 pass
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag2(ParserBBCodeTag):
                 delattr(ParserBBCodeTag, 'name')
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag3(ParserBBCodeTag):
                 name = 'it\'s a bad tag name'
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag4(ParserBBCodeTag):
                 name = 'ooo'
                 definition_string = '[ooo]{TEXT}[/ooo]'
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag5(ParserBBCodeTag):
                 name = 'ooo'
                 definition_string = 'bad definition'
                 format_string = 'bad format string'
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag6(ParserBBCodeTag):
                 name = 'ooo'
                 definition_string = '[ooo]{TEXT}[/aaa]'
                 format_string = 'bad format string'
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag7(ParserBBCodeTag):
                 name = 'ooo'
                 definition_string = '[ooo]{TEXT}[/ooo]'
                 format_string = '<span></span>'
-        with self.assertRaises(InvalidBBCodeTag):
+        with pytest.raises(InvalidBBCodeTag):
             class ErrnoneousTag8(ParserBBCodeTag):
                 name = 'ooo'
                 definition_string = '[ooo={TEXT}]{TEXT}[/ooo]'
@@ -174,7 +175,7 @@ class TestBbcodeTag(TestCase):
             format_string = '<span>{FOOD}</span>'
         self.parser.add_bbcode_tag(TagWithInvalidPlaceholders)
         # Run
-        with self.assertRaises(InvalidBBCodePlaholder):
+        with pytest.raises(InvalidBBCodePlaholder):
             self.parser.render('[bad]apple[/bad]')
 
 
@@ -232,7 +233,7 @@ class TestDbBbcodeTag(TestCase):
     def test_should_not_save_invalid_tags(self):
         # Run & check
         for tag_dict in self.ERRONEOUS_TAGS_TESTS:
-            with self.assertRaises(ValidationError):
+            with pytest.raises(ValidationError):
                 tag = BBCodeTag(**tag_dict)
                 tag.clean()
 
@@ -286,10 +287,10 @@ class TestDbBbcodeTag(TestCase):
         tag.save()
         # Run & check
         parser_tag_klass = tag.parser_tag_klass
-        self.assertTrue(issubclass(parser_tag_klass, ParserBBCodeTag))
-        self.assertEqual(parser_tag_klass.name, 'io')
-        self.assertEqual(parser_tag_klass.definition_string, '[io]{TEXT}[/io]')
-        self.assertEqual(parser_tag_klass.format_string, '<b>{TEXT}</b>')
+        assert issubclass(parser_tag_klass, ParserBBCodeTag)
+        assert parser_tag_klass.name == 'io'
+        assert parser_tag_klass.definition_string == '[io]{TEXT}[/io]'
+        assert parser_tag_klass.format_string == '<b>{TEXT}</b>'
 
     def test_can_be_rendered_by_the_bbcode_parser(self):
         # Setup
@@ -299,4 +300,4 @@ class TestDbBbcodeTag(TestCase):
         tag.save()
         parser_loader.init_custom_bbcode_tags()
         # Run & check
-        self.assertEqual(self.parser.render('[mail]xyz@xyz.com[/mail]'), '<a href="mailto:xyz@xyz.com">xyz@xyz.com</a>')
+        assert self.parser.render('[mail]xyz@xyz.com[/mail]') == '<a href="mailto:xyz@xyz.com">xyz@xyz.com</a>'

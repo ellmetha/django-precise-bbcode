@@ -7,6 +7,7 @@ import re
 # Third party imports
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
+import pytest
 
 # Local application / specific library imports
 from precise_bbcode import get_parser
@@ -81,32 +82,32 @@ class TestPlaceholderPool(TestCase):
         placeholder_pool.register_placeholder(FooPlaceholder)
         # Run & check
         # Let's add it a second time. We should catch an exception
-        with self.assertRaises(PlaceholderAlreadyRegistered):
+        with pytest.raises(PlaceholderAlreadyRegistered):
             placeholder_pool.register_placeholder(FooPlaceholder)
         # Let's make sure we have the same number of tags as before
         placeholder_pool.unregister_placeholder(FooPlaceholder)
         number_of_placeholders_after = len(placeholder_pool.get_placeholders())
-        self.assertEqual(number_of_placeholders_before, number_of_placeholders_after)
+        assert number_of_placeholders_before == number_of_placeholders_after
 
     def test_cannot_register_placeholders_with_incorrect_parent_classes(self):
         # Setup
         number_of_placeholders_before = len(placeholder_pool.get_placeholders())
         # Run & check
-        with self.assertRaises(ImproperlyConfigured):
+        with pytest.raises(ImproperlyConfigured):
             class ErrnoneousPlaceholder:
                 pass
             placeholder_pool.register_placeholder(ErrnoneousPlaceholder)
         number_of_placeholders_after = len(placeholder_pool.get_placeholders())
-        self.assertEqual(number_of_placeholders_before, number_of_placeholders_after)
+        assert number_of_placeholders_before == number_of_placeholders_after
 
     def test_cannot_unregister_a_non_registered_placeholder(self):
         # Setup
         number_of_placeholders_before = len(placeholder_pool.get_placeholders())
         # Run & check
-        with self.assertRaises(PlaceholderNotRegistered):
+        with pytest.raises(PlaceholderNotRegistered):
             placeholder_pool.unregister_placeholder(FooPlaceholder)
         number_of_placeholders_after = len(placeholder_pool.get_placeholders())
-        self.assertEqual(number_of_placeholders_before, number_of_placeholders_after)
+        assert number_of_placeholders_before == number_of_placeholders_after
 
     def test_placeholders_can_be_used_with_tags(self):
         # Setup
@@ -120,7 +121,7 @@ class TestPlaceholderPool(TestCase):
         # Run & check
         for bbcodes_text, expected_html_text in self.TAGS_TESTS:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text
         placeholder_pool.unregister_placeholder(FooPlaceholder)
         placeholder_pool.unregister_placeholder(DummyPlaceholder)
 
@@ -257,30 +258,30 @@ class TestPlaceholder(TestCase):
         # Run & check
         for _, re_tests in self.DEFAULT_PLACEHOLDERS_RE_TESTS.items():
             for test in re_tests['tests']:
-                self.assertIsNotNone(re.search(re_tests['re'], test))
+                assert re.search(re_tests['re'], test) is not None
 
     def test_provided_by_default_are_valid(self):
         for bbcodes_text, expected_html_text in self.DEFAULT_PLACEHOLDERS_TESTS:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text
 
     def test_provided_by_default_cannot_be_rendered_if_they_are_not_used_correctly(self):
         for bbcodes_text, expected_html_text in self.ERRORED_DEFAULT_PLACEHOLDERS_TESTS:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text
 
     def test_that_are_invalid_should_raise_at_runtime(self):
         # Run & check
-        with self.assertRaises(InvalidBBCodePlaholder):
+        with pytest.raises(InvalidBBCodePlaholder):
             class InvalidePlaceholder1(BBCodePlaceholder):
                 pass
-        with self.assertRaises(InvalidBBCodePlaholder):
+        with pytest.raises(InvalidBBCodePlaholder):
             class InvalidePlaceholder2(BBCodePlaceholder):
                 delattr(BBCodePlaceholder, 'name')
-        with self.assertRaises(InvalidBBCodePlaholder):
+        with pytest.raises(InvalidBBCodePlaholder):
             class InvalidePlaceholder3(BBCodePlaceholder):
                 name = 'bad placeholder name'
-        with self.assertRaises(InvalidBBCodePlaholder):
+        with pytest.raises(InvalidBBCodePlaholder):
             class InvalidePlaceholder4(BBCodePlaceholder):
                 name = 'correctname'
                 pattern = 'incorrect pattern'

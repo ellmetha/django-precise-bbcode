@@ -49,4 +49,4 @@ class TestSmiley(TestCase):
         # Run & check
         for bbcodes_text, expected_html_text in self.SMILIES_TESTS:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text

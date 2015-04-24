@@ -159,7 +159,7 @@ class TestParser(TestCase):
         # Run & check
         for bbcodes_text, expected_html_text in self.DEFAULT_TAGS_RENDERING_TESTS:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text
 
     def test_can_render_custom_tags(self):
         # Setup
@@ -168,11 +168,11 @@ class TestParser(TestCase):
         # Run & check
         for bbcodes_text, expected_html_text in self.CUSTOM_TAGS_RENDERING_TESTS['tests']:
             result = self.parser.render(bbcodes_text)
-            self.assertEqual(result, expected_html_text)
+            assert result == expected_html_text
 
     def test_can_handle_unicode_inputs(self):
         # Setup
         src = '[center]ƒünk¥ 你好 • §tüƒƒ 你好[/center]'
         dst = '<div style="text-align:center;">ƒünk¥ 你好 • §tüƒƒ 你好</div>'
         # Run & check
-        self.assertEqual(self.parser.render(src), dst)
+        assert self.parser.render(src) == dst
