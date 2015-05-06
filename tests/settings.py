@@ -27,18 +27,26 @@ TEMPLATE_CONTEXT_PROCESSORS = default_settings.TEMPLATE_CONTEXT_PROCESSORS
 
 INSTALLED_APPS = (
     'django.contrib.auth',
-    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
     'precise_bbcode',
     'tests',
+    'django.contrib.admin',
 )
 
 ROOT_URLCONF = 'tests._testsite.urls'
 
-MIDDLEWARE_CLASSES = default_settings.MIDDLEWARE_CLASSES
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
 
 ADMINS = ('admin@example.com',)
 

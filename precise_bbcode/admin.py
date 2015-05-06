@@ -3,9 +3,11 @@
 # Standard library imports
 # Third party imports
 from django.contrib import admin
+from django.contrib.admin import actions
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
+from .bbcode import get_parser
 from .models import BBCodeTag
 from .models import SmileyTag
 
@@ -32,6 +34,25 @@ class BBCodeTagAdmin(admin.ModelAdmin):
             )
         }),
     )
+
+    def get_actions(self, request):
+        actions = super(BBCodeTagAdmin, self).get_actions(request)
+        actions['delete_selected'] = (
+            BBCodeTagAdmin.delete_selected,
+            'delete_selected',
+            _('Delete selected %(verbose_name_plural)s'),
+        )
+        return actions
+
+    def delete_selected(self, request, queryset):
+        parser = get_parser()
+        tag_names = list(queryset.values_list('tag_name', flat=True))
+        response = actions.delete_selected(self, request, queryset)
+
+        if response is None:
+            [parser.bbcodes.pop(n) for n in tag_names]
+
+        return response
 
 
 class SmileyTagAdmin(admin.ModelAdmin):

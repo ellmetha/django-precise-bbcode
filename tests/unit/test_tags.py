@@ -4,8 +4,11 @@
 from __future__ import unicode_literals
 
 # Third party imports
+from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
+from django.test import Client
 from django.test import TestCase
 import pytest
 
@@ -74,7 +77,7 @@ class TestBbcodeTagPool(TestCase):
         # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         tag_pool.register_tag(FooTag)
-        # Run & check
+        # Run & check
         # Let's add it a second time. We should catch an exception
         with pytest.raises(TagAlreadyRegistered):
             tag_pool.register_tag(FooTag)
@@ -84,7 +87,7 @@ class TestBbcodeTagPool(TestCase):
         assert number_of_tags_before == number_of_tags_after
 
     def test_cannot_register_tags_with_incorrect_parent_classes(self):
-        # Setup
+        # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
         with pytest.raises(ImproperlyConfigured):
@@ -95,7 +98,7 @@ class TestBbcodeTagPool(TestCase):
         assert number_of_tags_before == number_of_tags_after
 
     def test_cannot_register_tags_that_are_already_stored_in_the_database(self):
-        # Setup
+        # Setup
         BBCodeTag.objects.create(
             tag_definition='[tt]{TEXT}[/tt]', html_replacement='<span>{TEXT}</span>')
         # Run
@@ -107,7 +110,7 @@ class TestBbcodeTagPool(TestCase):
             tag_pool.register_tag(ErrnoneousTag9)
 
     def test_cannot_unregister_a_non_registered_tag(self):
-        # Setup
+        # Setup
         number_of_tags_before = len(tag_pool.get_tags())
         # Run & check
         with pytest.raises(TagNotRegistered):
@@ -168,7 +171,7 @@ class TestBbcodeTag(TestCase):
                 format_string = '<span>{TEXT}</span>'
 
     def test_containing_invalid_placeholders_should_raise_during_rendering(self):
-        # Setup
+        # Setup
         class TagWithInvalidPlaceholders(ParserBBCodeTag):
             name = 'bad'
             definition_string = '[bad]{FOOD}[/bad]'
@@ -247,42 +250,65 @@ class TestDbBbcodeTag(TestCase):
                 self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
 
     def test_should_allow_tag_updates_if_the_name_does_not_change(self):
-        # Setup
+        # Setup
         tag_dict = {'tag_definition': '[pr]{TEXT}[/pr]', 'html_replacement': '<pre>{TEXT}</pre>'}
         tag = BBCodeTag(**tag_dict)
         tag.save()
-        # Run
+        # Run
         tag.html_replacement = '<span>{TEXT}</span>'
-        # Check
+        # Check
         try:
             tag.clean()
         except ValidationError:
             self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
 
     def test_should_allow_tag_creation_after_the_deletion_of_another_tag_with_the_same_name(self):
-        # Setup
+        # Setup
         tag_dict = {'tag_definition': '[pr]{TEXT}[/pr]', 'html_replacement': '<pre>{TEXT}</pre>'}
         tag = BBCodeTag(**tag_dict)
         tag.save()
         tag.delete()
         new_tag = BBCodeTag(**tag_dict)
-        # Run & check
+        # Run & check
+        try:
+            new_tag.clean()
+        except ValidationError:
+            self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
+
+    def test_should_allow_tag_creation_after_the_bulk_deletion_of_another_tag_with_the_same_name_in_the_admin(self):
+        # Setup
+        tag_dict = {'tag_definition': '[pr2]{TEXT}[/pr2]', 'html_replacement': '<pre>{TEXT}</pre>'}
+        tag = BBCodeTag(**tag_dict)
+        tag.save()
+
+        admin_user = User.objects.create_user('admin', 'admin@admin.io', 'adminpass')
+        admin_user.is_staff = True
+        admin_user.is_superuser = True
+        admin_user.save()
+        client = Client()
+        client.login(username='admin', password='adminpass')
+        url = reverse('admin:precise_bbcode_bbcodetag_changelist')
+        r = client.post(url, data={
+            'action': 'delete_selected', '_selected_action': [tag.pk, ], 'post': 'yes'})
+
+        new_tag = BBCodeTag(**tag_dict)
+        # Run & check
         try:
             new_tag.clean()
         except ValidationError:
             self.fail('The following BBCode failed to validate: {}'.format(tag_dict))
 
     def test_should_save_default_bbcode_tags_rewrites(self):
-        # Setup
+        # Setup
         tag = BBCodeTag(tag_definition='[b]{TEXT1}[/b]', html_replacement='<b>{TEXT1}</b>')
-        # Run & check
+        # Run & check
         try:
             tag.clean()
         except ValidationError:
             self.fail('The following BBCode failed to validate: {}'.format(tag))
 
     def test_should_provide_the_required_parser_bbcode_tag_class(self):
-        # Setup
+        # Setup
         tag = BBCodeTag(**{'tag_definition': '[io]{TEXT}[/io]', 'html_replacement': '<b>{TEXT}</b>'})
         tag.save()
         # Run & check
@@ -293,7 +319,7 @@ class TestDbBbcodeTag(TestCase):
         assert parser_tag_klass.format_string == '<b>{TEXT}</b>'
 
     def test_can_be_rendered_by_the_bbcode_parser(self):
-        # Setup
+        # Setup
         parser_loader = BBCodeParserLoader(parser=self.parser)
         tag = BBCodeTag(**{'tag_definition': '[mail]{EMAIL}[/mail]',
                         'html_replacement': '<a href="mailto:{EMAIL}">{EMAIL}</a>', 'swallow_trailing_newline': True})
