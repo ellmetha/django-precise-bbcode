@@ -3,6 +3,7 @@ pytest>=2.6
 pytest-cov>=1.8
 pytest-django>=2.8
 pytest-spec>=0.2
+pytest-pythonpath
 coverage>=3.7,<3.8
 coveralls==0.2
 tox==1.7.0
