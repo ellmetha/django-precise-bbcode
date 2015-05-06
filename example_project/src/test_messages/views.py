@@ -16,7 +16,6 @@ from .models import TestMessage
 class TestMessageCreate(CreateView):
     model = TestMessage
     form_class = TestMessageForm
-    fields = ['bbcode_content']
     template_name = 'test_messages/create_bbcode_message.html'
 
     def get_success_url(self):
