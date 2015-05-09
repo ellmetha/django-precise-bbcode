@@ -4,14 +4,13 @@
 from __future__ import unicode_literals
 
 # Third party imports
-from django.test import TestCase
 
 # Local application / specific library imports
 from precise_bbcode import get_parser
 from precise_bbcode.test import gen_bbcode_tag_klass
 
 
-class TestParser(TestCase):
+class TestParser(object):
     DEFAULT_TAGS_RENDERING_TESTS = (
         # BBcodes without errors
         ('[b]hello world![/b]', '<strong>hello world!</strong>'),
@@ -152,7 +151,7 @@ class TestParser(TestCase):
         )
     }
 
-    def setUp(self):
+    def setup_method(self, method):
         self.parser = get_parser()
 
     def test_can_render_default_tags(self):

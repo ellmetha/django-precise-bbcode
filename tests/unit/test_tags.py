@@ -9,7 +9,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client
-from django.test import TestCase
 import pytest
 
 # Local application / specific library imports
@@ -61,7 +60,8 @@ class BarTag(ParserBBCodeTag):
         return '<div class="bar" style="color:{};">{}</div>'.format(option, value)
 
 
-class TestBbcodeTagPool(TestCase):
+@pytest.mark.django_db
+class TestBbcodeTagPool(object):
     TAGS_TESTS = (
         ('[fooalt]hello world![/fooalt]', '<pre>hello world!</pre>'),
         ('[bar]hello world![/bar]', '<div class="bar">hello world!</div>'),
@@ -70,7 +70,7 @@ class TestBbcodeTagPool(TestCase):
         ('[bar]안녕하세요![/bar]', '<div class="bar">안녕하세요!</div>'),
     )
 
-    def setUp(self):
+    def setup_method(self, method):
         self.parser = get_parser()
 
     def test_should_raise_if_a_tag_is_registered_twice(self):
@@ -130,8 +130,9 @@ class TestBbcodeTagPool(TestCase):
             assert result == expected_html_text
 
 
-class TestBbcodeTag(TestCase):
-    def setUp(self):
+@pytest.mark.django_db
+class TestBbcodeTag(object):
+    def setup_method(self, method):
         self.parser = get_parser()
 
     def test_that_are_invalid_should_raise_at_runtime(self):
@@ -182,7 +183,8 @@ class TestBbcodeTag(TestCase):
             self.parser.render('[bad]apple[/bad]')
 
 
-class TestDbBbcodeTag(TestCase):
+@pytest.mark.django_db
+class TestDbBbcodeTag(object):
     ERRONEOUS_TAGS_TESTS = (
         {'tag_definition': '[tag]', 'html_replacement': ''},
         {'tag_definition': 'it\s not a tag', 'html_replacement': ''},
@@ -230,7 +232,7 @@ class TestDbBbcodeTag(TestCase):
         {'tag_definition': '[b]{TEXT}[/b]', 'html_replacement': '<b>{TEXT}</b>'},  # Default tag overriding
     )
 
-    def setUp(self):
+    def setup_method(self, method):
         self.parser = get_parser()
 
     def test_should_not_save_invalid_tags(self):

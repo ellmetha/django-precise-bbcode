@@ -2,11 +2,12 @@
 
 # Standard library imports
 from __future__ import unicode_literals
+import shutil
 
 # Third party imports
 from django.conf import settings
 from django.core.files import File
-from django.test import TestCase
+import pytest
 
 # Local application / specific library imports
 from precise_bbcode import get_parser
@@ -14,7 +15,8 @@ from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.models import SmileyTag
 
 
-class TestSmiley(TestCase):
+@pytest.mark.django_db
+class TestSmiley(object):
     SMILIES_TESTS = (
         (':test:', '<img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" />'),
         ('[list][*]:test: hello\n[/list]', '<ul><li><img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" /> hello</li></ul>'),
@@ -22,11 +24,11 @@ class TestSmiley(TestCase):
         ('[code]hello :test:[/code]', '<code>hello :test:</code>'),
     )
 
-    def setUp(self):
+    def create_smilies(self):
         self.parser = get_parser()
         self.parser_loader = BBCodeParserLoader(parser=self.parser)
         # Set up an image used for doing smilies tests
-        f = open(settings.MEDIA_ROOT + "/icon_e_wink.gif", "rb")
+        f = open(settings.MEDIA_ROOT + '/icon_e_wink.gif', 'rb')
         image_file = File(f)
         self.image = image_file
         # Set up a smiley tag
@@ -36,16 +38,13 @@ class TestSmiley(TestCase):
         smiley.save()
         self.parser_loader.init_bbcode_smilies()
 
-    def tearDown(self):
+    def teardown_method(self, method):
         self.image.close()
-        smilies = SmileyTag.objects.all()
-        for smiley in smilies:
-            try:
-                smiley.image.delete()
-            except:
-                pass
+        shutil.rmtree(settings.MEDIA_ROOT + '/precise_bbcode')
 
     def test_can_render_valid_smilies(self):
+        # Setup
+        self.create_smilies()
         # Run & check
         for bbcodes_text, expected_html_text in self.SMILIES_TESTS:
             result = self.parser.render(bbcodes_text)

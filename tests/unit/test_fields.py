@@ -2,12 +2,12 @@
 
 # Standard library imports
 from __future__ import unicode_literals
+import shutil
 
 # Third party imports
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
-from django.test import TestCase
 import pytest
 
 # Local application / specific library imports
@@ -16,7 +16,8 @@ from precise_bbcode.models import SmileyTag
 from tests.models import TestMessage
 
 
-class TestBbcodeTextField(TestCase):
+@pytest.mark.django_db
+class TestBbcodeTextField(object):
     BBCODE_FIELDS_TESTS = (
         ('[b]hello [u]world![/u][/b]', '<strong>hello <u>world!</u></strong>'),
         ('[url=http://google.com]goto google[/url]', '<a href="http://google.com">goto google</a>'),
@@ -56,7 +57,8 @@ class TestBbcodeTextField(TestCase):
         assert message.content.rendered == '<strong>hello world!</strong>'
 
 
-class TestSmileyCodeField(TestCase):
+@pytest.mark.django_db
+class TestSmileyCodeField(object):
     SMILIES_FIELDS_TESTS = (
         ';-)',
         ':lol:',
@@ -72,20 +74,15 @@ class TestSmileyCodeField(TestCase):
         ':i\'m happy:',
     )
 
-    def setUp(self):
+    def setup_method(self, method):
         # Set up an image used for doing smilies tests
-        f = open(settings.MEDIA_ROOT + "/icon_e_wink.gif", "rb")
+        f = open(settings.MEDIA_ROOT + '/icon_e_wink.gif', 'rb')
         image_file = File(f)
         self.image = image_file
 
-    def tearDown(self):
+    def teardown_method(self, method):
         self.image.close()
-        smilies = SmileyTag.objects.all()
-        for smiley in smilies:
-            try:
-                smiley.image.delete()
-            except:
-                pass
+        shutil.rmtree(settings.MEDIA_ROOT + '/precise_bbcode')
 
     def test_can_save_valid_smilies(self):
         # Run & check

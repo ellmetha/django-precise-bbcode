@@ -6,7 +6,6 @@ import re
 
 # Third party imports
 from django.core.exceptions import ImproperlyConfigured
-from django.test import TestCase
 import pytest
 
 # Local application / specific library imports
@@ -67,13 +66,14 @@ class DummyBBCodeTag(BBCodeTag):
     format_string = '<span class="dummy">{DUMMY}</span'
 
 
-class TestPlaceholderPool(TestCase):
+@pytest.mark.django_db
+class TestPlaceholderPool(object):
     TAGS_TESTS = (
         ('[xyz]hello world![/xyz]', '[xyz]hello world![/xyz]'),
         ('[xyz]12[/xyz]', '<span class="foo">12</span>'),
     )
 
-    def setUp(self):
+    def setup_method(self, method):
         self.parser = get_parser()
 
     def test_should_raise_if_a_placeholder_is_registered_twice(self):
@@ -126,7 +126,7 @@ class TestPlaceholderPool(TestCase):
         placeholder_pool.unregister_placeholder(DummyPlaceholder)
 
 
-class TestPlaceholder(TestCase):
+class TestPlaceholder(object):
     DEFAULT_PLACEHOLDERS_RE_TESTS = {
         'text': {
             're': _text_re,
@@ -248,7 +248,7 @@ class TestPlaceholder(TestCase):
         ('[s2=4]hello world![/s2]', '[s2=4]hello world![/s2]'),
     )
 
-    def setUp(self):
+    def setup_method(self, method):
         self.parser = get_parser()
         self.parser.add_bbcode_tag(SizeTag)
         self.parser.add_bbcode_tag(ErroredSizeTag)
