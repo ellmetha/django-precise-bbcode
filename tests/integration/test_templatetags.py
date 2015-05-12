@@ -5,12 +5,13 @@
 from django.template import Context
 from django.template import TemplateSyntaxError
 from django.template.base import Template
-from django.test import TestCase
+import pytest
 
 # Local application / specific library imports
 
 
-class TestBbcodeTemplateTags(TestCase):
+@pytest.mark.django_db
+class TestBbcodeTemplateTags(object):
     BBCODE_FILTER_EXPRESSIONS_TESTS = (
         (
             '{{ "[b]hello world![/b]"|bbcode }}',
@@ -46,7 +47,7 @@ class TestBbcodeTemplateTags(TestCase):
         '{% bbcode "[b]hello world![/b] as %}'
     )
 
-    def setUp(self):
+    def setup_method(self, method):
         self.loadstatement = '{% load bbcode_tags %}'
 
     def test_provide_a_functional_bbcode_filter(self):
@@ -54,17 +55,17 @@ class TestBbcodeTemplateTags(TestCase):
         for template_content, expected_html_text in self.BBCODE_FILTER_EXPRESSIONS_TESTS:
             t = Template(self.loadstatement + template_content)
             rendered = t.render(Context())
-            self.assertEqual(rendered, expected_html_text)
+            assert rendered == expected_html_text
 
     def test_provide_a_functional_bbcode_tag(self):
         # Run & check
         for template_content, expected_html_text in self.BBCODE_TAG_EXPRESSIONS_TESTS:
             t = Template(self.loadstatement + template_content)
             rendered = t.render(Context())
-            self.assertEqual(rendered, expected_html_text)
+            assert rendered == expected_html_text
 
     def test_should_raise_in_case_of_erroneous_syntax(self):
         # Run & check
         for template_content in self.BBCODE_TAG_ERRONEOUS_EXPRESSIONS_TESTS:
-            with self.assertRaises(TemplateSyntaxError):
+            with pytest.raises(TemplateSyntaxError):
                 t = Template(self.loadstatement + template_content)
