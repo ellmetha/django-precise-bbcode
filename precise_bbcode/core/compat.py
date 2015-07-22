@@ -33,9 +33,17 @@ except ImportError:
     from django.utils.encoding import smart_str as force_str  # noqa
 
 
+# get_model
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models import get_model  # noqa
+
+
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
-    class metaclass(meta):
+    class metaclass(meta):  # noqa
         __call__ = type.__call__
         __init__ = type.__init__
 
