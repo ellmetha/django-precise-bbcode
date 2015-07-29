@@ -8,6 +8,7 @@ import shutil
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
+from django.utils.safestring import SafeText
 import pytest
 
 # Local application / specific library imports
@@ -55,6 +56,18 @@ class TestBbcodeTextField(object):
         message.save()
         # Check
         assert message.content.rendered == '<strong>hello world!</strong>'
+
+    def test_rendered_values_are_safe_strings(self):
+        # Setup
+        message = TestMessage()
+        message.content = None
+        message.save()
+        bbcode_content = BBCodeContent('[b]hello world![/b]')
+        # Run
+        message.content = bbcode_content
+        message.save()
+        # Check
+        assert isinstance(message.content.rendered, SafeText)
 
 
 @pytest.mark.django_db

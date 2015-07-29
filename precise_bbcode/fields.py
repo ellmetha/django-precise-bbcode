@@ -9,6 +9,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 # Local application / specific library imports
@@ -25,7 +26,7 @@ validate_smiley_code = RegexValidator(_smiley_code_re, _("Enter a valid 'smiley 
 class BBCodeContent(object):
     def __init__(self, raw, rendered=None):
         self.raw = raw
-        self.rendered = rendered
+        self.rendered = mark_safe(rendered) if rendered else rendered
 
     def __str__(self):
         return self.raw
