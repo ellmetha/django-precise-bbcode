@@ -130,7 +130,7 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
             option
                 The value of an option passed to the tag.
             parent
-                The parent BBCodeTagOptions, if the tag is being rendered inside another tag,
+                The parent BBCodeTag instance, if the tag is being rendered inside another tag,
                 otherwise None.
         """
         # The default implementation will raise a NotImplementedError to ensure
@@ -209,5 +209,5 @@ class BBCodeTagOptions(object):
     display_on_editor = True
 
     def __init__(self, **kwargs):
-        for attr, value in list(kwargs.items()):
-            setattr(self, attr, bool(value))
+        for attr, value in kwargs.items():
+            setattr(self, attr, value)

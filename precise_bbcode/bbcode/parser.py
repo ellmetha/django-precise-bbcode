@@ -53,7 +53,7 @@ class BBCodeParser(object):
         Installs a placeholder. A placeholder is an instance of the BBCodePlaceholder
         class. Each placeholder can be used to validate any content embedded in a
         BBCode tag. A placeholder instance must implement a 'validate' method, which is
-        definated by the following signature:
+        defined by the following signature:
 
         def validate(self, content)
 
@@ -76,20 +76,22 @@ class BBCodeParser(object):
             option
                 The value of an option passed to the tag.
             parent
-                The parent BBCodeTagOptions, if the tag is being rendered inside another tag,
+                The parent BBCodeTag instance, if the tag is being rendered inside another tag,
                 otherwise None.
         """
         self.bbcodes[tag_klass.name] = tag_klass()
 
     def add_smiley(self, code, img):
         """
-        Insert a smiley code and its associated icon URL into a dictionary containing the available smilies.
+        Insert a smiley code and its associated icon URL into a dictionary containing the
+        available smilies.
         """
         self.smilies[code] = img
 
     def _parse_tag(self, tag):
         """
-        Given a string assumed to be an opening tag or a ending tag, validates it and return a 4-tuple of the form:
+        Given a string assumed to be an opening tag or a ending tag, validates it and return
+        a 4-tuple of the form:
             (valid, tag_name, closing, option)
         """
         # Validates the considered tag
@@ -116,8 +118,8 @@ class BBCodeParser(object):
 
     def get_tokens(self, data):
         """
-        Acts as a lexer: given an input text, converts a sequence of characters into a sequence of tokens that represents
-        the ramifications of the nested BBCode tags.
+        Acts as a lexer: given an input text, converts a sequence of characters into a sequence of
+        tokens that represents the ramifications of the nested BBCode tags.
         Each token embeds the following data:
 
             Token type
@@ -193,9 +195,10 @@ class BBCodeParser(object):
 
     def _drop_syntactic_errors(self, tokens):
         """
-        Given a list of lexical tokens, find the tags that are not closed or not started and converts them to textual tokens.
-        The non-valid tokens must not be swallowed. The tag tokens that are not valid in the BBCode tree will be converted to
-        textual tokens (eg. in '[b][i]test[/b][/i]' the 'b' tags will be tokenized as data).
+        Given a list of lexical tokens, find the tags that are not closed or not started
+        and converts them to textual tokens. The non-valid tokens must not be swallowed.
+        The tag tokens that are not valid in the BBCode tree will be converted to textual tokens
+        (eg. in '[b][i]test[/b][/i]'the 'b' tags will be tokenized as data).
         """
         opening_tags = []
         for index, token in enumerate(tokens):
@@ -267,9 +270,11 @@ class BBCodeParser(object):
 
     def _find_closing_token(self, tag_name, tag_options, tokens, pos):
         """
-        Given the name and the options of a considered tag, a list of lexical tokens and the position of the current tag in this list,
-        find the position of the associated closing tag. This function returns a tuple of the form (end_pos, consume_now), where 'consume_now'
-        is a boolean that indicates whether the ending token should be consumed or not.
+        Given the name and the options of a considered tag, a list of lexical tokens and
+        the position of the current tag in this list, find the position of the associated
+        closing tag. This function returns a tuple of the form (end_pos, consume_now),
+        where 'consume_now' is a boolean that indicates whether the ending token should be
+        consumed or not.
         """
         similar_tags_embedded = 0
         while pos < len(tokens):
@@ -291,8 +296,8 @@ class BBCodeParser(object):
 
     def _render_tokens(self, tokens, parent_tag=None):
         """
-        Given a list of lexical tokens, do the rendering process. During this process, some semantic verifications
-        are done on this lexical token stream.
+        Given a list of lexical tokens, do the rendering process. During this process, some
+        semantic verifications are done on this lexical token stream.
         """
         itk = 0
         rendered = []
@@ -304,7 +309,8 @@ class BBCodeParser(object):
             if token.type == BBCodeToken.TK_START_TAG:
                 # Fetch some data about the current tag
                 call_rendering_function = self.bbcodes[token.tag_name].do_render
-                tag_options = self.bbcodes[token.tag_name]._options
+                tag = self.bbcodes[token.tag_name]
+                tag_options = tag._options
 
                 if tag_options.standalone:
                     rendered.append(call_rendering_function(self, None, token.option, parent_tag))
@@ -318,7 +324,7 @@ class BBCodeParser(object):
                         token_end -= 1
 
                     if tag_options.render_embedded:
-                        inner = self._render_tokens(embedded_tokens, parent_tag=tag_options)
+                        inner = self._render_tokens(embedded_tokens, parent_tag=tag)
                     else:
                         inner = self._render_textual_content(''.join(tk.text for tk in embedded_tokens),
                                                              tag_options.escape_html, tag_options.replace_links, tag_options.render_embedded)
@@ -341,9 +347,9 @@ class BBCodeParser(object):
                     # Goto the end tag index
                     itk = token_end
             elif token.type == BBCodeToken.TK_DATA:
-                replace_specialchars = parent_tag.escape_html if parent_tag else True
-                replace_links = parent_tag.replace_links if parent_tag else True
-                replace_smilies = parent_tag.render_embedded if parent_tag else True
+                replace_specialchars = parent_tag._options.escape_html if parent_tag else True
+                replace_links = parent_tag._options.replace_links if parent_tag else True
+                replace_smilies = parent_tag._options.render_embedded if parent_tag else True
                 rendered.append(self._render_textual_content(token.text, replace_specialchars, replace_links, replace_smilies))
             elif token.type == BBCodeToken.TK_NEWLINE:
                 rendered.append(self.newline_char if parent_tag is None else token.text)
@@ -354,7 +360,8 @@ class BBCodeParser(object):
 
     def _render_textual_content(self, data, replace_specialchars, replace_links, replace_smilies):
         """
-        Given an input text, update it by replacing the HTML special characters or the found links by their HTML corresponding.
+        Given an input text, update it by replacing the HTML special characters or the found
+        links by their HTML corresponding.
         """
         url_matches = []
 
