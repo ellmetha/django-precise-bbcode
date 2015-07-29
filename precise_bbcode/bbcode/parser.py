@@ -379,9 +379,9 @@ class BBCodeParser(object):
                 data = data[:url_start] + token + data[url_end:]
                 pos = url_start
         if replace_specialchars:
-            data = self._replace(data, self.replace_html)
+            data = self._multiple_replace(data, self.replace_html)
         if replace_smilies:
-            data = self._replace(data, self.smilies.items())
+            data = self._multiple_replace(data, self.smilies.items())
         # Now put the previously genered links in the result text
         for token, replacement in url_matches:
             data = data.replace(token, replacement)
@@ -397,14 +397,13 @@ class BBCodeParser(object):
             href = 'http://' + href
         return '<a href="{0}">{1}</a>'.format(href, url)
 
-    def _replace(self, data, replacements):
+    def _multiple_replace(self, data, replacements):
         """
-        Given a list of 2-tuples (old, new), performs all replacements on the data and
-        returns the result.
+        Performs several string substitutions on the initial ``data`` string using
+        a list of 2-tuples (old, new) defining substitutions and returns the resulting
+        string.
         """
-        for old, new in replacements:
-            data = data.replace(old, new)
-        return data
+        return reduce(lambda a, kv: a.replace(*kv), replacements, data)
 
     def render(self, data):
         """
