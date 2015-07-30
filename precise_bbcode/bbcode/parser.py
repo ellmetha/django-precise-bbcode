@@ -13,6 +13,11 @@ from precise_bbcode.conf import settings as bbcode_settings
 
 
 class BBCodeToken(object):
+    """
+    Represents a BBCode token. It is used by the lexer provided by the BBCodeParser
+    class in order to turn a sequence of characters into a sequence of tokens that
+    represents the ramifications of nested BBCode tags.
+    """
     TK_START_TAG = 'start_tag'
     TK_END_TAG = 'end_tag'
     TK_DATA = 'data'
@@ -31,6 +36,26 @@ class BBCodeToken(object):
         return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
 
     __unicode__ = __str__
+
+    @property
+    def is_start_tag(self):
+        return self.type == self.TK_START_TAG
+
+    @property
+    def is_end_tag(self):
+        return self.type == self.TK_END_TAG
+
+    @property
+    def is_tag(self):
+        return self.is_start_tag or self.is_end_tag
+
+    @property
+    def is_data(self):
+        return self.type == self.TK_DATA
+
+    @property
+    def is_newline(self):
+        return self.type == self.TK_NEWLINE
 
 
 class BBCodeParser(object):
@@ -203,13 +228,13 @@ class BBCodeParser(object):
         """
         opening_tags = []
         for index, token in enumerate(tokens):
-            if token.type == BBCodeToken.TK_START_TAG:
+            if token.is_start_tag:
                 tag_options = self.bbcodes[token.tag_name]._options
                 if tag_options.same_tag_closes and len(opening_tags) > 0 and opening_tags[-1][0].tag_name == token.tag_name:
                     opening_tags.pop()
                 if not tag_options.standalone:
                     opening_tags.append((token, index))
-            elif token.type == BBCodeToken.TK_END_TAG:
+            elif token.is_end_tag:
                 tag_options = self.bbcodes[token.tag_name]._options
                 if len(opening_tags) > 0:
                     previous_tag, _ = opening_tags[-1]
@@ -238,7 +263,7 @@ class BBCodeParser(object):
                         opening_tags.pop()
                 else:
                     tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
-            elif token.type == BBCodeToken.TK_NEWLINE:
+            elif token.is_newline:
                 if len(opening_tags) > 0:
                     previous_tag, _ = opening_tags[-1]
                 else:
@@ -259,35 +284,34 @@ class BBCodeParser(object):
         """
         tokens = self._drop_syntactic_errors(self.get_tokens(data))
         for tk in tokens:
-            if tk.type in [BBCodeToken.TK_START_TAG, BBCodeToken.TK_END_TAG]:
+            if tk.is_tag:
                 if tk.option:
                     print(tk.type.upper() + " " + tk.tag_name + ", option = \"" + tk.option + "\"")
                 else:
                     print(tk.type.upper() + " " + tk.tag_name)
-            elif tk.type == BBCodeToken.TK_DATA:
+            elif tk.is_data:
                 print(tk.type.upper() + " \"" + tk.text + "\"")
-            elif tk.type == BBCodeToken.TK_NEWLINE:
+            elif tk.is_newline:
                 print(tk.type.upper())
 
-    def _find_closing_token(self, tag_name, tag_options, tokens, pos):
+    def _find_closing_token(self, tag, tokens, pos):
         """
-        Given the name and the options of a considered tag, a list of lexical tokens and
-        the position of the current tag in this list, find the position of the associated
-        closing tag. This function returns a tuple of the form (end_pos, consume_now),
-        where 'consume_now' is a boolean that indicates whether the ending token should be
-        consumed or not.
+        Given a BBCodeTag tag instance, a list of lexical tokens and the position of the
+        current tag in this list, find the position of the associated closing tag. This
+        function returns a tuple of the form (end_pos, consume_now), where 'consume_now'
+        is a boolean that indicates whether the ending token should be consumed or not.
         """
         similar_tags_embedded = 0
         while pos < len(tokens):
             token = tokens[pos]
-            if token.type == BBCodeToken.TK_NEWLINE and tag_options.newline_closes:
+            if token.is_newline and tag._options.newline_closes:
                 return pos, True
-            elif token.type == BBCodeToken.TK_START_TAG and token.tag_name == tag_name:
-                if tag_options.same_tag_closes:
+            elif token.is_start_tag and token.tag_name == tag.name:
+                if tag._options.same_tag_closes:
                     return pos, False
-                if tag_options.render_embedded:
+                if tag._options.render_embedded:
                     similar_tags_embedded += 1
-            elif token.type == BBCodeToken.TK_END_TAG and token.tag_name == tag_name:
+            elif token.is_end_tag and token.tag_name == tag.name:
                 if similar_tags_embedded > 0:
                     similar_tags_embedded -= 1
                 else:
@@ -307,52 +331,52 @@ class BBCodeParser(object):
             token = tokens[itk]
 
             # Try to render it according to its type
-            if token.type == BBCodeToken.TK_START_TAG:
+            if token.is_start_tag:
                 # Fetch some data about the current tag
                 call_rendering_function = self.bbcodes[token.tag_name].do_render
                 tag = self.bbcodes[token.tag_name]
-                tag_options = tag._options
 
-                if tag_options.standalone:
+                if tag._options.standalone:
                     rendered.append(call_rendering_function(self, None, token.option, parent_tag))
                 else:
                     # First find the closing tag associated with this tag
-                    token_end, consume_now = self._find_closing_token(token.tag_name, tag_options, tokens, itk + 1)
+                    token_end, consume_now = self._find_closing_token(tag, tokens, itk + 1)
                     embedded_tokens = tokens[itk + 1:token_end]
 
                     # If the end tag should not be consumed, back up one (after processing the embedded tokens)
                     if not consume_now:
                         token_end -= 1
 
-                    if tag_options.render_embedded:
+                    if tag._options.render_embedded:
                         inner = self._render_tokens(embedded_tokens, parent_tag=tag)
                     else:
-                        inner = self._render_textual_content(''.join(tk.text for tk in embedded_tokens),
-                                                             tag_options.escape_html, tag_options.replace_links, tag_options.render_embedded)
+                        inner = self._render_textual_content(
+                            ''.join(tk.text for tk in embedded_tokens),
+                            tag._options.escape_html, tag._options.replace_links, tag._options.render_embedded)
 
                     # Strip and replaces newlines if specified in the tag options
-                    if tag_options.strip:
+                    if tag._options.strip:
                         inner = inner.strip()
-                    if tag_options.transform_newlines:
+                    if tag._options.transform_newlines:
                         inner = inner.replace('\n', self.newline_char)
 
                     # Append the rendered data
                     rendered.append(call_rendering_function(self, inner, token.option, parent_tag))
 
                     # Swallow the first trailing newline if necessary
-                    if tag_options.swallow_trailing_newline:
+                    if tag._options.swallow_trailing_newline:
                         next_itk = token_end + 1
-                        if next_itk < len(tokens) and tokens[next_itk].type == BBCodeToken.TK_NEWLINE:
+                        if next_itk < len(tokens) and tokens[next_itk].is_newline:
                             token_end = next_itk
 
                     # Goto the end tag index
                     itk = token_end
-            elif token.type == BBCodeToken.TK_DATA:
+            elif token.is_data:
                 replace_specialchars = parent_tag._options.escape_html if parent_tag else True
                 replace_links = parent_tag._options.replace_links if parent_tag else True
                 replace_smilies = parent_tag._options.render_embedded if parent_tag else True
                 rendered.append(self._render_textual_content(token.text, replace_specialchars, replace_links, replace_smilies))
-            elif token.type == BBCodeToken.TK_NEWLINE:
+            elif token.is_newline:
                 rendered.append(self.newline_char if parent_tag is None else token.text)
 
             # Goto the next token!
