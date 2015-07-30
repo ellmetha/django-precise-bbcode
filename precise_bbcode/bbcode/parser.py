@@ -361,42 +361,23 @@ class BBCodeParser(object):
 
     def _render_textual_content(self, data, replace_specialchars, replace_links, replace_smilies):
         """
-        Given an input text, update it by replacing the HTML special characters or the found
-        links by their HTML corresponding.
+        Given an input text, update it by replacing the HTML special characters, the links with
+        their HTML corresponding tags and the smilies codes with the corresponding images.
         """
-        url_matches = []
-
-        if replace_links:
-            # The links must be pulled out before doing any character replacement
-            pos = 0
-            while True:
-                match = url_re.search(data, pos)
-                if not match:
-                    break
-                # Replace any link with a token that will be substitude back after replacements
-                token = '-*-bbcode-link-{match}-{pos}-*-'.format(match=id(match), pos=pos)
-                url_matches.append((token, self._link_replace(match)))
-                url_start, url_end = match.span()
-                data = data[:url_start] + token + data[url_end:]
-                pos = url_start
         if replace_specialchars:
             data = self._multiple_replace(data, self.replace_html)
+
+        if replace_links:
+            def linkrepl(match):
+                url = match.group(0)
+                href = url if '://' in url else 'http://' + url
+                return '<a href="{0}">{1}</a>'.format(href, url)
+            data = re.sub(url_re, linkrepl, data)
+
         if replace_smilies:
             data = self._multiple_replace(data, self.smilies.items())
-        # Now put the previously genered links in the result text
-        for token, replacement in url_matches:
-            data = data.replace(token, replacement)
-        return data
 
-    def _link_replace(self, match):
-        """
-        Callback for re.sub to replace textual links with HTML links.
-        """
-        url = match.group(0)
-        href = url
-        if '://' not in href:
-            href = 'http://' + href
-        return '<a href="{0}">{1}</a>'.format(href, url)
+        return data
 
     def _multiple_replace(self, data, replacements):
         """
