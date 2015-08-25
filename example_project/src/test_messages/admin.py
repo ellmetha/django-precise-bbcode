@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
 from django.contrib import admin
 
-# Local application / specific library imports
 from .models import TestMessage
 
 

@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import re
 
-# Third party imports
 from django.core.exceptions import ImproperlyConfigured
 import pytest
 
-# Local application / specific library imports
 from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode.defaults.placeholder import _color_re

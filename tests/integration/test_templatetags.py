@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
+from __future__ import unicode_literals
+
 from django.template import Context
 from django.template import TemplateSyntaxError
 from django.template.base import Template
 import pytest
-
-# Local application / specific library imports
 
 
 @pytest.mark.django_db

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
-from django.apps import AppConfig
+from __future__ import unicode_literals
 
-# Local application / specific library imports
+from django.apps import AppConfig
 
 
 class PreciseBbCodeAppConfig(AppConfig):

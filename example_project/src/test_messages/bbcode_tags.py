@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 import re
 
-# Third party imports
 from precise_bbcode.bbcode.tag import BBCodeTag
 from precise_bbcode.tag_pool import tag_pool
-
-# Local application / specific library imports
 
 
 color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')

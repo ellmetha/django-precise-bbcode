@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 
-# Third party imports
-
-# Local application / specific library imports
 from precise_bbcode import get_parser
 from precise_bbcode.test import gen_bbcode_tag_klass
 

@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
 from crispy_forms.layout import Submit
 from django import forms
 from django.utils.translation import ugettext as _
 
-# Local application / specific library imports
 from .models import TestMessage
 
 

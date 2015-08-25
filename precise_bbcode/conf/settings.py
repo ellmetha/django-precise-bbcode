@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
-from django.conf import settings
+from __future__ import unicode_literals
 
-# Local application / specific library imports
+from django.conf import settings
 
 
 # The HTML tag to make a line break

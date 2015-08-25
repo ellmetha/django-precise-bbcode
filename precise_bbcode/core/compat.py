@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 import sys
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
-# Third party imports
-# Local application / specific library imports
 
 
 # python_2_unicode_compatible

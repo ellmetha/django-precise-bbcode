@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
+from __future__ import unicode_literals
 import os
 
-# Third party imports
 from django.conf import global_settings as default_settings
 from django.conf import settings
-
-# Local application / specific library imports
 
 
 TEST_ROOT = os.path.abspath(os.path.dirname(__file__))

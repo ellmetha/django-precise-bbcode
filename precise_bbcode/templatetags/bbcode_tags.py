@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 import re
 
-# Third party imports
 from django import template
 from django.template import Node
 from django.template import TemplateSyntaxError
@@ -12,7 +10,6 @@ from django.template.base import TokenParser
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
-# Local application / specific library imports
 from precise_bbcode import render_bbcodes
 from precise_bbcode.core.compat import string_types
 

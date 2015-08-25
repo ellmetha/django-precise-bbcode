@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 import re
 
-# Third party imports
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
 from precise_bbcode.placeholder_pool import placeholder_pool
-
-# Local application / specific library imports
 
 
 class PhoneNumberBBCodePlaceholder(BBCodePlaceholder):

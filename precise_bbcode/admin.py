@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
+from __future__ import unicode_literals
+
 from django.contrib import admin
 from django.contrib.admin import actions
 from django.utils.translation import ugettext_lazy as _
 
-# Local application / specific library imports
 from .bbcode import get_parser
 from .models import BBCodeTag
 from .models import SmileyTag

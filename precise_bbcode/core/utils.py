@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
-
-# Third party imports
-# Local application / specific library imports
+from functools import reduce
 
 
 def replace(data, replacements):
     """
-    Given a list of 2-tuples (old, new), performs all replacements on the data and
-    returns the result.
+    Performs several string substitutions on the initial ``data`` string using
+    a list of 2-tuples (old, new) defining substitutions and returns the resulting
+    string.
     """
-    for old, new in replacements:
-        data = data.replace(old, new)
-    return data
+    return reduce(lambda a, kv: a.replace(*kv), replacements, data)

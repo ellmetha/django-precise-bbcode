@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import re
 
-# Third party imports
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.core.compat import with_metaclass
-
-# Local application / specific library imports
 
 
 class BBCodePlaceholderBase(type):

@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 from collections import defaultdict
-from functools import reduce
 import re
 
-# Third party imports
-# Local application / specific library imports
 from precise_bbcode.bbcode.regexes import url_re
 from precise_bbcode.conf import settings as bbcode_settings
+from precise_bbcode.core.utils import replace
 
 
 class BBCodeToken(object):
@@ -389,7 +386,7 @@ class BBCodeParser(object):
         their HTML corresponding tags and the smilies codes with the corresponding images.
         """
         if replace_specialchars:
-            data = self._multiple_replace(data, self.replace_html)
+            data = replace(data, self.replace_html)
 
         if replace_links:
             def linkrepl(match):
@@ -399,17 +396,9 @@ class BBCodeParser(object):
             data = re.sub(url_re, linkrepl, data)
 
         if replace_smilies:
-            data = self._multiple_replace(data, self.smilies.items())
+            data = replace(data, self.smilies.items())
 
         return data
-
-    def _multiple_replace(self, data, replacements):
-        """
-        Performs several string substitutions on the initial ``data`` string using
-        a list of 2-tuples (old, new) defining substitutions and returns the resulting
-        string.
-        """
-        return reduce(lambda a, kv: a.replace(*kv), replacements, data)
 
     def render(self, data):
         """

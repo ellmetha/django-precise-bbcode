@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import imp
 import importlib
 import inspect
 
-# Third party imports
 from django.conf import settings
-
-# Local application / specific library imports
 
 
 def get_module(app, modname):

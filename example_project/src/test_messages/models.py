@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 
-# Third party imports
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from precise_bbcode.fields import BBCodeTextField
-
-# Local application / specific library imports
 
 
 @python_2_unicode_compatible

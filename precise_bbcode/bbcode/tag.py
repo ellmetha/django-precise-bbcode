@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import inspect
 import re
 
-# Third party imports
-# Local application / specific library imports
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
 from precise_bbcode.bbcode.regexes import bbcodde_standalone_re

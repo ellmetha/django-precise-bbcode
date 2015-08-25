@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 
-# Third party imports
-# Local application / specific library imports
 from .bbcode.tag import BBCodeTag
 from .core.compat import force_str
 

@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import re
-
-# Third party imports
-# Local application / specific library imports
 
 
 # Common regexes

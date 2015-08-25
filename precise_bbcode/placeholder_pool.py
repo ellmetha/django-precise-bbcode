@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
+from __future__ import unicode_literals
 
-# Third party imports
 from django.core.exceptions import ImproperlyConfigured
 
-# Local application / specific library imports
 from .bbcode.placeholder import BBCodePlaceholder
 from .core.loading import load
 

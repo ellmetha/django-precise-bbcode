@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import re
 
-# Third party imports
-# Local application / specific library imports
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
 from precise_bbcode.bbcode.regexes import url_re
 

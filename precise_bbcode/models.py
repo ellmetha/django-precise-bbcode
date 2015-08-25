@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 import re
 
-# Third party imports
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-# Local application / specific library imports
 from . import get_parser
 from .bbcode.regexes import bbcodde_standalone_re
 from .bbcode.regexes import bbcodde_standard_re
