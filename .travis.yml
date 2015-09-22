@@ -30,7 +30,7 @@ matrix:
   - python: "3.5"
     env: DJANGO="django>=1.7,<1.8"
 install:
-  - "pip install $DJANGO --use-mirrors"
+  - "pip install $DJANGO"
 script:
   - make travis
 after_success:
