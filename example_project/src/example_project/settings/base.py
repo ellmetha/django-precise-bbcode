@@ -123,8 +123,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
-    # Third party apps
-    'crispy_forms',
+    'widget_tweaks',
 
     # Precise BBCode app
     'precise_bbcode',
@@ -133,7 +132,3 @@ INSTALLED_APPS = (
     'example_project',
     'test_messages',
 )
-
-# Crispy forms settings
-# --------------------------------------
-CRISPY_TEMPLATE_PACK = 'bootstrap3'

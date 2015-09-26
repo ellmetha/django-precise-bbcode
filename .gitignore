@@ -11,3 +11,4 @@ docs/_build/
 public/
 .tox
 tests/_testdata/media/
+.cache/
