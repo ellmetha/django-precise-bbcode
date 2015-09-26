@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import re
+import sys
 
 from django import template
 from django.template import Node
 from django.template import TemplateSyntaxError
 from django.template import Variable
-from django.template.base import TokenParser
 from django.template.defaultfilters import stringfilter
+from django.utils import six
 from django.utils.safestring import mark_safe
 
 from precise_bbcode import render_bbcodes
@@ -57,26 +57,31 @@ def do_bbcode_rendering(parser, token):
 
         {%  bbcode "[b]hello world![/b]" as renderedvar %}
     """
-    class BBCodeParser(TokenParser):
-        def top(self):
-            value = self.value()
+    bits = token.split_contents()
+    if len(bits) < 2:
+        raise TemplateSyntaxError('\'{0}\' takes at least one argument'.format(bits[0]))
+    value = parser.compile_filter(bits[1])
 
-            # Transform single-quoted strings to maintain backward compatibility
-            if value[0] == "'":
-                m = re.match("^'([^']+)'(\|.*$)", value)
-                if m:
-                    value = '"%s"%s' % (m.group(1).replace('"', '\\"'), m.group(2))
-                elif value[-1] == "'":
-                    value = '"%s"' % value[1:-1].replace('"', '\\"')
+    remaining = bits[2:]
+    asvar = None
+    seen = set()
 
-            asvar = None
-            while self.more():
-                tag = self.tag()
-                if tag == 'as':
-                    asvar = self.tag()
-                else:
-                    raise TemplateSyntaxError(
-                        "Only option for 'bbcode' is 'as VAR'.")
-            return value, asvar
-    value, asvar = BBCodeParser(token.contents).top()
-    return BBCodeNode(parser.compile_filter(value), asvar)
+    while remaining:
+        option = remaining.pop(0)
+        if option in seen:
+            raise TemplateSyntaxError(
+                'The \'{0}\' option was specified more than once.'.format(option))
+        elif option == 'as':
+            try:
+                var_value = remaining.pop(0)
+            except IndexError:
+                msg = 'No argument provided to the \'{0}\' tag for the as option.'.format(bits[0])
+                six.reraise(TemplateSyntaxError, TemplateSyntaxError(msg), sys.exc_info()[2])
+            asvar = var_value
+        else:
+            raise TemplateSyntaxError(
+                'Unknown argument for \'{0}\' tag: \'{1}\'. The only options '
+                'available is \'as VAR\'.'.format(bits[0], option))
+        seen.add(option)
+
+    return BBCodeNode(value, asvar)

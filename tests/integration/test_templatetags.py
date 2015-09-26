@@ -41,8 +41,9 @@ class TestBbcodeTemplateTags(object):
 
     BBCODE_TAG_ERRONEOUS_EXPRESSIONS_TESTS = (
         '{% bbcode %}',
-        '{% bbcode "[b]hello world![/b] noop %}'
-        '{% bbcode "[b]hello world![/b] as %}'
+        '{% bbcode "[b]hello world![/b]" as var as %}',
+        '{% bbcode "[b]hello world![/b]" as %}',
+        '{% bbcode "[b]hello world![/b]" bad %}',
     )
 
     def setup_method(self, method):
