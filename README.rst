@@ -119,10 +119,12 @@ And more...
 
 Head over to the `documentation <http://django-precise-bbcode.readthedocs.org/en/>`_ for all the details on how to use the BBCode parser and how to define custom BBcode tags, placeholders and smilies.
 
-Author
-------
+Authors
+-------
 
-Morgan Aubert (@ellmetha) <morgan.aubert@zoho.com>
+Morgan Aubert (@ellmetha) <morgan.aubert@zoho.com> and contributors_
+
+.. _contributors: https://github.com/ellmetha/django-precise-bbcode/contributors
 
 License
 -------
