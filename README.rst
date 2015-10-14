@@ -3,7 +3,7 @@ django-precise-bbcode
 =====================
 
 .. image:: https://readthedocs.org/projects/django-precise-bbcode/badge/?style=flat-square&version=stable
-   :target: https://readthedocs.org/projects/django-precise-bbcode/
+   :target: http://django-precise-bbcode.readthedocs.org/en/stable/
    :alt: Documentation Status
 
 .. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
