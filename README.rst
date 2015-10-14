@@ -2,9 +2,17 @@
 django-precise-bbcode
 =====================
 
+.. image:: https://readthedocs.org/projects/django-precise-bbcode/badge/?style=flat-square&version=stable
+   :target: https://readthedocs.org/projects/django-precise-bbcode/
+   :alt: Documentation Status
+
 .. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Latest Version
+
+.. image:: http://img.shields.io/pypi/dm/django-precise-bbcode.svg?style=flat-square
+    :target: https://pypi.python.org/pypi//django-precise-bbcode/
+    :alt: Download
 
 .. image:: http://img.shields.io/travis/ellmetha/django-precise-bbcode.svg?style=flat-square
     :target: http://travis-ci.org/ellmetha/django-precise-bbcode
@@ -13,10 +21,6 @@ django-precise-bbcode
 .. image:: http://img.shields.io/coveralls/ellmetha/django-precise-bbcode.svg?style=flat-square
     :target: https://coveralls.io/r/ellmetha/django-precise-bbcode
     :alt: Coveralls status
-
-.. image:: http://img.shields.io/pypi/dm/django-precise-bbcode.svg?style=flat-square
-    :target: https://pypi.python.org/pypi//django-precise-bbcode/
-    :alt: Download
 
 |
 *Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
