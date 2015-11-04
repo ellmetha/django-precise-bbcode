@@ -34,6 +34,8 @@ This application includes a BBCode compiler aimed to render any BBCode content t
 
 Read more in the `documentation <http://django-precise-bbcode.readthedocs.org/en/>`_ (latest version).
 
+.. contents::
+
 Requirements
 ------------
 
