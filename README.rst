@@ -133,7 +133,7 @@ Head over to the `documentation <https://django-precise-bbcode.readthedocs.org>`
 Authors
 -------
 
-Morgan Aubert (@ellmetha) <morgan.aubert@zoho.com> and contributors_
+Morgan Aubert (@ellmetha) and contributors_
 
 .. _contributors: https://github.com/ellmetha/django-precise-bbcode/contributors
 
