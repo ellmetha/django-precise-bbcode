@@ -2,19 +2,19 @@
 Welcome to django-precise-bbcode's documentation!
 #################################################
 
-.. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
+.. image:: https://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Latest Version
 
-.. image:: http://img.shields.io/travis/ellmetha/django-precise-bbcode.svg?style=flat-square
+.. image:: https://img.shields.io/travis/ellmetha/django-precise-bbcode.svg?style=flat-square
     :target: http://travis-ci.org/ellmetha/django-precise-bbcode
     :alt: Build status
 
-.. image:: http://img.shields.io/coveralls/ellmetha/django-precise-bbcode.svg?style=flat-square
+.. image:: https://img.shields.io/coveralls/ellmetha/django-precise-bbcode.svg?style=flat-square
     :target: https://coveralls.io/r/ellmetha/django-precise-bbcode
     :alt: Coveralls status
 
-.. image:: http://img.shields.io/pypi/dm/django-precise-bbcode.svg?style=flat-square
+.. image:: https://img.shields.io/pypi/dm/django-precise-bbcode.svg?style=flat-square
     :target: https://pypi.python.org/pypi//django-precise-bbcode/
     :alt: Download
 
