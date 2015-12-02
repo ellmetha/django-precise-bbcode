@@ -22,7 +22,7 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     url='https://github.com/ellmetha/django-precise-bbcode',
-    license='BSD license, see LICENSE file',
+    license='BSD',
     description='A django BBCode integration..',
     long_description=read_relative_file('README.rst'),
     zip_safe=False,
