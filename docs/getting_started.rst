@@ -10,9 +10,9 @@ Requirements
 * `South`_ 1.0.1 or higher if you are using Django < 1.7
 
 
-.. warning:: While *django-precise-bbcode* is compatible with Django 1.5.x and Django 1.6.x, these versions of Django
+.. warning:: While *django-precise-bbcode* is compatible with Django 1.5.x, Django 1.6.x and Django 1.7.x, these versions of Django
              are no longer supported by the Django team. Please upgrade to
-             Django 1.7.x or 1.8.x immediately.
+             Django 1.8.x or 1.9.x immediately.
 
 .. _Python: https://www.python.org
 .. _Django: https://www.djangoproject.com
