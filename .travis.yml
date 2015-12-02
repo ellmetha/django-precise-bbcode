@@ -6,34 +6,34 @@ python:
   - "3.4"
   - "3.5"
 env:
-  - DJANGO="django==1.4.2,<1.5"
+  - DJANGO="django>=1.4.2,<1.5"
   - DJANGO="django>=1.5,<1.6"
   - DJANGO="django>=1.6,<1.7"
   - DJANGO="django>=1.7,<1.8"
   - DJANGO="django>=1.8,<1.9"
-  - DJANGO="django==1.9rc2"
+  - DJANGO="django>=1.9,<1.10"
   - TOXENV=lint
 
 matrix:
   exclude:
   - python: "3.2"
-    env: DJANGO="django==1.4.2,<1.5"
+    env: DJANGO="django>=1.4.2,<1.5"
   - python: "3.2"
-    env: DJANGO="django==1.9rc2"
+    env: DJANGO="django>=1.9,<1.10"
   - python: "3.2"
     env: TOXENV=lint
   - python: "3.3"
-    env: DJANGO="django==1.4.2,<1.5"
+    env: DJANGO="django>=1.4.2,<1.5"
   - python: "3.3"
-    env: DJANGO="django==1.9rc2"
+    env: DJANGO="django>=1.9,<1.10"
   - python: "3.3"
     env: TOXENV=lint
   - python: "3.4"
-    env: DJANGO="django==1.4.2,<1.5"
+    env: DJANGO="django>=1.4.2,<1.5"
   - python: "3.4"
     env: TOXENV=lint
   - python: "3.5"
-    env: DJANGO="django==1.4.2,<1.5"
+    env: DJANGO="django>=1.4.2,<1.5"
   - python: "3.5"
     env: DJANGO="django>=1.5,<1.6"
   - python: "3.5"
