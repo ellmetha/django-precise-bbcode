@@ -6,6 +6,10 @@ django-precise-bbcode
    :target: http://django-precise-bbcode.readthedocs.org/en/stable/
    :alt: Documentation Status
 
+.. image:: https://img.shields.io/pypi/l/django-precise-bbcode.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/django-precise-bbcode/
+    :alt: License
+
 .. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Latest Version
