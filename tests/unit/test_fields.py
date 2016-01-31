@@ -11,7 +11,7 @@ import pytest
 
 from precise_bbcode.fields import BBCodeContent
 from precise_bbcode.models import SmileyTag
-from tests.models import TestMessage
+from tests.models import DummyMessage
 
 
 @pytest.mark.django_db
@@ -25,7 +25,7 @@ class TestBbcodeTextField(object):
 
     def test_accepts_none_values(self):
         # Setup
-        message = TestMessage()
+        message = DummyMessage()
         message.content = None
         # Run
         message.save()
@@ -37,14 +37,14 @@ class TestBbcodeTextField(object):
     def test_can_save_both_raw_and_rendered_data(self):
         # Run & check
         for bbcodes_text, expected_html_text in self.BBCODE_FIELDS_TESTS:
-            message = TestMessage()
+            message = DummyMessage()
             message.content = bbcodes_text
             message.save()
             assert message.content.rendered == expected_html_text
 
     def test_uses_a_valid_descriptor_protocol(self):
         # Setup
-        message = TestMessage()
+        message = DummyMessage()
         message.content = None
         message.save()
         bbcode_content = BBCodeContent('[b]hello world![/b]')
@@ -56,7 +56,7 @@ class TestBbcodeTextField(object):
 
     def test_rendered_values_are_safe_strings(self):
         # Setup
-        message = TestMessage()
+        message = DummyMessage()
         message.content = None
         message.save()
         bbcode_content = BBCodeContent('[b]hello world![/b]')
