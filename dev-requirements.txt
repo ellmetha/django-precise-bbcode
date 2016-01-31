@@ -7,7 +7,7 @@ pytest-pythonpath
 coverage>=3.7,<3.8
 coveralls==0.2
 tox>=2.1.0
-flake8==2.2.5
+flake8>=2.2.5
 
 # Docs
 Sphinx==1.2.3
