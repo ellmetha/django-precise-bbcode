@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from . import get_parser
+from .bbcode import get_parser
 from .bbcode.regexes import bbcodde_standalone_re
 from .bbcode.regexes import bbcodde_standard_re
 from .bbcode.regexes import placeholder_content_re

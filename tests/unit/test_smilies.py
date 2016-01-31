@@ -7,8 +7,8 @@ from django.conf import settings
 from django.core.files import File
 import pytest
 
-from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
+from precise_bbcode.bbcode import get_parser
 from precise_bbcode.models import SmileyTag
 
 

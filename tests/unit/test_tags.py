@@ -9,8 +9,8 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 import pytest
 
-from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
+from precise_bbcode.bbcode import get_parser
 from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag

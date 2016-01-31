@@ -10,7 +10,7 @@ from django.template.defaultfilters import stringfilter
 from django.utils import six
 from django.utils.safestring import mark_safe
 
-from precise_bbcode import render_bbcodes
+from precise_bbcode.shortcuts import render_bbcodes
 
 
 register = template.Library()

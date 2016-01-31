@@ -6,8 +6,8 @@ import re
 from django.core.exceptions import ImproperlyConfigured
 import pytest
 
-from precise_bbcode import get_parser
 from precise_bbcode.bbcode import BBCodeParserLoader
+from precise_bbcode.bbcode import get_parser
 from precise_bbcode.bbcode.defaults.placeholder import _color_re
 from precise_bbcode.bbcode.defaults.placeholder import _email_re
 from precise_bbcode.bbcode.defaults.placeholder import _number_re
