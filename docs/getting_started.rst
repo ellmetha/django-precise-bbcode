@@ -4,7 +4,7 @@ Getting started
 Requirements
 ------------
 
-* `Python`_ 2.7, 3.2, 3.3, 3.4 or 3.5
+* `Python`_ 2.7, 3.3, 3.4 or 3.5
 * `Django`_ 1.4.x, 1.5.x, 1.6.x, 1.7.x, 1.8.x or 1.9.x
 * `Pillow`_ 2.2. or higher
 * `South`_ 1.0.1 or higher if you are using Django < 1.7

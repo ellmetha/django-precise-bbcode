@@ -4,6 +4,8 @@ from os.path import join
 from setuptools import find_packages
 from setuptools import setup
 
+import precise_bbcode
+
 
 def read_relative_file(filename):
     """
@@ -16,7 +18,7 @@ def read_relative_file(filename):
 
 setup(
     name='django-precise-bbcode',
-    version=read_relative_file('VERSION').strip(),
+    version=precise_bbcode.__version__,
     author='Morgan Aubert',
     author_email='morgan.aubert@zoho.com',
     packages=find_packages(exclude=['tests*']),
@@ -41,7 +43,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
