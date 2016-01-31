@@ -118,8 +118,8 @@ class BBCodeParser(object):
             (valid, tag_name, closing, option)
         """
         # Validates the considered tag
-        if ((not (tag.startswith(self._TAG_OPENING) and tag.endswith(self._TAG_ENDING))) or ('\n' in tag) or ('\r' in tag)
-                or (tag.count(self._TAG_OPENING) > 1) or (tag.count(self._TAG_ENDING) > 1)):
+        if ((not (tag.startswith(self._TAG_OPENING) and tag.endswith(self._TAG_ENDING))) or
+           ('\n' in tag) or ('\r' in tag) or (tag.count(self._TAG_OPENING) > 1) or (tag.count(self._TAG_ENDING) > 1)):
             return (False, tag, False, None)
         tag_name = tag[len(self._TAG_OPENING):-len(self._TAG_ENDING)].strip()
         if not tag_name:
@@ -242,8 +242,8 @@ class BBCodeParser(object):
                     if not opening_tags:
                         continue
 
-                    if (opening_tags[-1][0].tag_name != token.tag_name and token.tag_name in [x[0].tag_name for x in opening_tags]
-                            and tag_options.render_embedded):
+                    if (opening_tags[-1][0].tag_name != token.tag_name and
+                       token.tag_name in [x[0].tag_name for x in opening_tags] and tag_options.render_embedded):
                         # In this case, we iterate to the first opening of the current tag : all the tags between the current tag
                         # and its opening are converted to textual tokens
                         for tag in reversed(opening_tags):

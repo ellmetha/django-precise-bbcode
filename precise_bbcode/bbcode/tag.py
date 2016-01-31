@@ -79,8 +79,9 @@ class BBCodeTagBase(type):
             re_groups = re.search(tag_re, new_tag.definition_string).groupdict()
 
             # The beginning and end tag names must be the same
-            if not (new_tag._options.standalone or new_tag._options.newline_closes or new_tag._options.same_tag_closes
-                    or new_tag._options.end_tag_closes) and re_groups['start_name'] != re_groups['end_name']:
+            if not (new_tag._options.standalone or new_tag._options.newline_closes or
+                    new_tag._options.same_tag_closes or new_tag._options.end_tag_closes) \
+                    and re_groups['start_name'] != re_groups['end_name']:
                 raise InvalidBBCodeTag('This BBCode tag dit not validate because the start tag and the tag names are not the same')
 
             # The used placeholders must be the same in the tag definition and in the HTML replacement code

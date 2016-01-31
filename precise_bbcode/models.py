@@ -114,8 +114,8 @@ class BBCodeTag(models.Model):
         valid_placeholder_types = [placeholder for placeholder in placeholder_types if placeholder in parser.placeholders.keys()]
 
         if (not len(valid_placeholder_types) and not self.standalone) or valid_placeholder_types != placeholder_types:
-            raise ValidationError(_('You can only use placeholder names among: ' + str(parser.placeholders.keys())
-                                  + '. If you need many placeholders of a specific type, you can append numbers to them (eg. {TEXT1} or {TEXT2})'))
+            raise ValidationError(_('You can only use placeholder names among: ' + str(parser.placeholders.keys()) +
+                                  '. If you need many placeholders of a specific type, you can append numbers to them (eg. {TEXT1} or {TEXT2})'))
 
         super(BBCodeTag, self).clean()
 
