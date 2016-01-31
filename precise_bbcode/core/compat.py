@@ -12,17 +12,6 @@ try:
 except ImportError:
     python_2_unicode_compatible = lambda x: x
 
-
-# Provides string_types if six is not available
-try:
-    from django.utils.six import string_types
-except ImportError:
-    if PY3:
-        string_types = str,
-    else:
-        string_types = basestring,
-
-
 # force_str
 try:
     from django.utils.encoding import force_str

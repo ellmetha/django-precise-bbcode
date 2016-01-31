@@ -11,7 +11,6 @@ from django.utils import six
 from django.utils.safestring import mark_safe
 
 from precise_bbcode import render_bbcodes
-from precise_bbcode.core.compat import string_types
 
 
 register = template.Library()
@@ -21,7 +20,7 @@ class BBCodeNode(Node):
     def __init__(self, filter_expression, asvar=None):
         self.filter_expression = filter_expression
         self.asvar = asvar
-        if isinstance(self.filter_expression.var, string_types):
+        if isinstance(self.filter_expression.var, six.string_types):
             self.filter_expression.var = Variable("'{!s}'".format(self.filter_expression.var))
 
     def render(self, context):
