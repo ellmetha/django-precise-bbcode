@@ -1,2 +1,2 @@
-django
+django>=1.9,<1.10
 django-widget-tweaks
