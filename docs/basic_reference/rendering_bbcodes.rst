@@ -7,7 +7,7 @@ BBcode parser
 
 *Django-precise-bbcode* provides a BBCode parser that allows you to transform any textual content containing BBCode tags to the corresponding HTML markup. To do this, just import the ``get_parser`` shortcut and use the ``render`` method of the BBCode parser::
 
-    from precise_bbcode import get_parser
+    from precise_bbcode.bbcode import get_parser
 
     parser = get_parser()
     rendered = parser.render('[b]Hello [u]world![/u][/b]')

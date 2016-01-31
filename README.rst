@@ -62,7 +62,7 @@ Just run:
 ::
 
   pip install django-precise-bbcode
-  
+
 Once installed you can configure your project to use *django-precise-bbcode* with the following steps.
 
 Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
@@ -95,7 +95,7 @@ Rendering bbcodes
 
 *Django-precise-bbcode* comes with a BBCode parser that allows you to transform a textual content containing BBCode tags to the corresponding HTML markup. To do this, simply import the ``get_parser`` shortcut and use the ``render`` method of the BBCode parser::
 
-  >>> from precise_bbcode import get_parser
+  >>> from precise_bbcode.bbcode import get_parser
   >>> parser = get_parser()
   >>> parser.render('[b]Hello [u]world![/u][/b]')
   '<strong>Hello <u>world!</u></strong>'
@@ -116,7 +116,7 @@ Storing bbcodes
 While you can use the Django built-in ``models.TextField`` to add your BBCode contents to your models, a common need is to store both the BBCode content and the corresponding HTML markup in the database. To address this *django-precise-bbcode* provides a ``BBCodeTextField``.
 
 ::
-  
+
   from django.db import models
   from precise_bbcode.fields import BBCodeTextField
 
