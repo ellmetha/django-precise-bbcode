@@ -13,3 +13,13 @@ The Django built-in ``models.TextField`` is all you need to simply add BBCode co
 A ``BBCodeTextField`` field contributes two columns to the model instead of a standard single column : one is used to save the BBCode content ; the other one keeps the corresponding HTML markup. The HTML content of such a field can then be displayed in any template by using its ``rendered`` attribute::
 
     {{ post.content.rendered }}
+
+.. note::
+
+    Please note that you should to use the ``safe`` template filter when displaying your BBCodes if you choose to store BBCode contents in the built-in ``models.TextField``.
+    This is because ``models.TextField`` contents are escaped by default.
+
+    ::
+
+        {% load bbcode_tags %}
+        {{ object.bbcode_content|safe|bbcode }}
