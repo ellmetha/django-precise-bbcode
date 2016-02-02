@@ -19,8 +19,8 @@ __all__ = [
 
 
 # Placeholder regexes
-_email_re = re.compile(r'(\w+[.|\w])*@\[?(\w+[.])*\w+\]?', re.IGNORECASE)
-_text_re = re.compile(r'^\s*([\w]+)|([\w]+\S*)\s*$', flags=re.UNICODE)
+_email_re = re.compile(r'(\w+[.|\w])*@\[?(\w+[.])*\w+\]?', flags=re.I)
+_text_re = re.compile(r'^\s*([\w]+)|([\w]+\S*)\s*', flags=(re.U | re.M))
 _simpletext_re = re.compile(r'^[a-zA-Z0-9-+.,_ ]+$')
 _color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
 _number_re = re.compile(r'^[+-]?\d+(?:(\.|,)\d+)?$')
