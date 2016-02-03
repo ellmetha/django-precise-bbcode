@@ -51,7 +51,7 @@ Requirements
 ------------
 
 * Python 2.7+ or 3.3+
-* Django 1.5+
+* Django 1.4+
 * PIL or Pillow (required for smiley tags)
 
 Installation
