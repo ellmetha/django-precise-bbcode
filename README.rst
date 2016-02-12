@@ -22,9 +22,9 @@ django-precise-bbcode
     :target: http://travis-ci.org/ellmetha/django-precise-bbcode
     :alt: Build status
 
-.. image:: http://img.shields.io/coveralls/ellmetha/django-precise-bbcode.svg?style=flat-square
-    :target: https://coveralls.io/r/ellmetha/django-precise-bbcode
-    :alt: Coveralls status
+.. image:: https://img.shields.io/codecov/c/github/ellmetha/django-precise-bbcode.svg?style=flat-square
+    :target: https://codecov.io/github/ellmetha/django-precise-bbcode
+    :alt: Codecov status
 
 |
 *Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
