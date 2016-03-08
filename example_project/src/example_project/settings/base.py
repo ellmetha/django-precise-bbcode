@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
+
 from __future__ import unicode_literals
-import gettext
+
 import os
+
 PROJECT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../..')
 
 DEBUG = False
@@ -20,9 +22,16 @@ TIME_ZONE = 'Europe/Paris'
 LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
-   ('en', "English"),
-   ('fr', "Français"),
+    ('en', "English"),
+    ('fr', "Français"),
 )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_PATH, 'example.db'),
+    }
+}
 
 LOCALE_PATHS = (
     os.path.join(PROJECT_PATH, 'src/locale/example_project'),
@@ -68,20 +77,14 @@ STATICFILES_DIRS = ()
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'APP_DIRS': True,
         'DIRS': [
-            os.path.join(PROJECT_PATH, 'src/example_project/templates/'),
+            os.path.join(PROJECT_PATH, 'src/example_project/jinja2/'),
         ],
         'OPTIONS': {
-            'context_processors': [
-                'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.debug',
-                'django.core.context_processors.i18n',
-                'django.core.context_processors.media',
-                'django.core.context_processors.static',
-                'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.request',
+            'extensions': [
+                'precise_bbcode.jinja2tags.bbcode',
             ],
         },
     },
@@ -122,8 +125,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-
-    'widget_tweaks',
 
     # Precise BBCode app
     'precise_bbcode',

@@ -1,29 +1,27 @@
-{% load i18n %}
-
 <!DOCTYPE html>
 <html lang="fr">
     <head>
         {% block head %}
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-            <title>{% block title %}{{ site.name }}{% endblock %}</title>
-            <meta name="description" content="{% block meta-description %}{% endblock %}" />
-            <meta name="keywords" content="{% block meta-keywords %}{% endblock %}"/>
+            <title>{% block title %}Precise BBCode Test Site{% endblock %}</title>
+            <meta name="description" content="{% block meta_description %}{% endblock %}" />
+            <meta name="keywords" content="{% block meta_keywords %}{% endblock %}"/>
 
             <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
             <!--[if lt IE 9]>
                 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
             <![endif]-->
         {% endblock head %}
-        
+
         {% block css %}
             <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
             <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
         {% endblock css %}
-        
-        {% block extra-css %}
-        {% endblock extra-css %}
-        
+
+        {% block extra_css %}
+        {% endblock extra_css %}
+
     </head>
     <body>
         {% block js %}
@@ -54,11 +52,11 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="push"></div>
         </div>
-        
-        {% block extra-js %}
-        {% endblock extra-js %}
+
+        {% block extra_js %}
+        {% endblock extra_js %}
     </body>
 </html>
