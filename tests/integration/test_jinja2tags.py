@@ -2,10 +2,12 @@
 
 from __future__ import unicode_literals
 
-from django.template import engines
+import django
 import pytest
 
 
+@pytest.mark.skipif(django.VERSION < (1, 8),
+                    reason="requires django>=1.8")
 @pytest.mark.django_db
 class TestBbcodeJinja2Tags(object):
     BBCODE_FILTER_EXPRESSIONS_TESTS = (
@@ -36,6 +38,7 @@ class TestBbcodeJinja2Tags(object):
     )
 
     def setup_method(self, method):
+        from django.template import engines
         self.engine = engines['jinja2']
 
     def test_provide_a_functional_bbcode_filter(self):
