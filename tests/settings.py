@@ -20,7 +20,26 @@ DATABASES = {
     }
 }
 
-TEMPLATE_CONTEXT_PROCESSORS = default_settings.TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [],
+        'OPTIONS': {
+            'context_processors': default_settings.TEMPLATE_CONTEXT_PROCESSORS,
+        },
+    },
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'APP_DIRS': True,
+        'DIRS': [],
+        'OPTIONS': {
+            'extensions': [
+                'precise_bbcode.jinja2tags.bbcode',
+            ],
+        },
+    },
+]
 
 INSTALLED_APPS = (
     'django.contrib.auth',
