@@ -12,3 +12,6 @@ flake8>=2.2.5
 # Docs
 Sphinx>=1.2.3
 sphinx_rtd_theme>=0.1.9
+
+# Templates
+Jinja2>=2.8
