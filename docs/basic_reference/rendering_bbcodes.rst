@@ -28,3 +28,26 @@ The previous parser can also be used in your templates as a template filter or a
 Doing this will force the BBCode content included in the ``entry.bbcode_content`` field to be converted to HTML. The last statement will output::
 
     <strong>Write some bbcodes!</strong>
+
+Jinja2 template support
+-----------------------
+
+*Django-precise-bbcode* supports Jinja 2 templating. You have to add the ``precise_bbcode.jinja2tags.bbcode`` extension to your template extensions if you want to use the *django-precise-bbcode*' Jinja 2 tags in your project::
+
+    TEMPLATES = [
+        # ...
+        {
+            'BACKEND': 'django.template.backends.jinja2.Jinja2',
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'extensions': [
+                    'precise_bbcode.jinja2tags.bbcode',
+                ],
+            },
+        }
+    ]
+
+The BBCode parser can then be used into your Jinja 2 templates as a function or as a template filter::
+
+    {{ bbcode("[b]Write some bbcodes![/b]") }}
+    {{ "[b]Write some bbcodes![/b]"|bbcode }}
