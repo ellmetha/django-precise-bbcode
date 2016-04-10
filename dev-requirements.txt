@@ -4,6 +4,7 @@ pytest-cov>=1.8
 pytest-django>=2.8
 pytest-spec>=0.2
 pytest-pythonpath
+pytest-sugar>=0.7.0
 coverage>=3.7
 codecov>=1.6
 tox>=2.1.0
