@@ -32,7 +32,7 @@ Doing this will force the BBCode content included in the ``entry.bbcode_content`
 Jinja2 template support
 -----------------------
 
-*Django-precise-bbcode* supports Jinja 2 templating. You have to add the ``precise_bbcode.jinja2tags.bbcode`` extension to your template extensions if you want to use the *django-precise-bbcode*' Jinja 2 tags in your project::
+*Django-precise-bbcode* supports Jinja 2 templating. You have to add the ``precise_bbcode.jinja2tags.bbcode`` extension to your template extensions if you want to use the *django-precise-bbcode*'s Jinja 2 tags in your project::
 
     TEMPLATES = [
         # ...
