@@ -14,10 +14,6 @@ django-precise-bbcode
     :target: https://pypi.python.org/pypi/django-precise-bbcode/
     :alt: Latest Version
 
-.. image:: http://img.shields.io/pypi/dm/django-precise-bbcode.svg?style=flat-square
-    :target: https://pypi.python.org/pypi//django-precise-bbcode/
-    :alt: Download
-
 .. image:: http://img.shields.io/travis/ellmetha/django-precise-bbcode.svg?style=flat-square
     :target: http://travis-ci.org/ellmetha/django-precise-bbcode
     :alt: Build status
