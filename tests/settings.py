@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 import os
 
-from django.conf import global_settings as default_settings
 from django.conf import settings
 
 
@@ -26,7 +25,15 @@ TEMPLATES = [
         'APP_DIRS': True,
         'DIRS': [],
         'OPTIONS': {
-            'context_processors': default_settings.TEMPLATE_CONTEXT_PROCESSORS,
+            'context_processors': (
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ),
         },
     },
     {
@@ -76,8 +83,3 @@ SITE_ID = 1
 SILENCED_SYSTEM_CHECKS = ['1_6.W001']
 
 SECRET_KEY = 'key'
-
-
-def configure():
-    if not settings.configured:
-        settings.configure(**TEST_SETTINGS)

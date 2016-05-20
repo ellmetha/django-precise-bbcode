@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
-# Third party imports
+from django import VERSION
 from django.conf.urls import include
-from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-# Local application / specific library imports
+if VERSION >= (1, 8):
+    patterns = lambda _, *p: list(p)
+else:
+    from django.conf.urls import patterns
 
 
 admin.autodiscover()
