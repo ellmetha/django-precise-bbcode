@@ -3,8 +3,6 @@
 from __future__ import unicode_literals
 import os
 
-from django.conf import settings
-
 
 TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
 
