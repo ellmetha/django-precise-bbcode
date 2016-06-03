@@ -63,7 +63,7 @@ Once installed you can configure your project to use *django-precise-bbcode* wit
 
 Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
 
-::
+.. code-block:: python
 
   INSTALLED_APPS = (
       # other apps
@@ -72,13 +72,13 @@ Add ``precise_bbcode`` to ``INSTALLED_APPS`` in your project's settings module:
 
 Then install the models:
 
-::
+.. code-block:: shell
 
   python manage.py syncdb
 
 If you are using Django 1.6 or below, you should use South 1.0 in order to benefit from the migrations. This way you can use the migration command provided by South:
 
-::
+.. code-block:: shell
 
   python manage.py migrate precise_bbcode
 
@@ -111,7 +111,7 @@ Storing bbcodes
 
 While you can use the Django built-in ``models.TextField`` to add your BBCode contents to your models, a common need is to store both the BBCode content and the corresponding HTML markup in the database. To address this *django-precise-bbcode* provides a ``BBCodeTextField``.
 
-::
+.. code-block:: python
 
   from django.db import models
   from precise_bbcode.fields import BBCodeTextField
