@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import unicode_literals
 
-# Third party imports
-# Local application / specific library imports
+
+from ..conf import settings as bbcode_settings
+from ..core.compat import get_model
+from ..core.loading import get_subclasses
 from .parser import BBCodeParser
 from .placeholder import BBCodePlaceholder
 from .tag import BBCodeTag
-from precise_bbcode.conf import settings as bbcode_settings
-from precise_bbcode.core.compat import get_model
-from precise_bbcode.core.loading import get_subclasses
 
 
 _bbcode_parser = None
@@ -44,7 +42,8 @@ class BBCodeParserLoader(object):
         self.init_bbcode_placeholders()
 
         # Init default BBCode tags
-        self.init_default_bbcode_tags()
+        if not bbcode_settings.BBCODE_DISABLE_BUILTIN_TAGS:
+            self.init_default_bbcode_tags()
 
         # Init renderers registered in 'bbcode_tags' modules
         self.init_bbcode_tags()

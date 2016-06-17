@@ -9,11 +9,14 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 import pytest
 
+from precise_bbcode.conf import settings as bbcode_settings
+from precise_bbcode.core.loading import get_subclasses
+from precise_bbcode.bbcode import BBCodeParser
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode import get_parser
-from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
+from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.tag_pool import TagAlreadyCreated
 from precise_bbcode.tag_pool import TagAlreadyRegistered
@@ -125,6 +128,17 @@ class TestBbcodeTagPool(object):
         for bbcodes_text, expected_html_text in self.TAGS_TESTS:
             result = self.parser.render(bbcodes_text)
             assert result == expected_html_text
+
+    def test_can_disable_builtin_tags(self):
+        # Setup
+        bbcode_settings.BBCODE_DISABLE_BUILTIN_TAGS = True
+        parser_loader = BBCodeParserLoader(parser=BBCodeParser())
+        # Run & check
+        parser_loader.load_parser()
+        import precise_bbcode.bbcode.defaults.tag
+        for tag_klass in get_subclasses(precise_bbcode.bbcode.defaults.tag, ParserBBCodeTag):
+            assert tag_klass.name not in parser_loader.parser.bbcodes
+        bbcode_settings.BBCODE_DISABLE_BUILTIN_TAGS = False
 
 
 @pytest.mark.django_db
@@ -287,7 +301,7 @@ class TestDbBbcodeTag(object):
         client = Client()
         client.login(username='admin', password='adminpass')
         url = reverse('admin:precise_bbcode_bbcodetag_changelist')
-        r = client.post(url, data={
+        client.post(url, data={
             'action': 'delete_selected', '_selected_action': [tag.pk, ], 'post': 'yes'})
 
         new_tag = BBCodeTag(**tag_dict)

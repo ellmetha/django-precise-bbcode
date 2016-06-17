@@ -19,7 +19,11 @@ escape_html = (
 BBCODE_ESCAPE_HTML = getattr(settings, 'BBCODE_ESCAPE_HTML', escape_html)
 
 
-# Should custom tags be allowed ?
+# Should the built-in tags be disabled?
+BBCODE_DISABLE_BUILTIN_TAGS = getattr(settings, 'BBCODE_DISABLE_BUILTIN_TAGS', False)
+
+
+# Should custom tags be allowed?
 BBCODE_ALLOW_CUSTOM_TAGS = getattr(settings, 'BBCODE_ALLOW_CUSTOM_TAGS', True)
 
 
