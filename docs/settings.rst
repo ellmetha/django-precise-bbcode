@@ -34,7 +34,7 @@ The list of all characters that must be escaped before rendering.
 
 Default: ``False``
 
-The flag indicating whether the built-in BBCode tags should be disbaled or not.
+The flag indicating whether the built-in BBCode tags should be disabled or not.
 
 ``BBCODE_ALLOW_CUSTOM_TAGS``
 ----------------------------
