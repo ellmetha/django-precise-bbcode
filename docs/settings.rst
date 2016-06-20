@@ -29,6 +29,13 @@ Default::
 
 The list of all characters that must be escaped before rendering.
 
+``BBCODE_DISABLE_BUILTIN_TAGS``
+-------------------------------
+
+Default: ``False``
+
+The flag indicating whether the built-in BBCode tags should be disbaled or not.
+
 ``BBCODE_ALLOW_CUSTOM_TAGS``
 ----------------------------
 
