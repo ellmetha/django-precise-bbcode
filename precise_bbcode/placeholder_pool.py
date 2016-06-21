@@ -18,8 +18,8 @@ class PlaceholderNotRegistered(Exception):
 
 class PlaceholderPool(object):
     """
-    BBCode placeholders are registered with the PlaceholderPool using the register() method. It makes them
-    available to the BBCode parser.
+    BBCode placeholders are registered with the PlaceholderPool using the register() method. It
+    makes them available to the BBCode parser.
     """
 
     def __init__(self):
@@ -35,19 +35,22 @@ class PlaceholderPool(object):
     def register_placeholder(self, placeholder):
         """
         Registers the given placeholder(s).
-        If a placeholder appears to be already registered, a PlaceholderAlreadyRegistered exception will be raised.
+        If a placeholder appears to be already registered, a PlaceholderAlreadyRegistered exception
+        will be raised.
         """
         # A registered placeholder must be a subclass of BBCodePlaceholder
         if not issubclass(placeholder, BBCodePlaceholder):
             raise ImproperlyConfigured(
-                'BBCode Placeholders must be subclasses of BBCodePlaceholder, {!r} is not'.format(placeholder)
+                'BBCode Placeholders must be subclasses of BBCodePlaceholder, '
+                '{!r} is not'.format(placeholder)
             )
 
         # Two placeholders with the same names can't be registered
         placeholder_name = placeholder.name
         if placeholder_name in self.placeholders:
             raise PlaceholderAlreadyRegistered(
-                'Cannot register {!r}, a placeholder with this name ({!r}) is already registered'.format(
+                'Cannot register {!r}, a placeholder with this name ({!r}) '
+                'is already registered'.format(
                     placeholder, placeholder_name)
             )
 
@@ -56,7 +59,8 @@ class PlaceholderPool(object):
     def unregister_placeholder(self, placeholder):
         """
         Unregister the given placeholder(s).
-        If a placeholder appears to be not registered, a PlaceholderNotRegistered exception will be raised.
+        If a placeholder appears to be not registered, a PlaceholderNotRegistered exception will be
+        raised.
         """
         placeholder_name = placeholder.name
         if placeholder_name not in self.placeholders:

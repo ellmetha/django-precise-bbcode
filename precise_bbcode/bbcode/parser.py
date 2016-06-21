@@ -27,10 +27,12 @@ class BBCodeToken(object):
         self.text = text
 
     def __repr__(self):
-        return '<BBCodeToken instance "({0}, {1}, {2}, {3})">'.format(self.type, self.tag_name, self.option, self.text)
+        return '<BBCodeToken instance "({0}, {1}, {2}, {3})">'.format(
+            self.type, self.tag_name, self.option, self.text)
 
     def __str__(self):
-        return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(self.type, self.tag_name, self.option, self.text)
+        return 'BBCodeToken: ({0}, {1}, {2}, {3})'.format(
+            self.type, self.tag_name, self.option, self.text)
 
     __unicode__ = __str__
 
@@ -56,7 +58,8 @@ class BBCodeToken(object):
 
 
 class BBCodeParser(object):
-    # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following constants should not be modified
+    # BBCode tags are enclosed in square brackets [ and ] rather than < and > ; the following
+    # constants should not be modified
     _TAG_OPENING = '['
     _TAG_ENDING = ']'
 
@@ -119,7 +122,8 @@ class BBCodeParser(object):
         """
         # Validates the considered tag
         if ((not (tag.startswith(self._TAG_OPENING) and tag.endswith(self._TAG_ENDING))) or
-           ('\n' in tag) or ('\r' in tag) or (tag.count(self._TAG_OPENING) > 1) or (tag.count(self._TAG_ENDING) > 1)):
+           ('\n' in tag) or ('\r' in tag) or (tag.count(self._TAG_OPENING) > 1) or
+           (tag.count(self._TAG_ENDING) > 1)):
             return (False, tag, False, None)
         tag_name = tag[len(self._TAG_OPENING):-len(self._TAG_ENDING)].strip()
         if not tag_name:
@@ -165,8 +169,8 @@ class BBCodeParser(object):
             pos_diff = tag_start - pos
 
             if pos_diff >= 0:
-                # There can be data between the index of the current tag opening character and the previous position
-                # These textual data are tokenised
+                # There can be data between the index of the current tag opening character and the
+                # previous position. These textual data are tokenised
                 if pos_diff:
                     tokens.extend(self._get_textual_tokens(data[pos:tag_start]))
 
@@ -176,18 +180,21 @@ class BBCodeParser(object):
                 new_tag_start = data.find(self._TAG_OPENING, tag_start + len(self._TAG_OPENING))
 
                 if new_tag_start > 0 and new_tag_start < tag_end:
-                    # In this case, a new opening character has been found ; the previous ones will be tokenized as data.
+                    # In this case, a new opening character has been found ; the previous ones will
+                    # be tokenized as data.
                     tokens.extend(self._get_textual_tokens(data[tag_start:new_tag_start]))
                     pos = new_tag_start
                 elif tag_end > tag_start:
                     tag = data[tag_start:tag_end + len(self._TAG_ENDING)]
                     valid, tag_name, closing, option = self._parse_tag(tag)
-                    # The fetched tag must be known by the parser to be tokenized as a BBCode tag ; otherwise it will be tokenized as data
+                    # The fetched tag must be known by the parser to be tokenized as a BBCode tag ;
+                    # otherwise it will be tokenized as data
                     if valid and tag_name in self.bbcodes:
                         if closing:
                             tokens.append(BBCodeToken(BBCodeToken.TK_END_TAG, tag_name, None, tag))
                         else:
-                            tokens.append(BBCodeToken(BBCodeToken.TK_START_TAG, tag_name, option, tag))
+                            tokens.append(
+                                BBCodeToken(BBCodeToken.TK_START_TAG, tag_name, option, tag))
                     else:
                         tokens.extend(self._get_textual_tokens(tag))
                     pos = tag_end + len(self._TAG_ENDING)
@@ -227,7 +234,8 @@ class BBCodeParser(object):
         for index, token in enumerate(tokens):
             if token.is_start_tag:
                 tag_options = self.bbcodes[token.tag_name]._options
-                if tag_options.same_tag_closes and len(opening_tags) > 0 and opening_tags[-1][0].tag_name == token.tag_name:
+                if tag_options.same_tag_closes and len(opening_tags) > 0 \
+                        and opening_tags[-1][0].tag_name == token.tag_name:
                     opening_tags.pop()
                 if not tag_options.standalone:
                     opening_tags.append((token, index))
@@ -243,16 +251,19 @@ class BBCodeParser(object):
                         continue
 
                     if (opening_tags[-1][0].tag_name != token.tag_name and
-                       token.tag_name in [x[0].tag_name for x in opening_tags] and tag_options.render_embedded):
-                        # In this case, we iterate to the first opening of the current tag : all the tags between the current tag
-                        # and its opening are converted to textual tokens
+                       token.tag_name in [x[0].tag_name for x in opening_tags] and
+                       tag_options.render_embedded):
+                        # In this case, we iterate to the first opening of the current tag : all the
+                        # tags between the current tag and its opening are converted to textual
+                        # tokens
                         for tag in reversed(opening_tags):
                             tk, index = tag
                             if tk.tag_name == token.tag_name:
                                 opening_tags.pop()
                                 break
                             else:
-                                tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, tk.text)
+                                tokens[index] = BBCodeToken(
+                                    BBCodeToken.TK_DATA, None, None, tk.text)
                                 opening_tags.pop()
                     elif opening_tags[-1][0].tag_name != token.tag_name:
                         tokens[index] = BBCodeToken(BBCodeToken.TK_DATA, None, None, token.text)
@@ -340,7 +351,8 @@ class BBCodeParser(object):
                     token_end, consume_now = self._find_closing_token(tag, tokens, itk + 1)
                     embedded_tokens = tokens[itk + 1:token_end]
 
-                    # If the end tag should not be consumed, back up one (after processing the embedded tokens)
+                    # If the end tag should not be consumed, back up one (after processing the
+                    # embedded tokens)
                     if not consume_now:
                         token_end -= 1
 
@@ -349,7 +361,8 @@ class BBCodeParser(object):
                     else:
                         inner = self._render_textual_content(
                             ''.join(tk.text for tk in embedded_tokens),
-                            tag._options.escape_html, tag._options.replace_links, tag._options.render_embedded)
+                            tag._options.escape_html, tag._options.replace_links,
+                            tag._options.render_embedded)
 
                     # Strip and replaces newlines if specified in the tag options
                     if tag._options.strip:
@@ -372,7 +385,8 @@ class BBCodeParser(object):
                 replace_specialchars = parent_tag._options.escape_html if parent_tag else True
                 replace_links = parent_tag._options.replace_links if parent_tag else True
                 replace_smilies = parent_tag._options.render_embedded if parent_tag else True
-                rendered.append(self._render_textual_content(token.text, replace_specialchars, replace_links, replace_smilies))
+                rendered.append(self._render_textual_content(
+                    token.text, replace_specialchars, replace_links, replace_smilies))
             elif token.is_newline:
                 rendered.append(self.newline_char if parent_tag is None else token.text)
 

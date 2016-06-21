@@ -48,14 +48,16 @@ class BBCodeTagBase(type):
             )
         if not re.match('^[^\s=]+$', new_tag.name):
             raise InvalidBBCodeTag(
-                """The \'name\' attribute associated with {!r} is not valid: a tag name must be strictly
-                composed of non-white-space characters and the '=' character is not allowed""".format(name)
+                """The \'name\' attribute associated with {!r} is not valid: a tag name must be
+                strictly composed of non-white-space characters and the '=' character is not
+                allowed""".format(name)
             )
 
         # Initializes the '_options' attribute
         if options_klass:
             option_attrs = inspect.getmembers(options_klass, lambda a: not(inspect.isroutine(a)))
-            options_kwargs = dict([a for a in option_attrs if not(a[0].startswith('__') and a[0].endswith('__'))])
+            options_kwargs = dict(
+                [a for a in option_attrs if not(a[0].startswith('__') and a[0].endswith('__'))])
             setattr(new_tag, '_options', BBCodeTagOptions(**options_kwargs))
         else:
             setattr(new_tag, '_options', BBCodeTagOptions())
@@ -71,7 +73,8 @@ class BBCodeTagBase(type):
 
         if new_tag.definition_string and new_tag.format_string:
             # Check whether the tag is correctly defined according to a bbcode tag regex
-            tag_re = bbcodde_standard_re if not new_tag._options.standalone else bbcodde_standalone_re
+            tag_re = bbcodde_standard_re if not new_tag._options.standalone \
+                else bbcodde_standalone_re
             valid_bbcode_tag = re.search(tag_re, new_tag.definition_string)
             if not valid_bbcode_tag:
                 raise InvalidBBCodeTag('The BBCode definition you provided is not valid')
@@ -82,18 +85,24 @@ class BBCodeTagBase(type):
             if not (new_tag._options.standalone or new_tag._options.newline_closes or
                     new_tag._options.same_tag_closes or new_tag._options.end_tag_closes) \
                     and re_groups['start_name'] != re_groups['end_name']:
-                raise InvalidBBCodeTag('This BBCode tag dit not validate because the start tag and the tag names are not the same')
+                raise InvalidBBCodeTag(
+                    'This BBCode tag dit not validate because the start tag and the tag names are '
+                    'not the same')
 
-            # The used placeholders must be the same in the tag definition and in the HTML replacement code
+            # The used placeholders must be the same in the tag definition and in the HTML
+            # replacement code
             def_placeholders = re.findall(placeholder_re, new_tag.definition_string)
             html_placeholders = re.findall(placeholder_re, new_tag.format_string)
             if set(def_placeholders) != set(html_placeholders):
-                raise InvalidBBCodeTag('The placeholders defined in the tag definition must be present in the HTML replacement code!')
+                raise InvalidBBCodeTag(
+                    'The placeholders defined in the tag definition must be present in the HTML '
+                    'replacement code!')
 
             # ... and two placeholders must not have the same name
             def_placeholders_uniques = list(set(def_placeholders))
             if sorted(def_placeholders) != sorted(def_placeholders_uniques):
-                raise InvalidBBCodeTag('The placeholders defined in the tag definition must be strictly uniques')
+                raise InvalidBBCodeTag(
+                    'The placeholders defined in the tag definition must be strictly uniques')
 
         return new_tag
 
@@ -143,7 +152,10 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
         if len(placeholders) == 1:
             fmt.update({placeholders[0]: value})
         elif len(placeholders) == 2:
-            fmt.update({placeholders[1]: value, placeholders[0]: replace(option, bbcode_settings.BBCODE_ESCAPE_HTML) if option else ''})
+            fmt.update({
+                placeholders[1]: value,
+                placeholders[0]: replace(option, bbcode_settings.BBCODE_ESCAPE_HTML) if option else ''  # noqa
+            })
 
         # Semantic validation
         valid = self._validate_format(parser, fmt)
@@ -152,17 +164,20 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
         elif not valid:
             return self.definition_string.format(**fmt).replace('=', '')
 
-        # Before rendering, it's necessary to escape the included braces: '{' and '}' ; some of them could not be placeholders
+        # Before rendering, it's necessary to escape the included braces: '{' and '}' ; some of them
+        # could not be placeholders
         escaped_format_string = self.format_string.replace('{', '{{').replace('}', '}}')
         for placeholder in fmt.keys():
-            escaped_format_string = escaped_format_string.replace('{' + placeholder + '}', placeholder)
+            escaped_format_string = escaped_format_string.replace(
+                '{' + placeholder + '}', placeholder)
 
         # Return the rendered data
         return escaped_format_string.format(**fmt)
 
     def _validate_format(self, parser, format_dict):
         """
-        Validates the given format dictionary. Each key of this dict refers to a specific BBCode placeholder type.
+        Validates the given format dictionary. Each key of this dict refers to a specific BBCode
+        placeholder type.
         eg. {TEXT} or {TEXT1} refer to the 'TEXT' BBCode placeholder type.
         Each content is validated according to its associated placeholder type.
         """
@@ -171,7 +186,8 @@ class BBCodeTag(with_metaclass(BBCodeTagBase)):
                 placeholder_results = re.findall(placeholder_content_re, placeholder_string)
                 assert len(placeholder_results)
                 placeholder_type, _, extra_context = placeholder_results[0]
-                valid_content = parser.placeholders[placeholder_type.upper()].validate(content, extra_context=extra_context[1:])
+                valid_content = parser.placeholders[placeholder_type.upper()].validate(
+                    content, extra_context=extra_context[1:])
                 assert valid_content and valid_content is not None
             except KeyError:
                 raise InvalidBBCodePlaholder(placeholder_type)

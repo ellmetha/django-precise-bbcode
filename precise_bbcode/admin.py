@@ -16,7 +16,8 @@ class BBCodeTagAdmin(admin.ModelAdmin):
     list_display_links = ('tag_name', 'tag_definition', 'html_replacement')
     fieldsets = (
         (None, {
-            'fields': ('tag_definition', 'html_replacement', 'helpline', 'standalone', 'display_on_editor')
+            'fields': (
+                'tag_definition', 'html_replacement', 'helpline', 'standalone', 'display_on_editor')
         }),
         (_('Advanced options'), {
             'classes': ('collapse',),

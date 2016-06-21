@@ -46,8 +46,10 @@ class ListBBCodeTag(BBCodeTag):
             'i': 'lower-roman', 'I': 'upper-roman',
         }
         list_tag = 'ol' if option in css_opts else 'ul'
-        list_tag_css = ' style="list-style-type:{};"'.format(css_opts[option]) if list_tag == 'ol' else ''
-        rendered = '<{tag}{css}>{content}</{tag}>'.format(tag=list_tag, css=list_tag_css, content=value)
+        list_tag_css = ' style="list-style-type:{};"'.format(css_opts[option]) if list_tag == 'ol' \
+            else ''
+        rendered = '<{tag}{css}>{content}</{tag}>'.format(
+            tag=list_tag, css=list_tag_css, content=value)
         return rendered
 
 
@@ -96,7 +98,7 @@ class ColorBBCodeTag(BBCodeTag):
 class UrlBBCodeTag(BBCodeTag):
     name = 'url'
 
-    _domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')
+    _domain_re = re.compile(r'^(?=.{4,255}$)([a-zA-Z0-9][a-zA-Z0-9-]{,61}[a-zA-Z0-9]\.)+[a-zA-Z0-9]{2,5}$')  # noqa
 
     class Options:
         replace_links = False

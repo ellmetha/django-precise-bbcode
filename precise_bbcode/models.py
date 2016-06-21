@@ -33,11 +33,13 @@ class BBCodeTag(models.Model):
         default=False)
     same_tag_closes = models.BooleanField(
         verbose_name=_('Same tag closing'),
-        help_text=_('Set this option to force the closing of this tag after the beginning of a similar tag'),
+        help_text=_('Set this option to force the closing of this tag after the '
+                    'beginning of a similar tag'),
         default=False)
     end_tag_closes = models.BooleanField(
         verbose_name=_('End tag closing'),
-        help_text=_('Set this option to force the closing of this tag after the end of another tag'),
+        help_text=_('Set this option to force the closing of this tag after the end '
+                    'of another tag'),
         default=False)
     standalone = models.BooleanField(
         verbose_name=_('Standalone tag'),
@@ -69,7 +71,8 @@ class BBCodeTag(models.Model):
         default=False)
 
     # For later use
-    helpline = models.CharField(max_length=120, verbose_name=_('Help text for this tag'), null=True, blank=True)
+    helpline = models.CharField(
+        max_length=120, verbose_name=_('Help text for this tag'), null=True, blank=True)
     display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
 
     class Meta:
@@ -104,18 +107,27 @@ class BBCodeTag(models.Model):
 
         if re_groups['start_name'] in parser.bbcodes.keys() \
                 and not hasattr(parser.bbcodes[re_groups['start_name']], 'default_tag') \
-                and not (old_instance is not None and old_instance.tag_name == re_groups['start_name']):
+                and not (
+                    old_instance is not None and old_instance.tag_name == re_groups['start_name']):
             raise ValidationError(_('A BBCode tag with this name appears to already exist'))
 
-        # Moreover, the used placeholders must be known by the BBCode parser and they must have the same name,
-        # with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT' placeholders are needed
-        placeholder_types = [re.findall(placeholder_content_re, placeholder) for placeholder in def_placeholders]
-        placeholder_types = [placeholder_data[0][0] for placeholder_data in placeholder_types if placeholder_data]
-        valid_placeholder_types = [placeholder for placeholder in placeholder_types if placeholder in parser.placeholders.keys()]
+        # Moreover, the used placeholders must be known by the BBCode parser and they must have the
+        # same name, with some variations: eg {TEXT} can be used as {TEXT1} or {TEXT2} if two 'TEXT'
+        # placeholders are needed
+        placeholder_types = [
+            re.findall(placeholder_content_re, placeholder) for placeholder in def_placeholders]
+        placeholder_types = [
+            placeholder_data[0][0] for placeholder_data in placeholder_types if placeholder_data]
+        valid_placeholder_types = [
+            placeholder for placeholder in placeholder_types
+            if placeholder in parser.placeholders.keys()]
 
-        if (not len(valid_placeholder_types) and not self.standalone) or valid_placeholder_types != placeholder_types:
-            raise ValidationError(_('You can only use placeholder names among: ' + str(parser.placeholders.keys()) +
-                                  '. If you need many placeholders of a specific type, you can append numbers to them (eg. {TEXT1} or {TEXT2})'))
+        if (not len(valid_placeholder_types) and not self.standalone) \
+                or valid_placeholder_types != placeholder_types:
+            raise ValidationError(
+                _('You can only use placeholder names among: ' + str(parser.placeholders.keys()) +
+                  '. If you need many placeholders of a specific type, you can append numbers to '
+                  'them (eg. {TEXT1} or {TEXT2})'))
 
         super(BBCodeTag, self).clean()
 
@@ -144,7 +156,8 @@ class BBCodeTag(models.Model):
         # Construct the inner Options class
         opts = self._meta
         tag_option_attrs = vars(BBCodeTagOptions)
-        options_klass_attrs = {f.name: f.value_from_object(self) for f in opts.fields if f.name in tag_option_attrs}
+        options_klass_attrs = {
+            f.name: f.value_from_object(self) for f in opts.fields if f.name in tag_option_attrs}
         options_klass = type(force_str('Options'), (), options_klass_attrs)
         # Construct the outer BBCodeTag class
         tag_klass_attrs = {
@@ -153,7 +166,8 @@ class BBCodeTag(models.Model):
             'format_string': self.html_replacement,
             'Options': options_klass,
         }
-        tag_klass = type(force_str('{}Tag'.format(self.tag_name)), (ParserBBCodeTag, ), tag_klass_attrs)
+        tag_klass = type(
+            force_str('{}Tag'.format(self.tag_name)), (ParserBBCodeTag, ), tag_klass_attrs)
         return tag_klass
 
     @property
@@ -164,12 +178,16 @@ class BBCodeTag(models.Model):
 @python_2_unicode_compatible
 class SmileyTag(models.Model):
     code = SmileyCodeField(max_length=60, verbose_name=_('Smiley code'), unique=True)
-    image = models.ImageField(verbose_name=_('Smiley icon'), upload_to=bbcode_settings.SMILIES_UPLOAD_TO)
-    image_width = models.PositiveIntegerField(verbose_name=_('Smiley icon width'), null=True, blank=True)
-    image_height = models.PositiveIntegerField(verbose_name=_('Smiley icon height'), null=True, blank=True)
+    image = models.ImageField(
+        verbose_name=_('Smiley icon'), upload_to=bbcode_settings.SMILIES_UPLOAD_TO)
+    image_width = models.PositiveIntegerField(
+        verbose_name=_('Smiley icon width'), null=True, blank=True)
+    image_height = models.PositiveIntegerField(
+        verbose_name=_('Smiley icon height'), null=True, blank=True)
 
     # For later use
-    emotion = models.CharField(max_length=100, verbose_name=_('Related emotion'), null=True, blank=True)
+    emotion = models.CharField(
+        max_length=100, verbose_name=_('Related emotion'), null=True, blank=True)
     display_on_editor = models.BooleanField(verbose_name=_('Display on editor'), default=True)
 
     class Meta:
@@ -194,5 +212,6 @@ class SmileyTag(models.Model):
         width = self.image_width or 'auto'
         height = self.image_height or 'auto'
         emotion = self.emotion or ''
-        img = '<img src="{}" width="{}" height="{}" alt="{}" />'.format(self.image.url, width, height, emotion)
+        img = '<img src="{}" width="{}" height="{}" alt="{}" />'.format(
+            self.image.url, width, height, emotion)
         return img

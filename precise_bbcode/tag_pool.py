@@ -53,7 +53,8 @@ class TagPool(object):
         tag_name = tag.name
         if tag_name in self.tags:
             raise TagAlreadyRegistered(
-                'Cannot register {!r}, a tag with this name ({!r}) is already registered'.format(tag, tag_name)
+                'Cannot register {!r}, a tag with this name ({!r}) '
+                'is already registered'.format(tag, tag_name)
             )
 
         # The tag cannot be registered if it is already stored as bbcode tag in the database

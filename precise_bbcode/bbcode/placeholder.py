@@ -33,7 +33,8 @@ class BBCodePlaceholderBase(type):
             )
         if not new_placeholder.name:
             raise InvalidBBCodePlaholder(
-                'The \'name\' attribute associated with InvalidBBCodePlaholder subclasses cannot be None'
+                'The \'name\' attribute associated with InvalidBBCodePlaholder subclasses '
+                'cannot be None'
             )
         if not re.match('^[\w]+$', new_placeholder.name):
             raise InvalidBBCodePlaholder(
