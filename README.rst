@@ -32,7 +32,8 @@ This application includes a BBCode compiler aimed to render any BBCode content t
 * Custom tags can be defined in the Django administration panel and stored into the database ; doing this allows any non-technical admin to add BBCode tags by defining the HTML replacement string associated with each tag
 * Tags can also be manually registered to be used by the parser by defining a tag class aimed to render a given bbcode tag and its content to the corresponding HTML markup
 
-.. contents::
+.. contents:: Table of Contents
+    :local:
 
 
 Documentation
