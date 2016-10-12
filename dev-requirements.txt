@@ -1,5 +1,5 @@
 # Testing
-pytest>=2.6
+pytest>=3.0
 pytest-cov>=1.8
 pytest-django>=2.8
 pytest-spec>=0.2
