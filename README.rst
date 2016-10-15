@@ -46,7 +46,7 @@ Requirements
 ------------
 
 * Python 2.7+ or 3.3+
-* Django 1.4+
+* Django 1.8+
 * PIL or Pillow (required for smiley tags)
 
 Installation
@@ -73,14 +73,7 @@ Then install the models:
 
 .. code-block:: shell
 
-  python manage.py syncdb
-
-If you are using Django 1.6 or below, you should use South 1.0 in order to benefit from the migrations. This way you can use the migration command provided by South:
-
-.. code-block:: shell
-
-  python manage.py migrate precise_bbcode
-
+  python manage.py migrate
 
 Usage
 -----

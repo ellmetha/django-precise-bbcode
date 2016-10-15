@@ -5,6 +5,7 @@ import re
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.encoding import force_str
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,7 +17,6 @@ from .bbcode.regexes import placeholder_re
 from .bbcode.tag import BBCodeTag as ParserBBCodeTag
 from .bbcode.tag import BBCodeTagOptions
 from .conf import settings as bbcode_settings
-from .core.compat import force_str
 from .fields import SmileyCodeField
 
 

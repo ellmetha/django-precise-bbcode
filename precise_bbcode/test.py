@@ -2,8 +2,9 @@
 
 from __future__ import unicode_literals
 
+from django.utils.encoding import force_str
+
 from .bbcode.tag import BBCodeTag
-from .core.compat import force_str
 
 
 def gen_bbcode_tag_klass(klass_attrs, options_attrs={}):

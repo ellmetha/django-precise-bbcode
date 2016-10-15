@@ -2,9 +2,9 @@
 
 from __future__ import unicode_literals
 
+from django.apps import apps
 
 from ..conf import settings as bbcode_settings
-from ..core.compat import get_model
 from ..core.loading import get_subclasses
 from .parser import BBCodeParser
 from .placeholder import BBCodePlaceholder
@@ -100,7 +100,7 @@ class BBCodeParserLoader(object):
         """
         Find the user-defined BBCode tags and initializes their associated renderers.
         """
-        BBCodeTag = get_model('precise_bbcode', 'BBCodeTag')  # noqa
+        BBCodeTag = apps.get_model('precise_bbcode', 'BBCodeTag')  # noqa
         if BBCodeTag:
             custom_tags = BBCodeTag.objects.all()
             for tag in custom_tags:
@@ -110,7 +110,7 @@ class BBCodeParserLoader(object):
         """
         Find the user-defined smilies tags and register them to the BBCode parser.
         """
-        SmileyTag = get_model('precise_bbcode', 'SmileyTag')  # noqa
+        SmileyTag = apps.get_model('precise_bbcode', 'SmileyTag')  # noqa
         if SmileyTag:
             custom_smilies = SmileyTag.objects.all()
             for smiley in custom_smilies:

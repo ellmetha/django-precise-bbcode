@@ -76,7 +76,7 @@ class BBCodeTextField(models.TextField):
     returned by the BBCode parser.
     """
     def __init__(self, *args, **kwargs):
-        # For South FakeORM / Django 1.7 migration serializer compatibility: the frozen version of a
+        # For Django 1.7 migration serializer compatibility: the frozen version of a
         # BBCodeTextField can't try to add a '*_rendered' field, because the '*_rendered' field
         # itself is frozen / serialized as well.
         self.add_rendered_field = not kwargs.pop('no_rendered_field', False)
@@ -149,23 +149,3 @@ class SmileyCodeField(models.CharField):
         if 'db_index' not in kwargs:
             kwargs['db_index'] = True
         super(SmileyCodeField, self).__init__(*args, **kwargs)
-
-
-# Allow South to handle those fields smoothly
-try:
-    from south.modelsinspector import add_introspection_rules
-
-    # For a normal BBCodeTextField, the add_rendered_field attribute is always True,
-    # which means that the no_rendered_field arg will always be True in a frozen BBCodeTextField,
-    # which is what we want. The use of this flag will tell South not to make the _rendered
-    # fields again.
-    add_introspection_rules(rules=[((BBCodeTextField,),
-                                    [],
-                                    {'no_rendered_field': ('add_rendered_field',
-                                                           {})})],
-                            patterns=['precise_bbcode\.fields\.BBCodeTextField'])
-
-    # SmileyCodeField
-    add_introspection_rules([], ['^precise_bbcode\.fields\.SmileyCodeField'])
-except ImportError:  # pragma: no cover
-    pass
