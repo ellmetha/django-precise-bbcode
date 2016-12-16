@@ -11,13 +11,16 @@ upgrade:
 lint:
 	flake8
 
+isort:
+	isort -sl --recursive --check-only --diff precise_bbcode tests -s migrations
+
 coverage:
 	py.test --cov-report term-missing --cov precise_bbcode
 
 spec:
 	py.test --spec -p no:sugar
 
-travis: install lint coverage
+travis: install lint coverage isort
 
 docs:
 	cd docs && make html

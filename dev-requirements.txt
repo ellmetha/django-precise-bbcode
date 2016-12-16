@@ -9,6 +9,7 @@ coverage>=3.7
 codecov>=1.6
 tox>=2.1.0
 flake8>=2.2.5
+isort>=4.2
 
 # Docs
 Sphinx>=1.2.3

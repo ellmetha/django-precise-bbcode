@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
 import re
 
-from django.core.exceptions import ImproperlyConfigured
 import pytest
+from django.core.exceptions import ImproperlyConfigured
 
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode import get_parser
@@ -17,9 +18,9 @@ from precise_bbcode.bbcode.defaults.placeholder import url_re
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
 from precise_bbcode.bbcode.tag import BBCodeTag
-from precise_bbcode.placeholder_pool import placeholder_pool
 from precise_bbcode.placeholder_pool import PlaceholderAlreadyRegistered
 from precise_bbcode.placeholder_pool import PlaceholderNotRegistered
+from precise_bbcode.placeholder_pool import placeholder_pool
 from precise_bbcode.tag_pool import tag_pool
 
 

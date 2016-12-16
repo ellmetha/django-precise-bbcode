@@ -2,21 +2,21 @@
 
 from __future__ import unicode_literals
 
+import pytest
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client
-import pytest
 
-from precise_bbcode.conf import settings as bbcode_settings
-from precise_bbcode.core.loading import get_subclasses
 from precise_bbcode.bbcode import BBCodeParser
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode import get_parser
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.exceptions import InvalidBBCodeTag
 from precise_bbcode.bbcode.tag import BBCodeTag as ParserBBCodeTag
+from precise_bbcode.conf import settings as bbcode_settings
+from precise_bbcode.core.loading import get_subclasses
 from precise_bbcode.models import BBCodeTag
 from precise_bbcode.tag_pool import TagAlreadyCreated
 from precise_bbcode.tag_pool import TagAlreadyRegistered

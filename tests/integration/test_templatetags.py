@@ -2,10 +2,10 @@
 
 from __future__ import unicode_literals
 
+import pytest
 from django.template import Context
 from django.template import TemplateSyntaxError
 from django.template.base import Template
-import pytest
 
 
 @pytest.mark.django_db

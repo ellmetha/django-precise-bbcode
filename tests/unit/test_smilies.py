@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
 import shutil
 
+import pytest
 from django.conf import settings
 from django.core.files import File
-import pytest
 
 from precise_bbcode.bbcode import BBCodeParserLoader
 from precise_bbcode.bbcode import get_parser

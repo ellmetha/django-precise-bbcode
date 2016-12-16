@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from collections import defaultdict
+
 import re
+from collections import defaultdict
 
 from precise_bbcode.bbcode.regexes import url_re
 from precise_bbcode.conf import settings as bbcode_settings

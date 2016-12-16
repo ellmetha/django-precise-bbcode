@@ -3,11 +3,11 @@
 from __future__ import unicode_literals
 import shutil
 
+import pytest
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.utils.safestring import SafeText
-import pytest
 
 from precise_bbcode.fields import BBCodeContent
 from precise_bbcode.models import SmileyTag
