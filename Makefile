@@ -12,7 +12,7 @@ lint:
 	flake8
 
 isort:
-	isort -sl --recursive --check-only --diff precise_bbcode tests -s migrations
+	isort --check-only --recursive precise_bbcode tests
 
 coverage:
 	py.test --cov-report term-missing --cov precise_bbcode
