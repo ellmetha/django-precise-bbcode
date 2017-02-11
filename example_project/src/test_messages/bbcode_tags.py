@@ -12,7 +12,7 @@ color_re = re.compile(r'^([a-z]+|#[0-9abcdefABCDEF]{3,6})$')
 class SubTag(BBCodeTag):
     name = 'sub'
 
-    def render(self, name, value, option=None, parent=None):
+    def render(self, value, option=None, parent=None):
         return '<sub>%s</sub>' % value
 
 
@@ -20,7 +20,7 @@ class PreTag(BBCodeTag):
     name = 'pre'
     render_embedded = False
 
-    def render(self, name, value, option=None, parent=None):
+    def render(self, value, option=None, parent=None):
         return '<pre>%s</pre>' % value
 
 
@@ -43,7 +43,6 @@ class PhoneLinkTag(BBCodeTag):
 
     def render(self, value, option=None, parent=None):
         href = 'tel:{}'.format(value)
-        # Render
         return '<a href="{0}">{0}</a>'.format(href, value)
 
 
