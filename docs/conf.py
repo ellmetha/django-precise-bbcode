@@ -43,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-precise-bbcode'
-copyright = u'2013-2016, Morgan Aubert'
+copyright = u'2013-2017, Morgan Aubert'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
