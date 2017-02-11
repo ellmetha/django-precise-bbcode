@@ -55,6 +55,8 @@ INSTALLED_APPS = (
     'precise_bbcode',
     'tests',
     'django.contrib.admin',
+    'tests._testsite.dummyapp01',
+    'tests._testsite.dummyapp02.apps.DummyAppConfig',
 )
 
 ROOT_URLCONF = 'tests._testsite.urls'

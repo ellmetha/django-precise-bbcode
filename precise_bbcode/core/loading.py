@@ -5,7 +5,7 @@ import imp
 import importlib
 import inspect
 
-from django.conf import settings
+from django.apps import apps
 
 
 def get_module(app, modname):
@@ -32,7 +32,8 @@ def load(modname):
     """
     Loads all modules with name 'modname' from all installed apps.
     """
-    for app in settings.INSTALLED_APPS:
+    app_names = [app.name for app in apps.app_configs.values()]
+    for app in app_names:
         get_module(app, modname)
 
 
