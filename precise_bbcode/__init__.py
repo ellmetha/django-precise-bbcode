@@ -2,6 +2,6 @@
 
 from __future__ import unicode_literals
 
-__version__ = '1.2.7.dev'
+__version__ = '1.2.7'
 
 default_app_config = 'precise_bbcode.apps.PreciseBbCodeAppConfig'
