@@ -12,7 +12,7 @@ env:
   - DJANGO="django>=1.8,<1.9"
   - DJANGO="django>=1.9,<1.10"
   - DJANGO="django>=1.10,<1.11"
-  - DJANGO="django==1.11a1"
+  - DJANGO="django==1.11b1"
 
 matrix:
   exclude:
@@ -21,7 +21,7 @@ matrix:
   - python: "3.3"
     env: DJANGO="django>=1.10,<1.11"
   - python: "3.3"
-    env: DJANGO="django==1.11a1"
+    env: DJANGO="django==1.11b1"
 install:
   - "pip install $DJANGO"
 script:
