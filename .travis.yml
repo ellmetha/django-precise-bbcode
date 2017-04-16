@@ -8,6 +8,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7-dev"
 env:
   - DJANGO="django>=1.8,<1.9"
   - DJANGO="django>=1.9,<1.10"
