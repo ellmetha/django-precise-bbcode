@@ -6,8 +6,8 @@ import pytest
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.test import Client
+from django.urls import reverse
 
 from precise_bbcode.bbcode import BBCodeParser
 from precise_bbcode.bbcode import BBCodeParserLoader

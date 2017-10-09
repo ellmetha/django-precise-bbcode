@@ -32,7 +32,7 @@ setup(
     long_description=read_relative_file('README.rst'),
     zip_safe=False,
     install_requires=[
-        'django>=1.8',
+        'django>=1.11',
         'pillow>=2.2.1',
     ],
     classifiers=[
