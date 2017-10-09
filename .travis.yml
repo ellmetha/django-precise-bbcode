@@ -15,6 +15,9 @@ env:
 matrix:
   allow_failures:
     - python: "3.7-dev"
+  exclude:
+  - python: "2.7"
+    env: DJANGO="django==2.0a1"
 install:
   - "pip install $DJANGO"
 script:
