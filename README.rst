@@ -2,25 +2,25 @@
 django-precise-bbcode
 =====================
 
-.. image:: https://readthedocs.org/projects/django-precise-bbcode/badge/?style=flat-square&version=stable
-   :target: http://django-precise-bbcode.readthedocs.org/en/stable/
-   :alt: Documentation Status
+.. image:: https://readthedocs.org/projects/django-precise-bbcode/badge/?version=stable
+  :target: http://django-precise-bbcode.readthedocs.org/en/stable/
+  :alt: Documentation Status
 
-.. image:: https://img.shields.io/pypi/l/django-precise-bbcode.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/django-precise-bbcode/
-    :alt: License
+.. image:: https://img.shields.io/pypi/l/django-precise-bbcode.svg
+  :target: https://pypi.python.org/pypi/django-precise-bbcode/
+  :alt: License
 
-.. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/django-precise-bbcode/
-    :alt: Latest Version
+.. image:: http://img.shields.io/pypi/v/django-precise-bbcode.svg
+  :target: https://pypi.python.org/pypi/django-precise-bbcode/
+  :alt: Latest Version
 
-.. image:: http://img.shields.io/travis/ellmetha/django-precise-bbcode.svg?style=flat-square
-    :target: http://travis-ci.org/ellmetha/django-precise-bbcode
-    :alt: Build status
+.. image:: http://img.shields.io/travis/ellmetha/django-precise-bbcode.svg
+  :target: http://travis-ci.org/ellmetha/django-precise-bbcode
+  :alt: Build status
 
-.. image:: https://img.shields.io/codecov/c/github/ellmetha/django-precise-bbcode.svg?style=flat-square
-    :target: https://codecov.io/github/ellmetha/django-precise-bbcode
-    :alt: Codecov status
+.. image:: https://img.shields.io/codecov/c/github/ellmetha/django-precise-bbcode.svg
+  :target: https://codecov.io/github/ellmetha/django-precise-bbcode
+  :alt: Codecov status
 
 |
 *Django-precise-bbcode* is a Django application providing a way to create textual contents based on BBCodes.
