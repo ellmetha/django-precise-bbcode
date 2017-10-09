@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
 import re
 
 from precise_bbcode.bbcode.tag import BBCodeTag

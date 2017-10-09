@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
 import re
 
 from django.core.validators import RegexValidator
@@ -11,6 +12,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from .bbcode import get_parser
+
 
 __all__ = (
     'BBCodeContent',

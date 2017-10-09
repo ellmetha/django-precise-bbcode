@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
 import re
 
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
 from precise_bbcode.bbcode.regexes import url_re
+
 
 __all__ = [
     'UrlBBCodePlaceholder',
