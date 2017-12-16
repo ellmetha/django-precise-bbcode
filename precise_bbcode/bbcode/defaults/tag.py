@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 
 import re
 
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+
 from precise_bbcode.bbcode.tag import BBCodeTag
 from precise_bbcode.conf import settings as bbcode_settings
 from precise_bbcode.core.utils import replace
@@ -105,12 +108,24 @@ class UrlBBCodeTag(BBCodeTag):
         replace_links = False
 
     def render(self, value, option=None, parent=None):
-        href = replace(option, bbcode_settings.BBCODE_ESCAPE_HTML) if option else value
+        href = option if option else value
+        href = replace(href, bbcode_settings.BBCODE_ESCAPE_HTML)
+        value = replace(value, bbcode_settings.BBCODE_ESCAPE_HTML)
         if '://' not in href and self._domain_re.match(href):
             href = 'http://' + href
-        content = value if option else href
-        # Render
-        return '<a href="{}">{}</a>'.format(href, content or href)
+        v = URLValidator()
+
+        # Validates and renders the considered URL.
+        try:
+            v(href)
+        except ValidationError:
+            rendered = '[url={}]{}[/url]'.format(href, value) if option else \
+                '[url]{}[/url]'.format(value)
+        else:
+            content = value if option else href
+            rendered = '<a href="{}">{}</a>'.format(href, content or href)
+
+        return rendered
 
 
 class ImgBBCodeTag(BBCodeTag):

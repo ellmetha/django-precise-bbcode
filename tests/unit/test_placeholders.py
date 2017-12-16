@@ -14,9 +14,9 @@ from precise_bbcode.bbcode.defaults.placeholder import _email_re
 from precise_bbcode.bbcode.defaults.placeholder import _number_re
 from precise_bbcode.bbcode.defaults.placeholder import _simpletext_re
 from precise_bbcode.bbcode.defaults.placeholder import _text_re
-from precise_bbcode.bbcode.defaults.placeholder import url_re
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
+from precise_bbcode.bbcode.regexes import url_re
 from precise_bbcode.bbcode.tag import BBCodeTag
 from precise_bbcode.placeholder_pool import PlaceholderAlreadyRegistered
 from precise_bbcode.placeholder_pool import PlaceholderNotRegistered

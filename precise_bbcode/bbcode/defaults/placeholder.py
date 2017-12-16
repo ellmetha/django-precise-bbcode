@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 
 import re
 
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
-from precise_bbcode.bbcode.regexes import url_re
 
 
 __all__ = [
@@ -30,7 +32,14 @@ _number_re = re.compile(r'^[+-]?\d+(?:(\.|,)\d+)?$')
 
 class UrlBBCodePlaceholder(BBCodePlaceholder):
     name = 'url'
-    pattern = url_re
+
+    def validate(self, content, extra_context=None):
+        v = URLValidator()
+        try:
+            v(content)
+        except ValidationError:
+            return False
+        return True
 
 
 class EmailBBCodePlaceholder(BBCodePlaceholder):
