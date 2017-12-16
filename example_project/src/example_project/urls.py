@@ -13,7 +13,7 @@ admin.autodiscover()
 # Patterns
 urlpatterns = [
     # Admin
-    url(r'^' + settings.ADMIN_URL, include(admin.site.urls)),
+    url(r'^' + settings.ADMIN_URL, admin.site.urls),
 
     # Apps
     url(r'^$', TestMessageCreate.as_view()),
