@@ -17,7 +17,7 @@ matrix:
     - python: "3.7-dev"
   exclude:
   - python: "2.7"
-    env: DJANGO="django==2.0a1"
+    env: DJANGO="django>=2.0,<2.1"
 install:
   - "pip install $DJANGO"
 script:
