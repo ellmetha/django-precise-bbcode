@@ -110,7 +110,6 @@ class UrlBBCodeTag(BBCodeTag):
     def render(self, value, option=None, parent=None):
         href = option if option else value
         href = replace(href, bbcode_settings.BBCODE_ESCAPE_HTML)
-        value = replace(value, bbcode_settings.BBCODE_ESCAPE_HTML)
         if '://' not in href and self._domain_re.match(href):
             href = 'http://' + href
         v = URLValidator()
