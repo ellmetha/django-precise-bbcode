@@ -18,7 +18,7 @@ coverage:
 	py.test --cov-report term-missing --cov precise_bbcode
 
 spec:
-	py.test --spec -p no:sugar
+	py.test --spec
 
 travis: install lint coverage isort
 
