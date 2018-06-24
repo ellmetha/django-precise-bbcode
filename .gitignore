@@ -12,3 +12,4 @@ public/
 .tox
 tests/_testdata/media/
 .cache/
+.pytest_cache/

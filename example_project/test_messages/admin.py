@@ -10,4 +10,5 @@ class TestMessageAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'bbcode_content')
     fields = ('bbcode_content', )
 
+
 admin.site.register(TestMessage, TestMessageAdmin)

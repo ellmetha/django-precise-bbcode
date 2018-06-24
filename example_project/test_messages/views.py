@@ -16,7 +16,9 @@ class TestMessageCreate(CreateView):
     template_name = 'test_messages/create_bbcode_message.html'
 
     def get_success_url(self):
-        return "{0}?success=true".format(reverse_lazy('bbcode-message-detail', kwargs={'message_pk': self.object.id}))
+        return "{0}?success=true".format(
+            reverse_lazy('bbcode-message-detail', kwargs={'message_pk': self.object.id})
+        )
 
 
 class TestMessageDetailView(DetailView):

@@ -30,7 +30,7 @@ class TestBbcodeTextField(object):
         message.content = None
         # Run
         message.save()
-        # Check
+        # Check
         assert message.content is None
         rendered = hasattr(message.content, 'rendered')
         assert not rendered
@@ -52,7 +52,7 @@ class TestBbcodeTextField(object):
         # Run
         message.content = bbcode_content
         message.save()
-        # Check
+        # Check
         assert message.content.rendered == '<strong>hello world!</strong>'
 
     def test_rendered_values_are_safe_strings(self):
@@ -64,7 +64,7 @@ class TestBbcodeTextField(object):
         # Run
         message.content = bbcode_content
         message.save()
-        # Check
+        # Check
         assert isinstance(message.content.rendered, SafeText)
 
 
@@ -86,7 +86,7 @@ class TestSmileyCodeField(object):
     )
 
     def setup_method(self, method):
-        # Set up an image used for doing smilies tests
+        # Set up an image used for doing smilies tests
         f = open(settings.MEDIA_ROOT + '/icon_e_wink.gif', 'rb')
         image_file = File(f)
         self.image = image_file

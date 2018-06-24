@@ -38,7 +38,9 @@ class ErroredSizeTag(BBCodeTag):
 
 class DayTag(BBCodeTag):
     name = 'day'
-    definition_string = '[day]{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}[/day]'
+    definition_string = (
+        '[day]{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}[/day]'
+    )
     format_string = '<h5>{CHOICE=monday,tuesday,wednesday,tuesday,friday,saturday,sunday}</h5>'
 
 
@@ -78,7 +80,7 @@ class TestPlaceholderPool(object):
         # Setup
         number_of_placeholders_before = len(placeholder_pool.get_placeholders())
         placeholder_pool.register_placeholder(FooPlaceholder)
-        # Run & check
+        # Run & check
         # Let's add it a second time. We should catch an exception
         with pytest.raises(PlaceholderAlreadyRegistered):
             placeholder_pool.register_placeholder(FooPlaceholder)
@@ -88,7 +90,7 @@ class TestPlaceholderPool(object):
         assert number_of_placeholders_before == number_of_placeholders_after
 
     def test_cannot_register_placeholders_with_incorrect_parent_classes(self):
-        # Setup
+        # Setup
         number_of_placeholders_before = len(placeholder_pool.get_placeholders())
         # Run & check
         with pytest.raises(ImproperlyConfigured):
@@ -99,7 +101,7 @@ class TestPlaceholderPool(object):
         assert number_of_placeholders_before == number_of_placeholders_after
 
     def test_cannot_unregister_a_non_registered_placeholder(self):
-        # Setup
+        # Setup
         number_of_placeholders_before = len(placeholder_pool.get_placeholders())
         # Run & check
         with pytest.raises(PlaceholderNotRegistered):
@@ -132,9 +134,14 @@ class TestPlaceholder(object):
                 'hello world',
                 'hello\nworld',
                 '   hello world     ',
-                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
+                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f'
+                '(asdf@qwertybean.com/qwertybean)',
                 '12902',
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer pretium, mi ac molestie ornare, urna sem fermentum erat, malesuada interdum sapien turpis sit amet eros.\nPhasellus quis mi velit. Cras porttitor dui faucibus rhoncus fringilla. Cras non fringilla est. \nCurabitur sollicitudin nisi quis sem sodales, quis blandit massa rhoncus. Nam porta at lacus semper gravida.\n',
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer pretium, mi ac '
+                '"molestie ornare, urna sem fermentum erat, malesuada interdum sapien turpis sit '
+                'amet eros.\nPhasellus quis mi velit. Cras porttitor dui faucibus rhoncus '
+                'fringilla. Cras non fringilla est. \nCurabitur sollicitudin nisi quis sem '
+                'sodales, quis blandit massa rhoncus. Nam porta at lacus semper gravida.\n',
                 '안녕하세요!',
             )
         },
@@ -167,7 +174,8 @@ class TestPlaceholder(object):
                 'Just a www.example.com link.',
                 'http://example.com/something?with,commas,in,url, but not at end',
                 'bit.ly/foo',
-                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f(asdf@qwertybean.com/qwertybean)',
+                'http://asdf.xxxx.yyyy.com/vvvvv/PublicPages/Login.aspx?ReturnUrl=%2fvvvvv%2f'
+                '(asdf@qwertybean.com/qwertybean)',
                 'http://something.xx:8080'
             )
         },

@@ -16,20 +16,31 @@ from precise_bbcode.models import SmileyTag
 @pytest.mark.django_db
 class TestSmiley(object):
     SMILIES_TESTS = (
-        (':test:', '<img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" />'),
-        ('[list][*]:test: hello\n[/list]', '<ul><li><img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" /> hello</li></ul>'),
-        ('[quote]hello :test:[/quote]', '<blockquote>hello <img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" /></blockquote>'),
+        (
+            ':test:',
+            '<img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" />'
+        ),
+        (
+            '[list][*]:test: hello\n[/list]',
+            '<ul><li><img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" '
+            'alt="" /> hello</li></ul>'
+        ),
+        (
+            '[quote]hello :test:[/quote]',
+            '<blockquote>hello <img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" '
+            'height="auto" alt="" /></blockquote>'
+        ),
         ('[code]hello :test:[/code]', '<code>hello :test:</code>'),
     )
 
     def create_smilies(self):
         self.parser = get_parser()
         self.parser_loader = BBCodeParserLoader(parser=self.parser)
-        # Set up an image used for doing smilies tests
+        # Set up an image used for doing smilies tests
         f = open(settings.MEDIA_ROOT + '/icon_e_wink.gif', 'rb')
         image_file = File(f)
         self.image = image_file
-        # Set up a smiley tag
+        # Set up a smiley tag
         smiley = SmileyTag()
         smiley.code = ':test:'
         smiley.image.save('icon_e_wink.gif', self.image)

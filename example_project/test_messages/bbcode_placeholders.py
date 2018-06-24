@@ -8,7 +8,9 @@ from precise_bbcode.placeholder_pool import placeholder_pool
 
 class PhoneNumberBBCodePlaceholder(BBCodePlaceholder):
     name = 'phonenumber'
-    pattern = re.compile(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})')
+    pattern = re.compile(
+        r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})'
+    )
 
 
 class StartsWithBBCodePlaceholder(BBCodePlaceholder):

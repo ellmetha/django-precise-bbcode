@@ -18,9 +18,13 @@ matrix:
   exclude:
   - python: "2.7"
     env: DJANGO="django>=2.0,<2.1"
+
 install:
-  - "pip install $DJANGO"
+  - pip install pip pipenv -U
+  - pipenv install $DJANGO --skip-lock
+  - pipenv install --dev --skip-lock
 script:
-  - make travis
+  - make qa
+  - make coverage
 after_success:
   - codecov

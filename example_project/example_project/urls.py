@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.static import serve
@@ -17,7 +17,11 @@ urlpatterns = [
 
     # Apps
     url(r'^$', TestMessageCreate.as_view()),
-    url(r'^testmessage/(?P<message_pk>\d+)/$', TestMessageDetailView.as_view(), name="bbcode-message-detail"),
+    url(
+        r'^testmessage/(?P<message_pk>\d+)/$',
+        TestMessageDetailView.as_view(),
+        name="bbcode-message-detail"
+    ),
 ]
 
 # # In DEBUG mode, serve media files through Django.
