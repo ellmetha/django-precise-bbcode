@@ -88,6 +88,26 @@ TEMPLATES = [
             ],
         },
     },
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
+            ],
+            'loaders': [
+                ('django.template.loaders.cached.Loader', (
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                )),
+            ]
+        },
+        },
 ]
 
 # List of finder classes that know how to find static files in
@@ -100,7 +120,7 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '833090dhkgrfgdfg#ddfggdfdf*fds5645456fg'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
