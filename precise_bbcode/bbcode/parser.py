@@ -411,7 +411,7 @@ class BBCodeParser(object):
             data = re.sub(url_re, linkrepl, data)
 
         if replace_smilies:
-            data = replace(data, self.smilies.items())
+            data = replace(data, sorted(self.smilies.items(), reverse=True))
 
         return data
 
