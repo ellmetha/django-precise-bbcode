@@ -60,8 +60,8 @@ Default: ``True``
 
 The flag indicating whether the smilies (defined by the end users through the Django admin) are allowed.
 
-``SMILIES_UPLOAD_TO``
----------------------
+``BBCODE_SMILIES_UPLOAD_TO``
+----------------------------
 
 Default: ``'precise_bbcode/smilies'``
 
