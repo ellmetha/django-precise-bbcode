@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
-
 ipython = "*"
 pytest = "*"
 pytest-cov = "*"
@@ -21,8 +18,7 @@ django-debug-toolbar = "*"
 factory-boy = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
-
+coverage = "*"
 
 [packages]
-
 "e1839a8" = {path = ".", editable = true}
