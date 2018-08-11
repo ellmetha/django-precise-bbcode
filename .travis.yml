@@ -14,8 +14,6 @@ env:
   - DJANGO="django>=2.1,<2.2"
 
 matrix:
-  allow_failures:
-    - python: "3.7-dev"
   exclude:
   - python: "2.7"
     env: DJANGO="django>=2.0,<2.1"
