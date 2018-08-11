@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import re
 
 from precise_bbcode.bbcode.exceptions import InvalidBBCodePlaholder
+from precise_bbcode.core.compat import pattern_type
 from precise_bbcode.core.compat import with_metaclass
 
 
@@ -44,7 +45,7 @@ class BBCodePlaceholderBase(type):
             )
 
         # Validates the placeholder pattern if present
-        if new_placeholder.pattern and not isinstance(new_placeholder.pattern, re._pattern_type):
+        if new_placeholder.pattern and not isinstance(new_placeholder.pattern, pattern_type):
             raise InvalidBBCodePlaholder(
                 """The \'pattern\' attribute associated with {!r} is not valid: a placeholder pattern must be an
                 instance of a valid regex type""".format(name)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 import sys
 
 
@@ -18,3 +19,6 @@ def with_metaclass(meta, *bases):
                 return type.__new__(cls, name, (), d)
             return meta(name, bases, d)
     return metaclass("NewBase", None, {})
+
+
+pattern_type = re._pattern_type if hasattr(re, '_pattern_type') else re.Pattern
