@@ -24,7 +24,7 @@ setup(
     name='django-precise-bbcode',
     version=precise_bbcode.__version__,
     author='Morgan Aubert',
-    author_email='morgan.aubert@zoho.com',
+    author_email='me@morganaubert.name',
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     url='https://github.com/ellmetha/django-precise-bbcode',
