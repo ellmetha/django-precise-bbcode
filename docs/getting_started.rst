@@ -5,7 +5,7 @@ Requirements
 ------------
 
 * `Python`_ 3.4, 3.5, 3.6 or 3.7
-* `Django`_ 1.11.x, 2.0.x or 2.1.x
+* `Django`_ 1.11.x, 2.0.x, 2.1.x or 2.2.x
 * `Pillow`_ 2.2. or higher
 
 .. _Python: https://www.python.org
