@@ -14,6 +14,7 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
+  - "3.8-dev"
 
 env:
   - DJANGO="django>=1.11,<2.0"
@@ -22,6 +23,8 @@ env:
   - DJANGO="django==2.2b1"
 
 matrix:
+  allow_failures:
+    - python: "3.8-dev"
   exclude:
   - python: "3.4"
     env: DJANGO="django>=2.1,<2.2"
