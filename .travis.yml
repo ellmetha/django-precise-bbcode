@@ -15,10 +15,12 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
+
 env:
   - DJANGO="django>=1.11,<2.0"
   - DJANGO="django>=2.0,<2.1"
   - DJANGO="django>=2.1,<2.2"
+  - DJANGO="django==2.2b1"
 
 matrix:
   exclude:
@@ -26,8 +28,12 @@ matrix:
     env: DJANGO="django>=2.0,<2.1"
   - python: "2.7"
     env: DJANGO="django>=2.1,<2.2"
+  - python: "2.7"
+    env: DJANGO="django==2.2b1"
   - python: "3.4"
     env: DJANGO="django>=2.1,<2.2"
+  - python: "3.4"
+    env: DJANGO="django==2.2b1"
   - python: "3.7"
     env: DJANGO="django>=1.11,<2.0"
 
