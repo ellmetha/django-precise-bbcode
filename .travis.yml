@@ -1,13 +1,20 @@
-# Force the use of the new container-based infrastructure
-sudo: false
+dist: xenial
 
 language: python
+
+addons:
+  apt:
+    sources:
+      - travis-ci/sqlite3
+    packages:
+      - sqlite3
+
 python:
   - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.7-dev"
+  - "3.7"
 env:
   - DJANGO="django>=1.11,<2.0"
   - DJANGO="django>=2.0,<2.1"
@@ -21,7 +28,7 @@ matrix:
     env: DJANGO="django>=2.1,<2.2"
   - python: "3.4"
     env: DJANGO="django>=2.1,<2.2"
-  - python: "3.7-dev"
+  - python: "3.7"
     env: DJANGO="django>=1.11,<2.0"
 
 install:
