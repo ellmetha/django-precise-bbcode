@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from precise_bbcode.bbcode import get_parser
 
 

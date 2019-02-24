@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import re
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import force_str
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from .bbcode import get_parser
@@ -21,7 +16,6 @@ from .conf import settings as bbcode_settings
 from .fields import SmileyCodeField
 
 
-@python_2_unicode_compatible
 class BBCodeTag(models.Model):
     tag_name = models.SlugField(max_length=20, verbose_name=_('BBCode tag name'), unique=True)
     tag_definition = models.TextField(verbose_name=_('Tag definition'))
@@ -176,7 +170,6 @@ class BBCodeTag(models.Model):
         return self.get_parser_tag_klass()
 
 
-@python_2_unicode_compatible
 class SmileyTag(models.Model):
     code = SmileyCodeField(max_length=60, verbose_name=_('Smiley code'), unique=True)
     image = models.ImageField(

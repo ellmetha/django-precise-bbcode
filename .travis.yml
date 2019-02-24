@@ -10,7 +10,6 @@ addons:
       - sqlite3
 
 python:
-  - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
@@ -24,12 +23,6 @@ env:
 
 matrix:
   exclude:
-  - python: "2.7"
-    env: DJANGO="django>=2.0,<2.1"
-  - python: "2.7"
-    env: DJANGO="django>=2.1,<2.2"
-  - python: "2.7"
-    env: DJANGO="django==2.2b1"
   - python: "3.4"
     env: DJANGO="django>=2.1,<2.2"
   - python: "3.4"

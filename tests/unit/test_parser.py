@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 from precise_bbcode.bbcode import get_parser
 from precise_bbcode.test import gen_bbcode_tag_klass
 

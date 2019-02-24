@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-
 import re
-import sys
-
-
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
 
 
 def with_metaclass(meta, *bases):

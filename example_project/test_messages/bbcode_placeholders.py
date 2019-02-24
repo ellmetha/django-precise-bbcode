@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder

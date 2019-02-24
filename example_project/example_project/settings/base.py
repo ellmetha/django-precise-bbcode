@@ -1,7 +1,3 @@
-# -*- coding:utf-8 -*-
-
-from __future__ import unicode_literals
-
 import os
 
 PROJECT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../..')

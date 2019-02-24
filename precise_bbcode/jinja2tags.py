@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 from jinja2 import Markup
 from jinja2.ext import Extension
 
