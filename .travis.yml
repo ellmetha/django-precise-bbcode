@@ -20,7 +20,7 @@ env:
   - DJANGO="django>=1.11,<2.0"
   - DJANGO="django>=2.0,<2.1"
   - DJANGO="django>=2.1,<2.2"
-  - DJANGO="django==2.2b1"
+  - DJANGO="django>=2.2,<3.0"
 
 matrix:
   allow_failures:
@@ -29,7 +29,7 @@ matrix:
   - python: "3.4"
     env: DJANGO="django>=2.1,<2.2"
   - python: "3.4"
-    env: DJANGO="django==2.2b1"
+    env: DJANGO="django>=2.2,<3.0"
   - python: "3.7"
     env: DJANGO="django>=1.11,<2.0"
 
