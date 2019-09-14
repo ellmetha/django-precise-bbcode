@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import re
 
 
@@ -11,6 +15,7 @@ placeholder_content_re = re.compile(r'^(?P<placeholder_name>[a-zA-Z]+)(\d*)(=[^\
 
 
 # BBCode regexes
-bbcodde_standard_re = r'^\[(?P<start_name>[^\s=\[\]]*)(=\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\})?\]\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\}(\[/(?P<end_name>[^\s=\[\]]*)\])?$'  # noqa
+#bbcodde_standard_re = r'^\[(?P<start_name>[^\s=\[\]]*)(=\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\})?\]\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\}(\[/(?P<end_name>[^\s=\[\]]*)\])?$'  # noqa
+bbcodde_standard_re = r'^\[(?P<start_name>[^\s=\[\]]*)(=\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\})?(\s+(?P<named_types>\{(.*)\}=(.*)))*\]\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\}(\[/(?P<end_name>[^\s=\[\]]*)\])?$' # extended for named attributes
 bbcodde_standalone_re = r'^\[(?P<start_name>[^\s=\[\]]*)(=\{[a-zA-Z]+\d*=?[^\s\[\]\{\}=]*\})?\]\{?[a-zA-Z]*\d*=?[^\s\[\]\{\}=]*\}?$'  # noqa
 bbcode_content_re = re.compile(r'^\[[A-Za-z0-9]*\](?P<content>.*)\[/[A-Za-z0-9]*\]')

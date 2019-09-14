@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import re
 from collections import defaultdict
 
@@ -122,7 +126,9 @@ class BBCodeParser(object):
            ('\n' in tag) or ('\r' in tag) or (tag.count(self._TAG_OPENING) > 1) or
            (tag.count(self._TAG_ENDING) > 1)):
             return (False, tag, False, None)
-        tag_name = tag[len(self._TAG_OPENING):-len(self._TAG_ENDING)].strip()
+        regex = r"^\[(?P<tag_name>\/?[a-zA-Z]*)(?P<single_option>=.*?)*(?P<multiple_options>(\s+[a-zA-Z]+=.*?))?\]"
+        match = re.match(regex, tag)
+        tag_name = match.group("tag_name") #tag[len(self._TAG_OPENING):-len(self._TAG_ENDING)].strip()
         if not tag_name:
             return (False, tag, False, None)
         # Determines whether the tag is a closing tag or not
@@ -132,12 +138,13 @@ class BBCodeParser(object):
             tag_name = tag_name[1:]
             closing = True
         # Parses the option inside the tag
-        if ('=' in tag_name) and closing:
+        if closing and (match.group("single_option") or match.group("multiple_options")):
             return (False, tag, False, None)
-        elif ('=' in tag_name):
-            option_pos = tag_name.find('=')
-            option = tag_name[option_pos + 1:]
-            tag_name = tag_name[:option_pos]
+        elif match.group("single_option"):
+            option = match.group("single_option").strip()
+            #tag_name = tag_name[:option_pos]
+        elif  match.group("multiple_options"):
+            option = match.group("multiple_options").strip()
         return (True, tag_name.strip().lower(), closing, option)
 
     def get_tokens(self, data):
@@ -241,12 +248,12 @@ class BBCodeParser(object):
                 if len(opening_tags) > 0:
                     previous_tag, _ = opening_tags[-1]
                     previous_tag_options = self.bbcodes[previous_tag.tag_name]._options
+
                     if previous_tag_options.end_tag_closes:
                         opening_tags.pop()
 
                     if not opening_tags:
                         continue
-
                     if (opening_tags[-1][0].tag_name != token.tag_name and
                        token.tag_name in [x[0].tag_name for x in opening_tags] and
                        tag_options.render_embedded):
@@ -415,6 +422,8 @@ class BBCodeParser(object):
         """
         Renders the given data by using the declared BBCodes tags.
         """
+
         lexical_units = self._drop_syntactic_errors(self.get_tokens(data))
         rendered = self._render_tokens(lexical_units)
+
         return rendered
