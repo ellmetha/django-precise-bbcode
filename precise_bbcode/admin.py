@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import actions
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .bbcode import get_parser
 from .models import BBCodeTag

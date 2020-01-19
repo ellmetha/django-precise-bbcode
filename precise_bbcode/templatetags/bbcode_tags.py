@@ -1,11 +1,8 @@
-import sys
-
 from django import template
 from django.template import Node
 from django.template import TemplateSyntaxError
 from django.template import Variable
 from django.template.defaultfilters import stringfilter
-from django.utils import six
 from django.utils.safestring import mark_safe
 
 from precise_bbcode.shortcuts import render_bbcodes
@@ -18,7 +15,7 @@ class BBCodeNode(Node):
     def __init__(self, filter_expression, asvar=None):
         self.filter_expression = filter_expression
         self.asvar = asvar
-        if isinstance(self.filter_expression.var, six.string_types):
+        if isinstance(self.filter_expression.var, str):
             self.filter_expression.var = Variable("'{!s}'".format(self.filter_expression.var))
 
     def render(self, context):
@@ -73,7 +70,7 @@ def do_bbcode_rendering(parser, token):
                 var_value = remaining.pop(0)
             except IndexError:
                 msg = 'No argument provided to the \'{0}\' tag for the as option.'.format(bits[0])
-                six.reraise(TemplateSyntaxError, TemplateSyntaxError(msg), sys.exc_info()[2])
+                raise TemplateSyntaxError(msg)
             asvar = var_value
         else:
             raise TemplateSyntaxError(

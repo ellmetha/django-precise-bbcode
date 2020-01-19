@@ -197,7 +197,7 @@ class TestBbcodeTag(object):
 class TestDbBbcodeTag(object):
     ERRONEOUS_TAGS_TESTS = (
         {'tag_definition': '[tag]', 'html_replacement': ''},
-        {'tag_definition': 'it\s not a tag', 'html_replacement': ''},
+        {'tag_definition': 'it\'s not a tag', 'html_replacement': ''},
         {'tag_definition': '[first]{TEXT1}[/end]', 'html_replacement': '<p>{TEXT1}</p>'},
         {'tag_definition': '[t2y={TEXT1}]{TEXT1}[/t2y]', 'html_replacement': '<b>{TEXT1}</b>'},
         {
