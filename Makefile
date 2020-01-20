@@ -2,7 +2,7 @@
 
 
 init:
-	pipenv install --three --dev
+	poetry install
 
 
 # DEVELOPMENT
@@ -13,15 +13,15 @@ init:
 
 # Generate the project's .po files.
 messages:
-	cd precise_bbcode && pipenv run python -m django makemessages -a
+	cd precise_bbcode && poetry run python -m django makemessages -a
 
 # Compiles the project's .po files.
 compiledmessages:
-	cd precise_bbcode && pipenv run python -m django compilemessages
+	cd precise_bbcode && poetry run python -m django compilemessages
 
 # Builds the documentation.
 docs:
-	cd docs && rm -rf _build && pipenv run make html
+	cd docs && rm -rf _build && poetry run make html
 
 
 # QUALITY ASSURANCE
@@ -33,11 +33,11 @@ qa: lint isort
 
 # Code quality checks (eg. flake8, eslint, etc).
 lint:
-	pipenv run flake8
+	poetry run flake8
 
 # Import sort checks.
 isort:
-	pipenv run isort --check-only --recursive --diff precise_bbcode tests
+	poetry run isort --check-only --recursive --diff precise_bbcode tests
 
 
 # TESTING
@@ -47,12 +47,12 @@ isort:
 
 # Just runs all the tests!
 tests:
-	pipenv run py.test
+	poetry run py.test
 
 # Collects code coverage data.
 coverage:
-	pipenv run py.test --cov-report term-missing --cov precise_bbcode
+	poetry run py.test --cov-report term-missing --cov precise_bbcode
 
 # Run the tests in "spec" mode.
 spec:
-	pipenv run py.test --spec -p no:sugar
+	poetry run py.test --spec -p no:sugar

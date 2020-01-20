@@ -1,0 +1,4 @@
+[flake8]
+exclude = migrations,build,docs,.tox,.venv
+ignore = E731, W504, W605
+max-line-length = 100

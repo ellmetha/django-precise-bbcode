@@ -25,9 +25,9 @@ matrix:
     env: DJANGO="django>=3.0,<3.1"
 
 install:
-  - pip install pip pipenv -U
-  - pipenv install "$DJANGO" --skip-lock
-  - pipenv install --dev --skip-lock
+  - pip install pip poetry -U
+  - poetry install
+  - poetry run pip install -U "$DJANGO_ENV"
 script:
   - make qa
   - make coverage

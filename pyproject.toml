@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "django-precise-bbcode"
+version = "1.2.11.dev0"
+description = "A django BBCode integration.."
+authors = ["Morgan Aubert <me@morganaubert.name>"]
+license = "BSD-3-Clause"
+readme = "README.rst"
+homepage = "https://github.com/ellmetha/django-precise-bbcode"
+repository = "https://github.com/ellmetha/django-precise-bbcode"
+keywords = ["django", "bbdode", "html"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+packages = [
+    { include = "precise_bbcode" },
+]
+include = ["LICENSE", "*.rst"]
+exclude = ["example_project", "tests"]
+
+[tool.poetry.dependencies]
+python = "^3.5"
+
+django = "^2.2 || >=3.0"
+pillow = ">=2.2.1"
+
+[tool.poetry.dev-dependencies]
+codecov = "*"
+django-debug-toolbar = "*"
+flake8 = "*"
+ipython = "*"
+isort = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-spec = "*"
+pytest-django = "*"
+pytest-pythonpath = "^0.7.3"
+jinja2 = "^2.10.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
