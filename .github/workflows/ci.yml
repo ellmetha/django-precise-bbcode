@@ -37,4 +37,13 @@ jobs:
     - name: Run QA checks
       run: make qa
     - name: Run tests suite
-      run: make coverage
+      run: poetry run pytest --cov-report xml --cov precise_bbcode
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        yml: ./codecov.yml
+        fail_ci_if_error: true
