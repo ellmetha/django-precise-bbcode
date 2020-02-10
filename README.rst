@@ -15,7 +15,7 @@ django-precise-bbcode
   :alt: Latest Version
 
 .. image:: https://github.com/ellmetha/django-precise-bbcode/workflows/CI/badge.svg?branch=develop
-  :target: http://travis-ci.org/ellmetha/django-precise-bbcode
+  :target: https://github.com/ellmetha/django-precise-bbcode/actions
   :alt: Build status
 
 .. image:: https://img.shields.io/codecov/c/github/ellmetha/django-precise-bbcode.svg
