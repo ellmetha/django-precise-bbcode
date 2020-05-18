@@ -380,7 +380,7 @@ class BBCodeParser(object):
                     itk = token_end
             elif token.is_data:
                 replace_specialchars = parent_tag._options.escape_html if parent_tag else True
-                replace_links = parent_tag._options.replace_links if parent_tag else True
+                replace_links = parent_tag._options.replace_links if parent_tag else False
                 replace_smilies = parent_tag._options.render_embedded if parent_tag else True
                 rendered.append(self._render_textual_content(
                     token.text, replace_specialchars, replace_links, replace_smilies))

@@ -209,7 +209,7 @@ class BBCodeTagOptions(object):
     # The HTML characters inside this tag will be escaped
     escape_html = True
     # Replace URLs with link markups inside this tag
-    replace_links = True
+    replace_links = False
     # Strip leading and trailing whitespace inside this tag
     strip = False
     # Swallow the first trailing newline
