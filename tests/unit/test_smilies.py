@@ -14,16 +14,19 @@ class TestSmiley(object):
     SMILIES_TESTS = (
         (
             ':test:',
-            '<img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" alt="" />'
+            '<img src="' + settings.MEDIA_URL + 'precise_bbcode/smilies/icon_e_wink.gif" '
+            'width="auto" height="auto" alt="" />'
         ),
         (
             '[list][*]:test: hello\n[/list]',
-            '<ul><li><img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" height="auto" '
+            '<ul><li><img src="' + settings.MEDIA_URL + 'precise_bbcode/smilies/icon_e_wink.gif" '
+            'width="auto" height="auto" '
             'alt="" /> hello</li></ul>'
         ),
         (
             '[quote]hello :test:[/quote]',
-            '<blockquote>hello <img src="precise_bbcode/smilies/icon_e_wink.gif" width="auto" '
+            '<blockquote>hello <img src="' + settings.MEDIA_URL +
+            'precise_bbcode/smilies/icon_e_wink.gif" width="auto" '
             'height="auto" alt="" /></blockquote>'
         ),
         ('[code]hello :test:[/code]', '<code>hello :test:</code>'),
