@@ -106,8 +106,8 @@ class UrlBBCodeTag(BBCodeTag):
     def render(self, value, option=None, parent=None):
         href = option if option else value
         if href[0] == href[-1] and href[0] in ('"', '\'') and len(href) > 2:
-            # URLs can be encapsulated in quotes (either single or double) that aren't part of the URL. If that's the
-            # case, strip them out.
+            # URLs can be encapsulated in quotes (either single or double) that aren't part of the
+            # URL. If that's the case, strip them out.
             href = href[1:-2]
         href = replace(href, bbcode_settings.BBCODE_ESCAPE_HTML)
         if '://' not in href and self._domain_re.match(href):

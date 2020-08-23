@@ -36,7 +36,8 @@ class TestParser(object):
         ('[url=http://google.com][/url]', '<a href="http://google.com">http://google.com</a>'),
         ('[url=\'http://google.com\'][/url]', '<a href="http://google.com">http://google.com</a>'),
         ('[url="http://google.com"][/url]', '<a href="http://google.com">http://google.com</a>'),
-        ('[url=http://google.com\'][/url]', '<a href="http://google.com\'">http://google.com\'</a>'),  # Close quote but no open in url
+        ('[url=http://google.com\'][/url]',
+         '<a href="http://google.com\'">http://google.com\'</a>'),  # Close quote but no open
         ('[URL=google.com]goto google[/URL]', '<a href="http://google.com">goto google</a>'),
         (
             '[url=<script>alert(1);</script>]xss[/url]',
