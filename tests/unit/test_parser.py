@@ -112,7 +112,8 @@ class TestParser(object):
         ('[color]more tests[/color=#FFF]', '[color]more tests[/color=#FFF]'),
         ('[*]hello[/i]', '<li>hello</li>'),
         ('[url=\'\']Hello[/url]', '[url=\'\']Hello[/url]'),  # No url in quotes (empty url)
-        ('[url=\'http://google.com][/url]', '[url=\'http://google.com][/url]'),  # Open quote but no close in url
+        ('[url=\'http://google.com][/url]',
+         '[url=\'http://google.com][/url]'),  # Open quote but no close in url
         # BBCodes with semantic errors
         ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes
