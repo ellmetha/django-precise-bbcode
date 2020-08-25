@@ -34,6 +34,8 @@ class TestParser(object):
         ),
         ('[url=google.com]goto google[/url]', '<a href="http://google.com">goto google</a>'),
         ('[url=http://google.com][/url]', '<a href="http://google.com">http://google.com</a>'),
+        ('[url=\'http://google.com\'][/url]', '<a href="http://google.com">http://google.com</a>'),
+        ('[url="http://google.com"][/url]', '<a href="http://google.com">http://google.com</a>'),
         ('[URL=google.com]goto google[/URL]', '<a href="http://google.com">goto google</a>'),
         (
             '[url=<script>alert(1);</script>]xss[/url]',
@@ -107,6 +109,9 @@ class TestParser(object):
         ('[col\nor]more tests[/color]', '[col<br />or]more tests[/color]'),
         ('[color]more tests[/color=#FFF]', '[color]more tests[/color=#FFF]'),
         ('[*]hello[/i]', '<li>hello</li>'),
+        ('[url=\'\']Hello[/url]', '[url=&#39;&#39;]Hello[/url]'),  # No url in quotes (empty url)
+        ('[url=\'http://google.com][/url]',
+         '[url=&#39;http://google.com][/url]'),  # Open quote but no close in url
         # BBCodes with semantic errors
         ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes
