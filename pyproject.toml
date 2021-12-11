@@ -47,6 +47,8 @@ pytest-spec = "*"
 pytest-django = "*"
 pytest-pythonpath = "^0.7.3"
 jinja2 = "^2.10.3"
+sphinx = "*"
+sphinx-rtd-theme = "*"
 
 [build-system]
 requires = ["poetry>=0.12"]
