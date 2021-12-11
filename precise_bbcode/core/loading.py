@@ -1,4 +1,3 @@
-import imp
 import importlib
 import inspect
 
@@ -9,16 +8,8 @@ def get_module(app, modname):
     """
     Internal function to load a module from a single app.
     """
-    # Find out the app's __path__
-    try:
-        app_path = importlib.import_module(app).__path__
-    except AttributeError:
-        return
-
-    # Use imp.find_module to find the app's modname.py
-    try:
-        imp.find_module(modname, app_path)
-    except ImportError:
+    # Check if the module exists.
+    if importlib.util.find_spec('{}.{}'.format(app, modname)) is None:
         return
 
     # Import the app's module file

@@ -37,7 +37,7 @@ lint:
 
 # Import sort checks.
 isort:
-	poetry run isort --check-only --recursive --diff precise_bbcode tests
+	poetry run isort --check-only --diff precise_bbcode tests
 
 
 # TESTING
