@@ -17,10 +17,10 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
 ]
 packages = [
     { include = "precise_bbcode" },
@@ -29,7 +29,7 @@ include = ["LICENSE", "*.rst"]
 exclude = ["example_project", "tests"]
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6"
 
 django = "^2.2 || >=3.0"
 pillow = ">=2.2.1"
@@ -40,7 +40,7 @@ django-debug-toolbar = "*"
 flake8 = "*"
 ipython = "*"
 isort = "*"
-pytest = "*"
+pytest = "^6.2.5"
 pytest-cov = "*"
 pytest-spec = "*"
 pytest-django = "*"
