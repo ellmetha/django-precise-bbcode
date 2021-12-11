@@ -45,8 +45,8 @@ Online browsable documentation is available at https://django-precise-bbcode.rea
 Requirements
 ------------
 
-* Python 3.5+
-* Django 2.2+
+* Python 3.6+
+* Django 3.2+
 * PIL or Pillow (required for smiley tags)
 
 Installation

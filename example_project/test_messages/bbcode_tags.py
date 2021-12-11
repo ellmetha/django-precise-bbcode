@@ -41,7 +41,7 @@ class PhoneLinkTag(BBCodeTag):
 
     def render(self, value, option=None, parent=None):
         href = 'tel:{}'.format(value)
-        return '<a href="{0}">{0}</a>'.format(href, value)
+        return '<a href="{0}">{1}</a>'.format(href, value)
 
 
 class StartsWithATag(BBCodeTag):
