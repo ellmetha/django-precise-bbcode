@@ -20,6 +20,7 @@ class BBCodeNode(Node):
 
     def render(self, context):
         output = self.filter_expression.resolve(context)
+        output = output.resolve(context) if hasattr(output, 'resolve') else output
         value = mark_safe(render_bbcodes(output))
         if self.asvar:
             context[self.asvar] = value
