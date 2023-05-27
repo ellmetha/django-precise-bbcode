@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+
 import precise_bbcode.fields
+from precise_bbcode.conf.settings import SMILIES_UPLOAD_TO
 
 
 class Migration(migrations.Migration):
@@ -42,7 +44,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('code', precise_bbcode.fields.SmileyCodeField(unique=True, max_length=60, verbose_name='Smiley code', db_index=True)),
-                ('image', models.ImageField(upload_to=b'precise_bbcode/smilies', verbose_name='Smiley icon')),
+                ('image', models.ImageField(upload_to=SMILIES_UPLOAD_TO, verbose_name='Smiley icon')),
                 ('image_width', models.PositiveIntegerField(null=True, verbose_name='Smiley icon width', blank=True)),
                 ('image_height', models.PositiveIntegerField(null=True, verbose_name='Smiley icon height', blank=True)),
                 ('emotion', models.CharField(max_length=100, null=True, verbose_name='Related emotion', blank=True)),
