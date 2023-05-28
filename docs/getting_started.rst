@@ -4,8 +4,8 @@ Getting started
 Requirements
 ------------
 
-* `Python`_ 3.5, 3.6, 3.7 or 3.8
-* `Django`_ 2.2.x or 3.0.x
+* `Python`_ 3.6+
+* `Django`_ 3.2_
 * `Pillow`_ 2.2. or higher
 
 .. _Python: https://www.python.org
