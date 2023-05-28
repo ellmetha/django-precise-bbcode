@@ -9,26 +9,25 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          3.6,
           3.7,
           3.8,
           3.9,
-          '3.10'
+          '3.10',
+          '3.11',
         ]
         django-version: [
           "django>=3.2,<4.0",
           "django>=4.0,<4.1",
           "django>=4.1,<4.2",
+          "django>=4.2,<5.0",
         ]
         exclude:
-          - python-version: 3.6
-            django-version: "django>=4.0,<4.1"
           - python-version: 3.7
             django-version: "django>=4.0,<4.1"
-          - python-version: 3.6
-            django-version: "django>=4.1,<4.2"
           - python-version: 3.7
             django-version: "django>=4.1,<4.2"
+          - python-version: 3.7
+            django-version: "django>=4.2,<5.0"
 
     steps:
     - uses: actions/checkout@v2
@@ -45,14 +44,4 @@ jobs:
     - name: Run QA checks
       run: make qa
     - name: Run tests suite
-      run: poetry run pytest --cov-report xml --cov precise_bbcode
-    - name: Upload coverage to Codecov
-      if: matrix.python-version == 3.10 && matrix.django-version == 'django>=4.0,<4.1'
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        yml: ./codecov.yml
-        fail_ci_if_error: true
+      run: poetry run pytest
