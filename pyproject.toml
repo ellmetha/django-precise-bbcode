@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-precise-bbcode"
-version = "1.2.16.dev"
+version = "1.2.16"
 description = "A django BBCode integration.."
 authors = ["Morgan Aubert <me@morganaubert.name>"]
 license = "BSD-3-Clause"
