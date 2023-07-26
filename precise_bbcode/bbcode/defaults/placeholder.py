@@ -30,11 +30,14 @@ class UrlBBCodePlaceholder(BBCodePlaceholder):
     name = 'url'
 
     def validate(self, content, extra_context=None):
-        v = URLValidator()
-        try:
-            v(content)
-        except ValidationError:
+        if content[:2] == '//':
             return False
+        if '://' in content:
+            v = URLValidator()
+            try:
+                v(content)
+            except ValidationError:
+                return False
         return True
 
 
