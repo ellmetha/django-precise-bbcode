@@ -111,19 +111,22 @@ class UrlBBCodeTag(BBCodeTag):
             href = href[1:-1]
         href = replace(href, bbcode_settings.BBCODE_ESCAPE_HTML)
         if '://' not in href and self._domain_re.match(href):
-            href = 'http://' + href
-        v = URLValidator()
+            href = 'https://' + href
 
-        # Validates and renders the considered URL.
-        try:
-            v(href)
-        except ValidationError:
-            rendered = '[url={}]{}[/url]'.format(href, value) if option else \
-                '[url]{}[/url]'.format(value)
-        else:
-            content = value if option else href
-            rendered = '<a href="{}">{}</a>'.format(href, content or href)
+        if href[:2] == '//':
+            # Protocolless absolute URLs are unsafe.
+            href = ''
 
+        if '://' in href:
+            # Validates the considered URL only if it is not relative.
+            v = URLValidator()
+            try:
+                v(href)
+            except ValidationError:
+                href = ''
+
+        content = value if option else href
+        rendered = '<a href="{}">{}</a>'.format(href, content or href)
         return rendered
 
 
