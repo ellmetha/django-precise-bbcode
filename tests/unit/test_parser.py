@@ -32,23 +32,25 @@ class TestParser(object):
             '[url]http://www.google.com[/url]',
             '<a href="http://www.google.com">http://www.google.com</a>'
         ),
-        ('[url=google.com]goto google[/url]', '<a href="http://google.com">goto google</a>'),
+        ('[url=google.com]goto google[/url]', '<a href="https://google.com">goto google</a>'),
         ('[url=http://google.com][/url]', '<a href="http://google.com">http://google.com</a>'),
         ('[url=\'http://google.com\'][/url]', '<a href="http://google.com">http://google.com</a>'),
         ('[url="http://google.com"][/url]', '<a href="http://google.com">http://google.com</a>'),
-        ('[URL=google.com]goto google[/URL]', '<a href="http://google.com">goto google</a>'),
+        ('[URL=google.com]goto google[/URL]', '<a href="https://google.com">goto google</a>'),
+        ('[URL=/localhost/www][/URL]', '<a href="/localhost/www">/localhost/www</a>'),
+        ('[URL=/localhost/www]goto localhost[/URL]', '<a href="/localhost/www">goto localhost</a>'),
         (
             '[url=<script>alert(1);</script>]xss[/url]',
             '[url=&lt;script&gt;alert(1);&lt;/script&gt;]xss[/url]'
         ),
         (
             'www.google.com foo.com/bar http://xyz.ci',
-            '<a href="http://www.google.com">www.google.com</a> '
-            '<a href="http://foo.com/bar">foo.com/bar</a> <a href="http://xyz.ci">http://xyz.ci</a>'
+            '<a href="www.google.com">www.google.com</a> '
+            '<a href="foo.com/bar">foo.com/bar</a> <a href="http://xyz.ci">http://xyz.ci</a>'
         ),
-        ('[url=relative/foo/bar.html]link[/url]', '[url=relative/foo/bar.html]link[/url]'),
-        ('[url=/absolute/foo/bar.html]link[/url]', '[url=/absolute/foo/bar.html]link[/url]'),
-        ('[url=./hello.html]world![/url]', '[url=./hello.html]world![/url]'),
+        ('[url=relative/foo/bar.html]link[/url]', '<a href="relative/foo/bar.html">link</a>'),
+        ('[url=/absolute/foo/bar.html]link[/url]', '<a href="/absolute/foo/bar.html">link</a>'),
+        ('[url=./hello.html]world![/url]', '<a href="./hello.html">world!</a>'),
         (
             '[url=javascript:alert(String.fromCharCode(88,83,83))]http://google.com[/url]',
             '[url=javascript:alert(String.fromCharCode(88,83,83))]http://google.com[/url]'
@@ -73,11 +75,19 @@ class TestParser(object):
             '[img]http://foo.com/fake.png [img] '
             'onerrorjavascript:alert(String.fromCharCode(88,83,83)) [/img] [/img]'
         ),
+        (
+            '[img]/localhost/www[/img]',
+            '<img src="/localhost/www" alt="" />'
+        ),
+        (
+            '[url=/localhost/www][img]/localhost/www[/img][/url]',
+            '<a href="/localhost/www"><img src="/localhost/www" alt="" /></a>'
+        ),
         ('[quote] \r\nhello\nworld! [/quote]', '<blockquote>hello<br />world!</blockquote>'),
         ('[code][b]hello world![/b][/code]', '<code>[b]hello world![/b]</code>'),
         (
             '[color=green]goto [url=google.com]google website[/url][/color]',
-            '<span style="color:green;">goto <a href="http://google.com">google website</a></span>'
+            '<span style="color:green;">goto <a href="https://google.com">google website</a></span>'
         ),
         ('[color=#FFFFFF]white[/color]', '<span style="color:#FFFFFF;">white</span>'),
         (
@@ -142,8 +152,8 @@ class TestParser(object):
                     'definition_string': '[youtube]{TEXT}[/youtube]',
                     'format_string': (
                         '<object width="425" height="350"><param name="movie" '
-                        'value="http://www.youtube.com/v/{TEXT}"></param><param name="wmode" '
-                        'value="transparent"></param><embed src="http://www.youtube.com/v/{TEXT}" '
+                        'value="https://www.youtube.com/v/{TEXT}"></param><param name="wmode" '
+                        'value="transparent"></param><embed src="https://www.youtube.com/v/{TEXT}" '
                         'type="application/x-shockwave-flash" wmode="transparent" width="425" '
                         'height="350"></embed></object>'
                     ),
@@ -208,7 +218,7 @@ class TestParser(object):
             ),
             (
                 '[youtube]ztD3mRMdqSw[/youtube]',
-                '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/ztD3mRMdqSw"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/ztD3mRMdqSw" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>'  # noqa
+                '<object width="425" height="350"><param name="movie" value="https://www.youtube.com/v/ztD3mRMdqSw"></param><param name="wmode" value="transparent"></param><embed src="https://www.youtube.com/v/ztD3mRMdqSw" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>'  # noqa
             ),
             (
                 '[h1=#FFF]hello world![/h1]',

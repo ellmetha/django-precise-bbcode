@@ -104,18 +104,30 @@ class UrlBBCodeTag(BBCodeTag):
         replace_links = False
 
     def render(self, value, option=None, parent=None):
+        def bad_value_render(href):
+            if option:
+                return '[url={}]{}[/url]'.format(href, value)
+            else:
+                return '[url]{}[/url]'.format(value)
+
         href = option if option else value
         if href[0] == href[-1] and href[0] in ('"', '\'') and len(href) > 2:
             # URLs can be encapsulated in quotes (either single or double) that aren't part of the
             # URL. If that's the case, strip them out.
             href = href[1:-1]
+        if not href:
+            return bad_value_render(href)
         href = replace(href, bbcode_settings.BBCODE_ESCAPE_HTML)
+        for xss in bbcode_settings.URL_XSS_FILTER:
+            if xss in href:
+                return bad_value_render(href)
+
         if '://' not in href and self._domain_re.match(href):
             href = 'https://' + href
 
         if href[:2] == '//':
             # Protocolless absolute URLs are unsafe.
-            href = ''
+            return bad_value_render(href)
 
         if '://' in href:
             # Validates the considered URL only if it is not relative.
@@ -123,11 +135,10 @@ class UrlBBCodeTag(BBCodeTag):
             try:
                 v(href)
             except ValidationError:
-                href = ''
+                return bad_value_render(href)
 
         content = value if option else href
-        rendered = '<a href="{}">{}</a>'.format(href, content or href)
-        return rendered
+        return '<a href="{}">{}</a>'.format(href, content or href)
 
 
 class ImgBBCodeTag(BBCodeTag):
