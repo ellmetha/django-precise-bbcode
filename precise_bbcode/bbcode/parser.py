@@ -416,7 +416,7 @@ class BBCodeParser(object):
                     except ValidationError:
                         return url
 
-                return '<a href="{0}">{1}</a>'.format(url, url)
+                return '<a href="{0}"{1}>{2}</a>'.format(url, bbcode_settings._BBCODE_NOFOLLOW, url)
             data = re.sub(url_re, linkrepl, data)
 
         if replace_smilies:

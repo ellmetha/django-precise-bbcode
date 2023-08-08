@@ -138,7 +138,7 @@ class UrlBBCodeTag(BBCodeTag):
                 return bad_value_render(href)
 
         content = value if option else href
-        return '<a href="{}">{}</a>'.format(href, content or href)
+        return '<a href="{}"{}>{}</a>'.format(href, bbcode_settings._BBCODE_NOFOLLOW, content or href)
 
 
 class ImgBBCodeTag(BBCodeTag):
