@@ -122,7 +122,7 @@ class UrlBBCodeTag(BBCodeTag):
                 '[url]{}[/url]'.format(value)
         else:
             content = value if option else href
-            rendered = '<a href="{}">{}</a>'.format(href, content or href)
+            rendered = '<a href="{}"{}>{}</a>'.format(href, bbcode_settings._BBCODE_NOFOLLOW, content or href)
 
         return rendered
 

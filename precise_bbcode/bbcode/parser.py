@@ -403,7 +403,7 @@ class BBCodeParser(object):
             def linkrepl(match):
                 url = match.group(0)
                 href = url if '://' in url else 'http://' + url
-                return '<a href="{0}">{1}</a>'.format(href, url)
+                return '<a href="{0}"{1}>{2}</a>'.format(href, bbcode_settings._BBCODE_NOFOLLOW, url)
             data = re.sub(url_re, linkrepl, data)
 
         if replace_smilies:

@@ -25,7 +25,8 @@ BBCODE_ALLOW_CUSTOM_TAGS = getattr(settings, 'BBCODE_ALLOW_CUSTOM_TAGS', True)
 
 # Other options
 BBCODE_NORMALIZE_NEWLINES = getattr(settings, 'BBCODE_NORMALIZE_NEWLINES', True)
-
+BBCODE_URL_NOFOLLOW = False
+_BBCODE_NOFOLLOW = ' rel="nofollow"' if BBCODE_URL_NOFOLLOW else ''
 
 # Smileys options
 BBCODE_ALLOW_SMILIES = getattr(settings, 'BBCODE_ALLOW_SMILIES', True)
