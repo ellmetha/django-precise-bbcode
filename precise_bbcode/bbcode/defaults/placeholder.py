@@ -3,8 +3,8 @@ import re
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
+from precise_bbcode.conf import settings as bbcode_settings
 from precise_bbcode.bbcode.placeholder import BBCodePlaceholder
-
 
 __all__ = [
     'UrlBBCodePlaceholder',
@@ -30,11 +30,17 @@ class UrlBBCodePlaceholder(BBCodePlaceholder):
     name = 'url'
 
     def validate(self, content, extra_context=None):
-        v = URLValidator()
-        try:
-            v(content)
-        except ValidationError:
+        for xss in bbcode_settings.URL_XSS_FILTER:
+            if xss in content:
+                return False
+        if content[:2] == '//':
             return False
+        if '://' in content:
+            v = URLValidator()
+            try:
+                v(content)
+            except ValidationError:
+                return False
         return True
 
 
