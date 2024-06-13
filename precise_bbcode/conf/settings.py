@@ -30,3 +30,5 @@ BBCODE_NORMALIZE_NEWLINES = getattr(settings, 'BBCODE_NORMALIZE_NEWLINES', True)
 # Smileys options
 BBCODE_ALLOW_SMILIES = getattr(settings, 'BBCODE_ALLOW_SMILIES', True)
 SMILIES_UPLOAD_TO = getattr(settings, 'BBCODE_SMILIES_UPLOAD_TO', 'precise_bbcode/smilies')
+
+URL_XSS_FILTER = '"<>^`{|}();'
