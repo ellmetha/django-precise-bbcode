@@ -116,6 +116,8 @@ class TestParser(object):
         ('[color=some words]test[/color]', '[color=some words]test[/color]'),
         # Unknown BBCodes
         ('[unknown][hello][/unknown]', '[unknown][hello][/unknown]'),
+        ('[url]"[url]', '[url]&quot;[url]'),
+        ('[url="]wow, that is very short[url]', '[url=&quot;]wow, that is very short[url]'),
     )
 
     CUSTOM_TAGS_RENDERING_TESTS = {
