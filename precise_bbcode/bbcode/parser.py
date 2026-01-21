@@ -1,6 +1,8 @@
 import re
 from collections import defaultdict
 
+from django.core.validators import URLValidator
+
 from precise_bbcode.bbcode.regexes import url_re
 from precise_bbcode.conf import settings as bbcode_settings
 from precise_bbcode.core.utils import replace
@@ -402,8 +404,19 @@ class BBCodeParser(object):
         if replace_links:
             def linkrepl(match):
                 url = match.group(0)
-                href = url if '://' in url else 'http://' + url
-                return '<a href="{0}">{1}</a>'.format(href, url)
+                for xss in bbcode_settings.URL_XSS_FILTER:
+                    if xss in url:
+                        return url
+                if url[:2] == '//':
+                    return url
+                if '://' in url:
+                    v = URLValidator()
+                    try:
+                        v(url)
+                    except ValidationError:
+                        return url
+
+                return '<a href="{0}">{1}</a>'.format(url, url)
             data = re.sub(url_re, linkrepl, data)
 
         if replace_smilies:
